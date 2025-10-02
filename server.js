@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
 
-// Database (books data)
+// Database (books 
 const books = [
   {
     "idBuku": "B001",
