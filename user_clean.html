@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+  <meta charset="UTF-8">
+  <title>E-Perpus - Main Menu User</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f6fa;
+    }
+    .sidebar {
+      height: 100vh;
+      background: #1e3d59;
+      color: #fff;
+      padding: 20px 10px;
+      position: fixed;
+      width: 220px;
+    }
+    .sidebar a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .sidebar a:hover {
+      background: #3a506b;
+    }
+    .content {
+      margin-left: 240px;
+      padding: 20px;
+    }
+    .card-info {
+      border-radius: 12px;
+      padding: 20px;
+      color: #fff;
+    }
+    .card-blue { background: #007bff; }
+    .card-orange { background: #ff8c42; }
+    .card-green { background: #4caf50; }
+    .hero {
+      background: linear-gradient(135deg, rgba(30,61,89,0.85), rgba(0,123,255,0.75)), url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+      border-radius: 16px;
+      color: #fff;
+      padding: 28px;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+    }
+    .hero h4 { margin: 0 0 6px 0; }
+    .hero p { margin: 0; opacity: 0.95; }
+    .popular-books .card { height: 100%; }
+    .popular-books .card-img-top { height: 180px; object-fit: cover; }
+    .popular-books .card-body { min-height: 48px; display: flex; align-items: center; justify-content: center; }
+    .popular-books .card { transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+    .popular-books .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    .popular-books .card-img-top { transition: transform 0.3s ease; }
+    .popular-books .card:hover .card-img-top { transform: scale(1.03); }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
+    <a href="#">🏠 Home</a>
+    <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
+    <div id="submenuDaftar" class="collapse ms-3">
+      <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
+      <a href="#">✅ Buku Tersedia</a>
+      <a href="#">🆕 Buku Terbaru</a>
+    </div>
+    <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
+    <div id="submenuPinjam" class="collapse ms-3">
+      <a href="#">➕ Form Pinjam</a>
+      <a href="#">📊 Status Peminjaman</a>
+    </div>
+    <a href="#">↩️ Pengembalian Buku</a>
+    <a href="#">🕓 Riwayat Peminjaman</a>
+    <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal">🚪 Logout</a>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3>Halo, Andiva 👋</h3>
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">👤 Andiva</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Profile User</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="searchSemuaBuku" class="collapse mb-3">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku">
+        <button class="btn btn-primary" type="button">Cari</button>
+      </div>
+    </div>
+
+    <div class="hero mb-4">
+      <div>
+        <h4>Selamat datang di PERPUS ISLAM</h4>
+        <p>Temukan inspirasi dari ribuan koleksi buku digital kami.</p>
+      </div>
+    </div>
+
+    <!-- Tentang Perpustakaan -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-2">Tentang PERPUS ISLAM</h5>
+        <p class="card-text mb-2">Selamat datang di PERPUS ISLAM, perpustakaan digital yang membantu Anda menemukan, meminjam, dan mengembalikan buku dengan mudah. Nikmati kemudahan akses koleksi kami kapan saja dan di mana saja.</p>
+        <ul class="mb-0">
+          <li>Akses cepat ke semua koleksi dan buku terbaru</li>
+          <li>Peminjaman online dengan status peminjaman yang jelas</li>
+          <li>Notifikasi jatuh tempo dan informasi denda terkini</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Dashboard Info -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card-info card-blue">
+          <h6>Buku Dipinjam</h6>
+          <h3>2</h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-info card-orange">
+          <h6>Denda Saat Ini</h6>
+          <h3>Rp 5.000</h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-info card-green">
+          <h6>Jatuh Tempo Terdekat</h6>
+          <p>Matematika Lanjut<br><small>3 hari lagi</small></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buku Populer -->
+    <h5>Buku Populer Minggu Ini</h5>
+    <div class="row popular-books">
+      <div class="col-md-2">
+        <div class="card">
+          <img src="https://covers.openlibrary.org/b/id/8231856-L.jpg" class="card-img-top" alt="Atomic Habits">
+          <div class="card-body p-2 text-center">
+            <small>Atomic Habits</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card">
+          <img src="https://covers.openlibrary.org/b/id/9259251-L.jpg" class="card-img-top" alt="The Midnight Library">
+          <div class="card-body p-2 text-center">
+            <small>The Midnight Library</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card">
+          <img src="https://covers.openlibrary.org/b/id/11153284-L.jpg" class="card-img-top" alt="Sapiens">
+          <div class="card-body p-2 text-center">
+            <small>Sapiens</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card">
+          <img src="https://covers.openlibrary.org/b/id/10909258-L.jpg" class="card-img-top" alt="Becoming">
+          <div class="card-body p-2 text-center">
+            <small>Becoming</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card">
+          <img src="https://covers.openlibrary.org/b/id/12880737-L.jpg" class="card-img-top" alt="Educated">
+          <div class="card-body p-2 text-center">
+            <small>Educated</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card">
+          <img src="https://covers.openlibrary.org/b/id/12604065-L.jpg" class="card-img-top" alt="The Alchemist">
+          <div class="card-body p-2 text-center">
+            <small>The Alchemist</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">Apakah Anda serius mau logout?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+          <a href="#" class="btn btn-danger">Ya, Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // API Base URL
+    const API_BASE = 'http://localhost:3001/api';
+    
+    // Load user data
+    async function loadUserData() {
+      try {
+        const response = await fetch(`${API_BASE}/user`);
+        const user = await response.json();
+        
+        // Update user name in header
+        document.querySelector('h3').textContent = `Halo, ${user.nama} 👋`;
+        document.querySelector('.dropdown-toggle').textContent = `👤 ${user.nama}`;
+        
+        // Update dashboard info
+        document.querySelector('.card-blue h3').textContent = user.bukuDipinjam;
+        document.querySelector('.card-orange h3').textContent = `Rp ${user.denda.toLocaleString()}`;
+        document.querySelector('.card-green p').innerHTML = `${user.jatuhTempo}<br><small>${user.hariJatuhTempo} hari lagi</small>`;
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    }
+    
+    // Load popular books
+    async function loadPopularBooks() {
+      try {
+        const response = await fetch(`${API_BASE}/books/popular`);
+        const books = await response.json();
+        
+        const booksContainer = document.querySelector('.popular-books');
+        booksContainer.innerHTML = '';
+        
+        books.forEach(book => {
+          const bookCard = document.createElement('div');
+          bookCard.className = 'col-md-2';
+          bookCard.innerHTML = `
+            <div class="card">
+              <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 180px; background: linear-gradient(45deg, #f0f0f0, #e0e0e0);">
+                <i class="fas fa-book fa-3x text-muted"></i>
+              </div>
+              <div class="card-body p-2 text-center">
+                <small>${book.namaBuku}</small>
+                <br><small class="text-muted">${book.penulis}</small>
+              </div>
+            </div>
+          `;
+          booksContainer.appendChild(bookCard);
+        });
+      } catch (error) {
+        console.error('Error loading popular books:', error);
+      }
+    }
+    
+    // Search functionality
+    function setupSearch() {
+      const searchInput = document.querySelector('#searchSemuaBuku input');
+      const searchButton = document.querySelector('#searchSemuaBuku button');
+      
+      if (searchInput && searchButton) {
+        searchButton.addEventListener('click', async () => {
+          const query = searchInput.value.trim();
+          if (query) {
+            try {
+              const response = await fetch(`${API_BASE}/books/search?q=${encodeURIComponent(query)}`);
+              const books = await response.json();
+              displaySearchResults(books);
+            } catch (error) {
+              console.error('Error searching books:', error);
+            }
+          }
+        });
+        
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            searchButton.click();
+          }
+        });
+      }
+    }
+    
+    // Display search results
+    function displaySearchResults(books) {
+      const resultsContainer = document.querySelector('.popular-books');
+      if (!resultsContainer) return;
+      
+      resultsContainer.innerHTML = '';
+      
+      if (books.length === 0) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center text-muted">Tidak ada buku ditemukan</div>';
+        return;
+      }
+      
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'col-md-2';
+        bookCard.innerHTML = `
+          <div class="card">
+            <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 180px; background: linear-gradient(45deg, #f0f0f0, #e0e0e0);">
+              <i class="fas fa-book fa-3x text-muted"></i>
+            </div>
+            <div class="card-body p-2 text-center">
+              <small>${book.namaBuku}</small>
+              <br><small class="text-muted">${book.penulis}</small>
+              <br><small class="text-success">Stok: ${book.stok}</small>
+            </div>
+          </div>
+        `;
+        resultsContainer.appendChild(bookCard);
+      });
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      loadUserData();
+      loadPopularBooks();
+      setupSearch();
+    });
+  </script>
+</body>
+</html>
