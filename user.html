@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html> 
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>E-Perpus - Main Menu User</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     body {
       background-color: #f5f6fa;
@@ -50,13 +51,38 @@
     }
     .hero h4 { margin: 0 0 6px 0; }
     .hero p { margin: 0; opacity: 0.95; }
-    .popular-books .card { height: 100%; }
-    .popular-books .card-img-top { height: 180px; object-fit: cover; }
-    .popular-books .card-body { min-height: 48px; display: flex; align-items: center; justify-content: center; }
-    .popular-books .card { transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
-    .popular-books .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
-    .popular-books .card-img-top { transition: transform 0.3s ease; }
-    .popular-books .card:hover .card-img-top { transform: scale(1.03); }
+    .popular-books .card { 
+      height: 100%; 
+      border: 1px solid #e9ecef;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease; 
+      cursor: pointer; 
+    }
+    .popular-books .card:hover { 
+      transform: translateY(-4px); 
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+    }
+    .popular-books .card-img-top { 
+      height: 180px; 
+      object-fit: cover; 
+      transition: transform 0.3s ease; 
+    }
+    .popular-books .card:hover .card-img-top { 
+      transform: scale(1.03); 
+    }
+    .popular-books .card-title {
+      font-size: 0.9rem;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    .popular-books .card-text {
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+    .popular-books .badge {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -64,30 +90,30 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
-    <a href="#">🏠Home</a>
-          <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖Daftar Buku</a>
-       <div id="submenuDaftar" class="collapse ms-3">
-         <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false"> Semua Buku</a>
-         <a href="#"> Buku Tersedia</a>
-         <a href="#">Buku Terbaru</a>
-       </div>
-      <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
-              <div id="submenuPinjam" class="collapse ms-3">
-          <a href="#"> Form Pinjam</a>
-          <a href="#"> Status Peminjaman</a>
-        </div>
-      <a href="#">↩️Pengembalian Buku</a>
-      <a href="#">🕓 Riwayat Peminjaman</a>
-      <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal"> Logout</a>
+    <a href="#">🏠 Home</a>
+    <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
+    <div id="submenuDaftar" class="collapse ms-3">
+      <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
+      <a href="#">✅ Buku Tersedia</a>
+      <a href="#">🆕 Buku Terbaru</a>
+    </div>
+    <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
+    <div id="submenuPinjam" class="collapse ms-3">
+      <a href="#">➕ Form Pinjam</a>
+      <a href="#">📊 Status Peminjaman</a>
+    </div>
+    <a href="#">↩️ Pengembalian Buku</a>
+    <a href="#">🕓 Riwayat Peminjaman</a>
+    <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal">🚪 Logout</a>
   </div>
 
   <!-- Content -->
   <div class="content">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3>Halo, Andiva👋</h3>
+      <h3>Halo, Andiva 👋</h3>
       <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">🧑Andiva</button>
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">👤 Andiva</button>
         <ul class="dropdown-menu dropdown-menu-end">
           <li><a class="dropdown-item" href="#">Profile User</a></li>
           <li><hr class="dropdown-divider"></li>
@@ -146,8 +172,8 @@
 
   
 
-    <!-- Buku Populer -->
-    <h5>Buku Populer Minggu Ini</h5>
+    <!-- Buku Section -->
+    <h5 id="sectionTitle">Buku Populer Minggu Ini</h5>
     <div class="row popular-books">
       <div class="col-md-2">
         <div class="card">
@@ -215,7 +241,461 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="bookModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bookModalTitle">Detail Buku</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:180px">
+                <i class="fas fa-book fa-3x text-muted"></i>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <h5 id="bookTitle" class="mb-1"></h5>
+              <p class="mb-2"><small class="text-muted" id="bookAuthor"></small></p>
+              <p id="bookSynopsis" class="mb-2"></p>
+              <div class="small text-secondary">
+                <span id="bookPublisher" class="me-3"></span>
+                <span id="bookYear" class="me-3"></span>
+                <span id="bookStock"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // API Base URL
+    const API_BASE = 'http://localhost:3001/api';
+    
+    // Synopsis map (sinopsis singkat)
+    const BOOK_SYNOPSIS = {
+      'Laskar Pelangi': 'Novel inspiratif tentang perjuangan sepuluh anak Belitung di sekolah sederhana; persahabatan, optimisme, dan kekuatan pendidikan.',
+      'Bumi Manusia': 'Kisah cinta Minke dan Annelies di tengah penindasan kolonial; potret perlawanan terhadap ketidakadilan.',
+      'Negeri 5 Menara': 'Enam santri yang memegang prinsip man jadda wajada; mimpi, persahabatan, dan daya juang.',
+      'Ayat-Ayat Cinta': 'Romansa religius Fahri di Mesir; ujian cinta dan iman dengan nilai moral-spiritual.',
+      'Filosofi Kopi': 'Kumpulan cerita seputar Ben sang barista; refleksi hidup sederhana namun dalam melalui secangkir kopi.',
+      'Perahu Kertas': 'Perjalanan Keenan dan Kugy mencari jati diri, mimpi, dan cinta; kisah coming-of-age.',
+      'Pulang': 'Bujang dan organisasi rahasia; aksi, persahabatan, serta pencarian identitas.',
+      'Orang-Orang Biasa': 'Sekelompok orang kecil mencoba mengubah nasib; persahabatan, mimpi, dan perjuangan.',
+      'Tentang Kamu': 'Pengacara muda mengurai warisan misterius; kisah hidup penuh pelajaran berharga.',
+      'Hujan': 'Lail dan Esok di masa depan yang dilanda bencana; cinta, kehilangan, dan ketabahan.',
+      'Rindu': 'Para jamaah haji abad ke-19; rahasia, penyesalan, dan harapan selama pelayaran panjang.',
+      'Cantik Itu Luka': 'Magis realisme tentang Dewi Ayu; satir sejarah, cinta, dan luka bangsa.',
+      'Sejarah Dunia yang Disembunyikan': 'Nonfiksi teori alternatif sejarah; sisi tersembunyi peradaban, keyakinan, dan kuasa.',
+      'Atomic Habits': 'Panduan kebiasaan kecil berdampak besar; bangun kebiasaan baik, hilangkan yang buruk.',
+      'Sapiens': 'Perjalanan Homo sapiens hingga modern; budaya, agama, dan sains membentuk peradaban.',
+      'Homo Deus': 'Gagasan masa depan manusia, AI, dan bioteknologi; arah peradaban yang menggugah.',
+      'The Power of Habit': 'Bagaimana kebiasaan terbentuk dan berubah; contoh dari individu hingga perusahaan.',
+      'Rich Dad Poor Dad': 'Kontras pola pikir uang; pelajaran finansial menuju kebebasan keuangan.',
+      'Think and Grow Rich': 'Klasik motivasi pola pikir sukses; wawancara tokoh kaya pada masanya.',
+      '7 Habits of Highly Effective People': 'Tujuh kebiasaan untuk efektivitas pribadi; fokus pada diri, waktu, dan relasi.'
+    };
+
+    function openBookModal(book) {
+      const titleEl = document.getElementById('bookModalTitle');
+      const h5Title = document.getElementById('bookTitle');
+      const authorEl = document.getElementById('bookAuthor');
+      const synEl = document.getElementById('bookSynopsis');
+      const pubEl = document.getElementById('bookPublisher');
+      const yearEl = document.getElementById('bookYear');
+      const stockEl = document.getElementById('bookStock');
+
+      const synopsis = BOOK_SYNOPSIS[book.namaBuku] || BOOK_SYNOPSIS[(book.namaBuku || '').split(':')[0]] || 'Sinopsis belum tersedia.';
+
+      titleEl.textContent = 'Detail Buku';
+      h5Title.textContent = book.namaBuku;
+      authorEl.textContent = `Penulis: ${book.penulis}`;
+      synEl.textContent = synopsis;
+      pubEl.textContent = `Penerbit: ${book.penerbit}`;
+      yearEl.textContent = `Tahun: ${book.tahunTerbit}`;
+      stockEl.textContent = `Stok: ${book.stok}`;
+
+      // tampilkan cover di modal
+      const coverCol = document.querySelector('#bookModal .col-md-4 > div');
+      if (coverCol) {
+        const imgSrcJpg = getBookImageSrc(book);
+        const imgSrcPng = imgSrcJpg.replace(/\.jpg$/i, '.png');
+        coverCol.innerHTML = `<img src="${imgSrcJpg}" alt="${book.namaBuku}" class="img-fluid rounded" onerror="this.onerror=null;this.src='${imgSrcPng}';">`;
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('bookModal'));
+      modal.show();
+    }
+
+    // Helper: sanitasi nama file dan path gambar lokal
+    function sanitizeForFilename(str) {
+      return (str || '')
+        .toString()
+        .normalize('NFKD')
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/[\s_]+/g, '-')
+        .toLowerCase();
+    }
+    function getImageCandidates(book) {
+      const baseDir = 'images';
+      const title = book?.namaBuku || '';
+      const rawJpg = `${baseDir}/${title}.jpg`;
+      const rawPng = `${baseDir}/${title}.png`;
+      const sanitized = sanitizeForFilename(title);
+      const sanJpg = `${baseDir}/${sanitized}.jpg`;
+      const sanPng = `${baseDir}/${sanitized}.png`;
+      return [rawJpg, rawPng, sanJpg, sanPng];
+    }
+    function setBookImage(imgEl, book) {
+      const candidates = getImageCandidates(book);
+      let idx = 0;
+      function tryNext() {
+        if (idx >= candidates.length) {
+          imgEl.onerror = null;
+          imgEl.src = 'https://via.placeholder.com/300x180?text=No+Image';
+          return;
+        }
+        const src = candidates[idx++];
+        // Encode spaces safely but keep slashes
+        const parts = src.split('/');
+        parts[parts.length - 1] = encodeURIComponent(parts[parts.length - 1]);
+        imgEl.src = parts.join('/');
+      }
+      imgEl.onerror = tryNext;
+      tryNext();
+    }
+    
+    // Load user data
+    async function loadUserData() {
+      try {
+        const response = await fetch(`${API_BASE}/user`);
+        const user = await response.json();
+        
+        // Update user name in header
+        document.querySelector('h3').textContent = `Halo, ${user.nama} 👋`;
+        document.querySelector('.dropdown-toggle').textContent = `👤 ${user.nama}`;
+        
+        // Update dashboard info
+        document.querySelector('.card-blue h3').textContent = user.bukuDipinjam;
+        document.querySelector('.card-orange h3').textContent = `Rp ${user.denda.toLocaleString()}`;
+        document.querySelector('.card-green p').innerHTML = `${user.jatuhTempo}<br><small>${user.hariJatuhTempo} hari lagi</small>`;
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    }
+    
+    // Load popular books
+    async function loadPopularBooks() {
+      try {
+        const response = await fetch(`${API_BASE}/books/popular`);
+        const books = await response.json();
+        
+        const booksContainer = document.querySelector('.popular-books');
+        booksContainer.innerHTML = '';
+        
+        books.forEach(book => {
+          const bookCard = document.createElement('div');
+          bookCard.className = 'col-md-2';
+          bookCard.innerHTML = `
+            <div class="card">
+              <img class="card-img-top" alt="${book.namaBuku}">
+              <div class="card-body p-2 text-center">
+                <small>${book.namaBuku}</small>
+                <br><small class="text-muted">${book.penulis}</small>
+                <br><small class="text-success">Stok: ${book.stok}</small>
+              </div>
+            </div>
+          `;
+          setBookImage(bookCard.querySelector('.card-img-top'), book);
+          bookCard.querySelector('.card').addEventListener('click', () => openBookModal(book));
+          booksContainer.appendChild(bookCard);
+        });
+      } catch (error) {
+        console.error('Error loading popular books:', error);
+      }
+    }
+    
+    // Load all books
+    async function loadAllBooks() {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      // Show loading state
+      if (sectionTitle) {
+        sectionTitle.textContent = 'Memuat Semua Buku...';
+      }
+      if (resultsContainer) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE}/books`);
+        const books = await response.json();
+        displayAllBooks(books);
+      } catch (error) {
+        console.error('Error loading all books:', error);
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat data buku</div>';
+        }
+        if (sectionTitle) {
+          sectionTitle.textContent = 'Semua Buku';
+        }
+      }
+    }
+    
+    // Display all books
+    function displayAllBooks(books) {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      if (!resultsContainer) return;
+      
+      // Update section title
+      if (sectionTitle) {
+        sectionTitle.textContent = `Semua Buku (${books.length} buku)`;
+      }
+      
+      resultsContainer.innerHTML = '';
+      
+      if (books.length === 0) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-book-open me-2"></i>Tidak ada buku tersedia</div>';
+        return;
+      }
+      
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'col-md-2 mb-3';
+        bookCard.innerHTML = `
+          <div class="card h-100">
+            <img class="card-img-top" alt="${book.namaBuku}">
+            <div class="card-body p-3">
+              <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
+              <p class="card-text">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-user me-1"></i>${book.penulis}
+                </small>
+                <small class="text-info d-block mb-1">
+                  <i class="fas fa-building me-1"></i>${book.penerbit}
+                </small>
+                <small class="text-secondary d-block mb-2">
+                  <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
+                </small>
+                <span class="badge ${book.stok > 0 ? 'bg-success' : 'bg-danger'}">
+                  <i class="fas fa-box me-1"></i>Stok: ${book.stok}
+                </span>
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-2">
+              <small class="text-muted">
+                <i class="fas fa-barcode me-1"></i>ID: ${book.idBuku}
+              </small>
+            </div>
+          </div>
+        `;
+        bookCard.querySelector('.card').addEventListener('click', () => openBookModal(book));
+        setBookImage(bookCard.querySelector('.card-img-top'), book);
+        resultsContainer.appendChild(bookCard);
+      });
+    }
+    
+    // Search functionality
+    function setupSearch() {
+      const searchInput = document.querySelector('#searchSemuaBuku input');
+      const searchButton = document.querySelector('#searchSemuaBuku button');
+      
+      if (searchInput && searchButton) {
+        searchButton.addEventListener('click', async () => {
+          const query = searchInput.value.trim();
+          if (query) {
+            try {
+              const response = await fetch(`${API_BASE}/books/search?q=${encodeURIComponent(query)}`);
+              const books = await response.json();
+              displayAllBooks(books);
+            } catch (error) {
+              console.error('Error searching books:', error);
+            }
+          } else {
+            // If search is empty, show all books
+            loadAllBooks();
+          }
+        });
+        
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            searchButton.click();
+          }
+        });
+      }
+    }
+    
+    
+    // Load available books
+    async function loadAvailableBooks() {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      // Show loading state
+      if (sectionTitle) {
+        sectionTitle.textContent = 'Memuat Buku Tersedia...';
+      }
+      if (resultsContainer) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE}/books/available`);
+        const books = await response.json();
+        displayAvailableBooks(books);
+      } catch (error) {
+        console.error('Error loading available books:', error);
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat data buku</div>';
+        }
+        if (sectionTitle) {
+          sectionTitle.textContent = 'Buku Tersedia';
+        }
+      }
+    }
+    
+    // Display available books
+    function displayAvailableBooks(books) {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      if (!resultsContainer) return;
+      
+      // Update section title
+      if (sectionTitle) {
+        sectionTitle.textContent = `Buku Tersedia (${books.length} buku)`;
+      }
+      
+      resultsContainer.innerHTML = '';
+      
+      if (books.length === 0) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-book-open me-2"></i>Tidak ada buku tersedia</div>';
+        return;
+      }
+      
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'col-md-2 mb-3';
+        bookCard.innerHTML = `
+          <div class="card h-100">
+            <img class="card-img-top" alt="${book.namaBuku}">
+            <div class="card-body p-3">
+              <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
+              <p class="card-text">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-user me-1"></i>${book.penulis}
+                </small>
+                <small class="text-info d-block mb-1">
+                  <i class="fas fa-building me-1"></i>${book.penerbit}
+                </small>
+                <small class="text-secondary d-block mb-2">
+                  <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
+                </small>
+                <span class="badge bg-success">
+                  <i class="fas fa-box me-1"></i>Stok: ${book.stok}
+                </span>
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-2">
+              <small class="text-muted">
+                <i class="fas fa-barcode me-1"></i>ID: ${book.idBuku}
+              </small>
+            </div>
+          </div>
+        `;
+        bookCard.querySelector('.card').addEventListener('click', () => openBookModal(book));
+        setBookImage(bookCard.querySelector('.card-img-top'), book);
+        resultsContainer.appendChild(bookCard);
+      });
+    }
+    
+    // Show no latest books message
+    function showNoLatestBooks() {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      if (!resultsContainer) return;
+      
+      // Update section title
+      if (sectionTitle) {
+        sectionTitle.textContent = 'Buku Terbaru';
+      }
+      
+      resultsContainer.innerHTML = `
+        <div class="col-12 text-center py-5">
+          <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">Belum Ada Buku Terbaru</h5>
+          <p class="text-muted">Koleksi buku terbaru akan segera hadir. Silakan cek kembali nanti.</p>
+        </div>
+      `;
+    }
+    
+    // Setup submenu click handlers
+    function setupSubmenuHandlers() {
+      // Semua Buku submenu
+      const semuaBukuLink = document.querySelector('a[href="#searchSemuaBuku"]');
+      if (semuaBukuLink) {
+        semuaBukuLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Show search bar
+          const searchBar = document.getElementById('searchSemuaBuku');
+          if (searchBar) {
+            const bsCollapse = new bootstrap.Collapse(searchBar, { show: true });
+          }
+          // Load all books
+          loadAllBooks();
+        });
+      }
+      
+      // Buku Tersedia submenu
+      const allLinks = document.querySelectorAll('a[href="#"]');
+      allLinks.forEach(link => {
+        if (link.textContent.includes('Buku Tersedia')) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Hide search bar
+            const searchBar = document.getElementById('searchSemuaBuku');
+            if (searchBar) {
+              const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+            }
+            // Load available books
+            loadAvailableBooks();
+          });
+        }
+        
+        if (link.textContent.includes('Buku Terbaru')) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Hide search bar
+            const searchBar = document.getElementById('searchSemuaBuku');
+            if (searchBar) {
+              const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+            }
+            // Show no latest books message
+            showNoLatestBooks();
+          });
+        }
+      });
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      loadUserData();
+      loadPopularBooks();
+      setupSearch();
+      setupSubmenuHandlers();
+    });
+  </script>
 </body>
 </html>
 

@@ -1,4 +1,4 @@
-﻿const express = require('express'); 
+﻿const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
@@ -10,14 +10,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
 
-// Database (books 
+// Database (books data)
 const books = [
   {
     "idBuku": "B001",
     "namaBuku": "Laskar Pelangi",
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
-    "penulis": "Andrea Hirata", 
+    "penulis": "Andrea Hirata",
     "stok": 12
   },
   {
