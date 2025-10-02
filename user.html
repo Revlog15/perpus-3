@@ -353,6 +353,12 @@
       const sanPng = `${baseDir}/${sanitized}.png`;
       return [rawJpg, rawPng, sanJpg, sanPng];
     }
+    // For modal cover: pick a reasonable default; inline onerror will try PNG
+    function getBookImageSrc(book) {
+      const candidates = getImageCandidates(book);
+      // Prefer sanitized JPG first
+      return candidates[2];
+    }
     function setBookImage(imgEl, book) {
       const candidates = getImageCandidates(book);
       let idx = 0;

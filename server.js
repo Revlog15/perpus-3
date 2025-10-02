@@ -222,10 +222,12 @@ app.get('/api/books/search', (req, res) => {
   res.json(searchResults);
 });
 
-// Get popular books (top 6 by stock)
+// Get popular books (top 6 with lowest remaining stock > 0)
 app.get('/api/books/popular', (req, res) => {
   const popularBooks = books
-    .sort((a, b) => b.stok - a.stok)
+    .filter(book => book.stok > 0)
+    .slice() // copy before sorting to avoid mutating main list
+    .sort((a, b) => a.stok - b.stok)
     .slice(0, 6);
   res.json(popularBooks);
 });
