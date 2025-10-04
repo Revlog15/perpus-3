@@ -249,6 +249,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'user.html'));
 });
 
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 // Get all books
 app.get('/api/books', (req, res) => {
   res.json(books);
@@ -328,10 +332,18 @@ app.post('/api/loans', (req, res) => {
     return res.status(400).json({ message: 'Buku tidak tersedia (stok habis)' });
   }
   
-  // Cari user
-  const user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
+  // Cari user atau buat user baru jika tidak ada
+  let user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
   if (!user) {
-    return res.status(404).json({ message: 'User tidak ditemukan' });
+    // Buat user baru dengan ID unik
+    const newUserId = `U${String(users.length + 1).padStart(3, '0')}`;
+    user = {
+      id: newUserId,
+      nama: nama,
+      email: `${nama.toLowerCase().replace(/\s+/g, '')}@email.com`,
+      telepon: "000000000000"
+    };
+    users.push(user);
   }
   
   // Cek apakah user sudah meminjam buku yang sama
@@ -384,10 +396,18 @@ app.post('/api/returns', (req, res) => {
     return res.status(400).json({ message: 'ID Buku dan Nama harus diisi' });
   }
   
-  // Cari user
-  const user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
+  // Cari user atau buat user baru jika tidak ada
+  let user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
   if (!user) {
-    return res.status(404).json({ message: 'User tidak ditemukan' });
+    // Buat user baru dengan ID unik
+    const newUserId = `U${String(users.length + 1).padStart(3, '0')}`;
+    user = {
+      id: newUserId,
+      nama: nama,
+      email: `${nama.toLowerCase().replace(/\s+/g, '')}@email.com`,
+      telepon: "000000000000"
+    };
+    users.push(user);
   }
   
   // Cari peminjaman aktif
@@ -445,6 +465,292 @@ app.get('/api/loans/history/:userId', (req, res) => {
   res.json({
     activeLoans: userLoans.filter(l => l.status === 'aktif'),
     returnHistory: userReturns
+  });
+});
+
+// Admin routes
+// Add new book
+app.post('/api/books', (req, res) => {
+  const { idBuku, namaBuku, penulis, penerbit, tahunTerbit, stok } = req.body;
+  
+  // Validasi input
+  if (!idBuku || !namaBuku || !penulis || !penerbit || !tahunTerbit || stok === undefined) {
+    return res.status(400).json({ message: 'Semua field harus diisi' });
+  }
+  
+  // Cek apakah ID buku sudah ada
+  const existingBook = books.find(b => b.idBuku === idBuku);
+  if (existingBook) {
+    return res.status(400).json({ message: 'ID buku sudah ada' });
+  }
+  
+  // Tambah buku baru
+  const newBook = {
+    idBuku,
+    namaBuku,
+    penulis,
+    penerbit,
+    tahunTerbit: parseInt(tahunTerbit),
+    stok: parseInt(stok)
+  };
+  
+  books.push(newBook);
+  res.status(201).json({ message: 'Buku berhasil ditambahkan', book: newBook });
+});
+
+// Update book
+app.put('/api/books/:id', (req, res) => {
+  const { id } = req.params;
+  const { namaBuku, penulis, penerbit, tahunTerbit, stok } = req.body;
+  
+  const bookIndex = books.findIndex(b => b.idBuku === id);
+  if (bookIndex === -1) {
+    return res.status(404).json({ message: 'Buku tidak ditemukan' });
+  }
+  
+  // Update buku
+  books[bookIndex] = {
+    ...books[bookIndex],
+    namaBuku,
+    penulis,
+    penerbit,
+    tahunTerbit: parseInt(tahunTerbit),
+    stok: parseInt(stok)
+  };
+  
+  res.json({ message: 'Buku berhasil diupdate', book: books[bookIndex] });
+});
+
+// Delete book
+app.delete('/api/books/:id', (req, res) => {
+  const { id } = req.params;
+  
+  const bookIndex = books.findIndex(b => b.idBuku === id);
+  if (bookIndex === -1) {
+    return res.status(404).json({ message: 'Buku tidak ditemukan' });
+  }
+  
+  // Cek apakah buku sedang dipinjam
+  const activeLoan = loans.find(l => l.idBuku === id && l.status === 'aktif');
+  if (activeLoan) {
+    return res.status(400).json({ message: 'Buku sedang dipinjam, tidak dapat dihapus' });
+  }
+  
+  books.splice(bookIndex, 1);
+  res.json({ message: 'Buku berhasil dihapus' });
+});
+
+// Get admin statistics
+app.get('/api/admin/stats', (req, res) => {
+  const today = new Date();
+  const overdueLoans = loans.filter(loan => {
+    const returnDate = new Date(loan.tanggalKembali);
+    return returnDate < today && loan.status === 'aktif';
+  });
+  
+  res.json({
+    totalBooks: books.length,
+    totalUsers: users.length,
+    activeLoans: loans.length,
+    overdueLoans: overdueLoans.length,
+    totalReturns: returns.length
+  });
+});
+
+// Get overdue loans
+app.get('/api/admin/overdue', (req, res) => {
+  const today = new Date();
+  const overdueLoans = loans.filter(loan => {
+    const returnDate = new Date(loan.tanggalKembali);
+    return returnDate < today && loan.status === 'aktif';
+  });
+  
+  res.json(overdueLoans);
+});
+
+// User management routes
+// Add new user
+app.post('/api/users', (req, res) => {
+  const { nama, email, telepon, password } = req.body;
+  
+  // Validasi input
+  if (!nama || !email || !telepon || !password) {
+    return res.status(400).json({ message: 'Semua field harus diisi' });
+  }
+  
+  // Cek apakah email sudah ada
+  const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (existingUser) {
+    return res.status(400).json({ message: 'Email sudah digunakan' });
+  }
+  
+  // Tambah user baru
+  const newUserId = `U${String(users.length + 1).padStart(3, '0')}`;
+  const newUser = {
+    id: newUserId,
+    nama,
+    email,
+    telepon,
+    password, // In production, this should be hashed
+    status: 'active',
+    createdAt: new Date().toISOString().split('T')[0]
+  };
+  
+  users.push(newUser);
+  res.status(201).json({ message: 'User berhasil ditambahkan', user: newUser });
+});
+
+// Update user
+app.put('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  const { nama, email, telepon, password, status } = req.body;
+  
+  const userIndex = users.findIndex(u => u.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User tidak ditemukan' });
+  }
+  
+  // Cek apakah email sudah digunakan oleh user lain
+  const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.id !== id);
+  if (existingUser) {
+    return res.status(400).json({ message: 'Email sudah digunakan' });
+  }
+  
+  // Update user
+  const updateData = { nama, email, telepon, status: status || 'active' };
+  if (password) {
+    updateData.password = password; // In production, this should be hashed
+  }
+  
+  users[userIndex] = {
+    ...users[userIndex],
+    ...updateData
+  };
+  
+  res.json({ message: 'User berhasil diupdate', user: users[userIndex] });
+});
+
+// Reset user password
+app.post('/api/users/:id/reset-password', (req, res) => {
+  const { id } = req.params;
+  const { password } = req.body;
+  
+  const userIndex = users.findIndex(u => u.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User tidak ditemukan' });
+  }
+  
+  if (!password) {
+    return res.status(400).json({ message: 'Password harus diisi' });
+  }
+  
+  // Update password
+  users[userIndex].password = password; // In production, this should be hashed
+  
+  res.json({ message: 'Password berhasil direset' });
+});
+
+// Toggle user status
+app.put('/api/users/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  const userIndex = users.findIndex(u => u.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User tidak ditemukan' });
+  }
+  
+  if (!['active', 'inactive'].includes(status)) {
+    return res.status(400).json({ message: 'Status tidak valid' });
+  }
+  
+  // Update status
+  users[userIndex].status = status;
+  
+  res.json({ message: `User berhasil ${status === 'active' ? 'diaktifkan' : 'dinonaktifkan'}`, user: users[userIndex] });
+});
+
+// Delete user
+app.delete('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  
+  const userIndex = users.findIndex(u => u.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User tidak ditemukan' });
+  }
+  
+  // Check if user has active loans
+  const activeLoans = loans.filter(loan => loan.idUser === id && loan.status === 'aktif');
+  if (activeLoans.length > 0) {
+    return res.status(400).json({ 
+      message: `Tidak dapat menghapus user karena masih memiliki ${activeLoans.length} peminjaman aktif` 
+    });
+  }
+  
+  // Remove user
+  const deletedUser = users.splice(userIndex, 1)[0];
+  
+  res.json({ message: 'User berhasil dihapus', user: deletedUser });
+});
+
+// Admin loan management routes
+// Confirm return
+app.post('/api/admin/confirm-return', (req, res) => {
+  const { returnLoanId, returnBookId, returnBorrowerName, returnCondition, returnNotes } = req.body;
+  
+  // Validasi input
+  if (!returnLoanId || !returnBookId || !returnBorrowerName) {
+    return res.status(400).json({ message: 'ID Peminjaman, ID Buku, dan Nama Peminjam harus diisi' });
+  }
+  
+  // Cari peminjaman aktif
+  const activeLoan = loans.find(l => l.id === returnLoanId && l.idBuku === returnBookId && l.nama === returnBorrowerName && l.status === 'aktif');
+  if (!activeLoan) {
+    return res.status(404).json({ message: 'Peminjaman aktif tidak ditemukan' });
+  }
+  
+  // Hitung denda
+  const today = new Date();
+  const returnDate = new Date(activeLoan.tanggalKembali);
+  const daysLate = Math.max(0, Math.ceil((today - returnDate) / (1000 * 60 * 60 * 24)));
+  const fine = daysLate * 1000; // Rp 1000 per hari terlambat
+  
+  // Buat record pengembalian
+  const newReturn = {
+    id: `R${String(returns.length + 1).padStart(3, '0')}`,
+    idBuku: returnBookId,
+    idUser: activeLoan.idUser,
+    nama: returnBorrowerName,
+    tanggalPinjam: activeLoan.tanggalPinjam,
+    tanggalKembali: activeLoan.tanggalKembali,
+    tanggalPengembalian: today.toISOString().split('T')[0],
+    denda: fine,
+    status: 'selesai',
+    kondisiBuku: returnCondition || 'baik',
+    catatan: returnNotes || ''
+  };
+  
+  returns.push(newReturn);
+  
+  // Update status peminjaman
+  activeLoan.status = 'dikembalikan';
+  
+  // Tambah stok buku
+  const book = books.find(b => b.idBuku === returnBookId);
+  if (book) {
+    book.stok += 1;
+  }
+  
+  // Update user data
+  const user = users.find(u => u.id === activeLoan.idUser);
+  if (user) {
+    user.bukuDipinjam = loans.filter(l => l.idUser === user.id && l.status === 'aktif').length;
+  }
+  
+  res.status(201).json({ 
+    message: 'Pengembalian berhasil dikonfirmasi', 
+    return: newReturn,
+    fine: fine
   });
 });
 

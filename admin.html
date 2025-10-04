@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Perpus - Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f6fa;
+    }
+    .sidebar {
+      height: 100vh;
+      background: #1e3d59;
+      color: #fff;
+      padding: 20px 10px;
+      position: fixed;
+      width: 220px;
+    }
+    .sidebar a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .sidebar a:hover {
+      background: #3a506b;
+    }
+    .content {
+      margin-left: 240px;
+      padding: 20px;
+    }
+    .card-info {
+      border-radius: 12px;
+      padding: 20px;
+      color: #fff;
+    }
+    .card-blue { background: #007bff; }
+    .card-orange { background: #ff8c42; }
+    .card-green { background: #4caf50; }
+    .card-red { background: #dc3545; }
+    .card-purple { background: #6f42c1; }
+    .hero {
+      background: linear-gradient(135deg, rgba(30,61,89,0.85), rgba(0,123,255,0.75)), url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+      border-radius: 16px;
+      color: #fff;
+      padding: 28px;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+    }
+    .hero h4 { margin: 0 0 6px 0; }
+    .hero p { margin: 0; opacity: 0.95; }
+    .admin-section {
+      display: none;
+    }
+    .admin-section.active {
+      display: block;
+    }
+    .notification-item {
+      border-left: 4px solid #dc3545;
+      background: #fff3cd;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+    }
+    .book-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    .book-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .book-img {
+      height: 200px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
+    <h6 class="text-center mb-3 text-warning">Admin Panel</h6>
+    
+        <a href="#" onclick="showSection('home')" class="admin-menu-item" data-section="home">
+          <i class="fas fa-home me-2"></i>Home
+        </a>
+        <a href="#" onclick="showSection('profile')" class="admin-menu-item" data-section="profile">
+          <i class="fas fa-user-shield me-2"></i>Profile Admin
+        </a>
+        <a href="#" onclick="showSection('books')" class="admin-menu-item" data-section="books">
+          <i class="fas fa-book me-2"></i>Kelola Buku
+        </a>
+        <a href="#" onclick="showSection('users')" class="admin-menu-item" data-section="users">
+          <i class="fas fa-users me-2"></i>Kelola User
+        </a>
+    <a href="#" onclick="showSection('loans')" class="admin-menu-item" data-section="loans">
+      <i class="fas fa-book-reader me-2"></i>Kelola Peminjaman
+    </a>
+    <a href="#" onclick="showSection('reports')" class="admin-menu-item" data-section="reports">
+      <i class="fas fa-chart-bar me-2"></i>Laporan Peminjaman
+    </a>
+    
+    <hr class="my-3">
+    <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      <i class="fas fa-sign-out-alt me-2"></i>Logout
+    </a>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 id="adminName">Halo, Admin 👋</h3>
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-shield me-2"></i><span id="adminDropdownName">Admin</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#" onclick="showSection('profile')">
+            <i class="fas fa-user-shield me-2"></i>Profile Admin
+          </a></li>
+          <li><a class="dropdown-item" href="#" onclick="showAdminSettings()">
+            <i class="fas fa-cog me-2"></i>Pengaturan
+          </a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Home Section -->
+    <div id="home-section" class="admin-section">
+      <div class="hero mb-4">
+        <div>
+          <h4>Dashboard Admin PERPUS ISLAM</h4>
+          <p>Kelola perpustakaan dengan mudah dan efisien.</p>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card-info card-blue">
+            <h6><i class="fas fa-book me-2"></i>Total Buku</h6>
+            <h3 id="totalBooks">0</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card-info card-green">
+            <h6><i class="fas fa-users me-2"></i>Total User</h6>
+            <h3 id="totalUsers">0</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card-info card-orange">
+            <h6><i class="fas fa-book-reader me-2"></i>Peminjaman Aktif</h6>
+            <h3 id="activeLoans">0</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card-info card-red">
+            <h6><i class="fas fa-exclamation-triangle me-2"></i>Keterlambatan</h6>
+            <h3 id="overdueLoans">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notifikasi Penting</h5>
+        </div>
+        <div class="card-body">
+          <div id="notificationsList">
+            <!-- Notifications will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-history me-2"></i>Aktivitas Terbaru</h5>
+        </div>
+        <div class="card-body">
+          <div id="recentActivity">
+            <!-- Recent activity will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Admin Section -->
+    <div id="profile-section" class="admin-section" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-user-shield me-2"></i>Profile Admin</h4>
+        <button class="btn btn-primary" onclick="editProfile()">
+          <i class="fas fa-edit me-2"></i>Edit Profile
+        </button>
+      </div>
+
+      <!-- View Profile -->
+      <div id="viewProfile">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body text-center">
+                <div class="mb-3">
+                  <i class="fas fa-user-shield fa-4x text-primary"></i>
+                </div>
+                <h5 id="profileName">Admin Perpustakaan</h5>
+                <p class="text-muted" id="profileRole">Administrator</p>
+                <p class="text-muted" id="profileEmail">admin@perpustakaan.com</p>
+                <p class="text-muted" id="profileUsername">admin</p>
+                <div class="mt-3">
+                  <span class="badge bg-success">Aktif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header">
+                <h6><i class="fas fa-info-circle me-2"></i>Informasi Detail</h6>
+              </div>
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Nama Lengkap:</strong></div>
+                  <div class="col-sm-8" id="detailName">Admin Perpustakaan</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Username:</strong></div>
+                  <div class="col-sm-8" id="detailUsername">admin</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Email:</strong></div>
+                  <div class="col-sm-8" id="detailEmail">admin@perpustakaan.com</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Role:</strong></div>
+                  <div class="col-sm-8" id="detailRole">Administrator</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Tanggal Bergabung:</strong></div>
+                  <div class="col-sm-8" id="detailJoinDate">01 Januari 2024</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Terakhir Login:</strong></div>
+                  <div class="col-sm-8" id="detailLastLogin">Hari ini</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-4"><strong>Status:</strong></div>
+                  <div class="col-sm-8">
+                    <span class="badge bg-success">Aktif</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Statistics -->
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h6><i class="fas fa-chart-line me-2"></i>Statistik Admin</h6>
+              </div>
+              <div class="card-body">
+                <div class="row text-center">
+                  <div class="col-md-3">
+                    <div class="border-end">
+                      <h4 class="text-primary" id="adminTotalBooks">0</h4>
+                      <p class="text-muted mb-0">Total Buku</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="border-end">
+                      <h4 class="text-success" id="adminTotalUsers">0</h4>
+                      <p class="text-muted mb-0">Total User</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="border-end">
+                      <h4 class="text-warning" id="adminActiveLoans">0</h4>
+                      <p class="text-muted mb-0">Peminjaman Aktif</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <h4 class="text-danger" id="adminOverdueLoans">0</h4>
+                    <p class="text-muted mb-0">Keterlambatan</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Profile Form -->
+      <div id="editProfile" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <h6><i class="fas fa-edit me-2"></i>Edit Profile Admin</h6>
+          </div>
+          <div class="card-body">
+            <form id="editProfileForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editName" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="editName" name="nama" value="Admin Perpustakaan" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUsername" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="editUsername" name="username" value="admin" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editEmail" name="email" value="admin@perpustakaan.com" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editRole" class="form-label">Role</label>
+                    <select class="form-select" id="editRole" name="role" disabled>
+                      <option value="admin" selected>Administrator</option>
+                    </select>
+                    <div class="form-text">Role tidak dapat diubah</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editPassword" class="form-label">Password Baru</label>
+                    <input type="password" class="form-control" id="editPassword" name="password" placeholder="Kosongkan jika tidak ingin mengubah">
+                    <div class="form-text">Minimal 6 karakter</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Konfirmasi Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi password baru">
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="editBio" class="form-label">Bio</label>
+                <textarea class="form-control" id="editBio" name="bio" rows="3" placeholder="Tuliskan bio singkat tentang diri Anda">Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan digital.</textarea>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save me-2"></i>Simpan Perubahan
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="cancelEditProfile()">
+                  <i class="fas fa-times me-2"></i>Batal
+                </button>
+              </div>
+            </form>
+            <div id="profileMessage" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Books Management Section -->
+    <div id="books-section" class="admin-section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-book me-2"></i>Kelola Buku</h4>
+        <button class="btn btn-primary" onclick="showAddBookModal()">
+          <i class="fas fa-plus me-2"></i>Tambah Buku
+        </button>
+      </div>
+
+      <!-- Search and Filter -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <div class="input-group">
+            <input type="text" class="form-control" id="bookSearch" placeholder="Cari buku...">
+            <button class="btn btn-outline-secondary" onclick="searchBooks()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <select class="form-select" id="bookFilter">
+            <option value="all">Semua Buku</option>
+            <option value="available">Tersedia</option>
+            <option value="unavailable">Tidak Tersedia</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Books Grid -->
+      <div id="booksGrid" class="row">
+        <!-- Books will be loaded here -->
+      </div>
+    </div>
+
+    <!-- User Management Section -->
+    <div id="users-section" class="admin-section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4><i class="fas fa-users me-2"></i>Kelola User</h4>
+          <p class="text-muted mb-0">Kelola akun user, reset password, dan aktifkan/nonaktifkan user</p>
+        </div>
+        <button class="btn btn-success" onclick="showAddUserModal()">
+          <i class="fas fa-user-plus me-2"></i>Tambah User
+        </button>
+      </div>
+
+      <!-- Search and Filter -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <div class="input-group">
+            <input type="text" class="form-control" id="userSearch" placeholder="Cari user...">
+            <button class="btn btn-outline-secondary" onclick="searchUsers()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <select class="form-select" id="userFilter">
+            <option value="all">Semua User</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Tidak Aktif</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID User</th>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Telepon</th>
+                  <th>Status</th>
+                  <th>Buku Dipinjam</th>
+                  <th>Terdaftar</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <!-- Users will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loan Management Section -->
+    <div id="loans-section" class="admin-section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4><i class="fas fa-book-reader me-2"></i>Kelola Peminjaman</h4>
+          <p class="text-muted mb-0">Kelola peminjaman aktif, konfirmasi pengembalian, dan pantau keterlambatan</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-outline-primary" onclick="showActiveLoans()">
+            <i class="fas fa-list me-2"></i>Peminjaman Aktif
+          </button>
+          <button class="btn btn-outline-warning" onclick="showOverdueLoans()">
+            <i class="fas fa-exclamation-triangle me-2"></i>Keterlambatan
+          </button>
+        </div>
+      </div>
+
+      <!-- Loan Management Tabs -->
+      <ul class="nav nav-tabs mb-4" id="loanTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="active-loans-tab" data-bs-toggle="tab" data-bs-target="#active-loans" type="button" role="tab">
+            <i class="fas fa-list me-2"></i>Daftar Peminjaman Aktif
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="overdue-loans-tab" data-bs-toggle="tab" data-bs-target="#overdue-loans" type="button" role="tab">
+            <i class="fas fa-exclamation-triangle me-2"></i>Daftar Keterlambatan
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="return-confirm-tab" data-bs-toggle="tab" data-bs-target="#return-confirm" type="button" role="tab">
+            <i class="fas fa-check-circle me-2"></i>Konfirmasi Pengembalian
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="loanTabsContent">
+        <!-- Active Loans Tab -->
+        <div class="tab-pane fade show active" id="active-loans" role="tabpanel">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">Peminjaman Aktif</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID Peminjaman</th>
+                      <th>Buku</th>
+                      <th>Peminjam</th>
+                      <th>Tanggal Pinjam</th>
+                      <th>Jatuh Tempo</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activeLoansTableBody">
+                    <!-- Active loans will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overdue Loans Tab -->
+        <div class="tab-pane fade" id="overdue-loans" role="tabpanel">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">Daftar Keterlambatan</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID Peminjaman</th>
+                      <th>Buku</th>
+                      <th>Peminjam</th>
+                      <th>Tanggal Pinjam</th>
+                      <th>Jatuh Tempo</th>
+                      <th>Terlambat</th>
+                      <th>Denda</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overdueLoansTableBody">
+                    <!-- Overdue loans will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Return Confirmation Tab -->
+        <div class="tab-pane fade" id="return-confirm" role="tabpanel">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">Konfirmasi Pengembalian</h6>
+            </div>
+            <div class="card-body">
+              <form id="returnConfirmForm">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="returnLoanId" class="form-label">ID Peminjaman</label>
+                      <input type="text" class="form-control" id="returnLoanId" placeholder="Masukkan ID peminjaman">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="returnBookId" class="form-label">ID Buku</label>
+                      <input type="text" class="form-control" id="returnBookId" placeholder="Masukkan ID buku">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="returnBorrowerName" class="form-label">Nama Peminjam</label>
+                      <input type="text" class="form-control" id="returnBorrowerName" placeholder="Masukkan nama peminjam">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="returnCondition" class="form-label">Kondisi Buku</label>
+                      <select class="form-select" id="returnCondition">
+                        <option value="baik">Baik</option>
+                        <option value="rusak_ringan">Rusak Ringan</option>
+                        <option value="rusak_berat">Rusak Berat</option>
+                        <option value="hilang">Hilang</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="returnNotes" class="form-label">Catatan (opsional)</label>
+                  <textarea class="form-control" id="returnNotes" rows="3" placeholder="Catatan tambahan..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">
+                  <i class="fas fa-check me-2"></i>Konfirmasi Pengembalian
+                </button>
+              </form>
+              <div id="returnConfirmMessage" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Settings Section -->
+    <div id="settings-section" class="admin-section">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Pengaturan Sistem</h5>
+            </div>
+            <div class="card-body">
+              <form id="systemSettingsForm">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="libraryName" class="form-label">Nama Perpustakaan</label>
+                      <input type="text" class="form-control" id="libraryName" value="PERPUS ISLAM">
+                    </div>
+                    <div class="mb-3">
+                      <label for="maxLoanDays" class="form-label">Maksimal Hari Peminjaman</label>
+                      <input type="number" class="form-control" id="maxLoanDays" value="7" min="1" max="30">
+                    </div>
+                    <div class="mb-3">
+                      <label for="finePerDay" class="form-label">Denda per Hari (Rp)</label>
+                      <input type="number" class="form-control" id="finePerDay" value="1000" min="0">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="maxBooksPerUser" class="form-label">Maksimal Buku per User</label>
+                      <input type="number" class="form-control" id="maxBooksPerUser" value="5" min="1" max="10">
+                    </div>
+                    <div class="mb-3">
+                      <label for="autoRenewal" class="form-label">Perpanjangan Otomatis</label>
+                      <select class="form-select" id="autoRenewal">
+                        <option value="enabled">Diaktifkan</option>
+                        <option value="disabled">Dinonaktifkan</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="notificationDays" class="form-label">Notifikasi Sebelum Jatuh Tempo (hari)</label>
+                      <input type="number" class="form-control" id="notificationDays" value="2" min="0" max="7">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save me-2"></i>Simpan Pengaturan
+                </button>
+              </form>
+              <div id="settingsMessage" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informasi Sistem</h6>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <strong>Versi:</strong> 1.0.0
+              </div>
+              <div class="mb-3">
+                <strong>Database:</strong> In-Memory
+              </div>
+              <div class="mb-3">
+                <strong>Server:</strong> Node.js Express
+              </div>
+              <div class="mb-3">
+                <strong>Status:</strong> <span class="badge bg-success">Aktif</span>
+              </div>
+              <hr>
+              <div class="mb-2">
+                <strong>Statistik:</strong>
+              </div>
+              <div class="small text-muted">
+                <div>Total Buku: <span id="settingsTotalBooks">0</span></div>
+                <div>Total User: <span id="settingsTotalUsers">0</span></div>
+                <div>Peminjaman Aktif: <span id="settingsActiveLoans">0</span></div>
+                <div>Keterlambatan: <span id="settingsOverdueLoans">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Section -->
+    <div id="reports-section" class="admin-section">
+      <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Laporan Peminjaman</h4>
+      
+      <!-- Report Filters -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <label class="form-label">Periode</label>
+          <select class="form-select" id="reportPeriod">
+            <option value="today">Hari Ini</option>
+            <option value="week">Minggu Ini</option>
+            <option value="month">Bulan Ini</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="reportStatus">
+            <option value="all">Semua Status</option>
+            <option value="active">Aktif</option>
+            <option value="overdue">Terlambat</option>
+            <option value="returned">Dikembalikan</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">User</label>
+          <select class="form-select" id="reportUser">
+            <option value="all">Semua User</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-primary w-100" onclick="generateReport()">
+            <i class="fas fa-filter me-2"></i>Filter Laporan
+          </button>
+        </div>
+      </div>
+
+      <!-- Report Results -->
+      <div id="reportResults">
+        <!-- Report data will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">Apakah Anda yakin ingin logout?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <a href="#" class="btn btn-danger">Ya, Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Book Modal -->
+  <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addBookModalLabel">Tambah Buku Baru</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addBookForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookId" class="form-label">ID Buku</label>
+                  <input type="text" class="form-control" id="bookId" required>
+                </div>
+                <div class="mb-3">
+                  <label for="bookTitle" class="form-label">Judul Buku</label>
+                  <input type="text" class="form-control" id="bookTitle" required>
+                </div>
+                <div class="mb-3">
+                  <label for="bookAuthor" class="form-label">Penulis</label>
+                  <input type="text" class="form-control" id="bookAuthor" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookPublisher" class="form-label">Penerbit</label>
+                  <input type="text" class="form-control" id="bookPublisher" required>
+                </div>
+                <div class="mb-3">
+                  <label for="bookYear" class="form-label">Tahun Terbit</label>
+                  <input type="number" class="form-control" id="bookYear" required>
+                </div>
+                <div class="mb-3">
+                  <label for="bookStock" class="form-label">Stok</label>
+                  <input type="number" class="form-control" id="bookStock" required min="0">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" onclick="addBook()">Tambah Buku</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Book Modal -->
+  <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editBookModalLabel">Edit Buku</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editBookForm">
+            <input type="hidden" id="editBookId">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookTitle" class="form-label">Judul Buku</label>
+                  <input type="text" class="form-control" id="editBookTitle" required>
+                </div>
+                <div class="mb-3">
+                  <label for="editBookAuthor" class="form-label">Penulis</label>
+                  <input type="text" class="form-control" id="editBookAuthor" required>
+                </div>
+                <div class="mb-3">
+                  <label for="editBookPublisher" class="form-label">Penerbit</label>
+                  <input type="text" class="form-control" id="editBookPublisher" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookYear" class="form-label">Tahun Terbit</label>
+                  <input type="number" class="form-control" id="editBookYear" required>
+                </div>
+                <div class="mb-3">
+                  <label for="editBookStock" class="form-label">Stok</label>
+                  <input type="number" class="form-control" id="editBookStock" required min="0">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" onclick="updateBook()">Update Buku</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addUserModalLabel">Tambah User Baru</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addUserForm">
+            <div class="mb-3">
+              <label for="userName" class="form-label">Nama Lengkap</label>
+              <input type="text" class="form-control" id="userName" required>
+            </div>
+            <div class="mb-3">
+              <label for="userEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="userEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="userPhone" class="form-label">Telepon</label>
+              <input type="text" class="form-control" id="userPhone" required>
+            </div>
+            <div class="mb-3">
+              <label for="userPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="userPassword" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-success" onclick="addUser()">Tambah User</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editUserForm">
+            <input type="hidden" id="editUserId">
+            <div class="mb-3">
+              <label for="editUserName" class="form-label">Nama Lengkap</label>
+              <input type="text" class="form-control" id="editUserName" required>
+            </div>
+            <div class="mb-3">
+              <label for="editUserEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="editUserEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="editUserPhone" class="form-label">Telepon</label>
+              <input type="text" class="form-control" id="editUserPhone" required>
+            </div>
+            <div class="mb-3">
+              <label for="editUserPassword" class="form-label">Password Baru (kosongkan jika tidak ingin mengubah)</label>
+              <input type="password" class="form-control" id="editUserPassword" placeholder="Masukkan password baru">
+            </div>
+            <div class="mb-3">
+              <label for="editUserStatus" class="form-label">Status</label>
+              <select class="form-select" id="editUserStatus">
+                <option value="active">Aktif</option>
+                <option value="inactive">Tidak Aktif</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" onclick="updateUser()">Update User</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete User Confirmation Modal -->
+  <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteUserModalLabel">Konfirmasi Hapus User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Peringatan!</strong> Tindakan ini tidak dapat dibatalkan.
+          </div>
+          <p>Apakah Anda yakin ingin menghapus user <strong id="deleteUserName"></strong>?</p>
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="confirmDelete">
+              <label class="form-check-label" for="confirmDelete">
+                Saya mengerti bahwa user akan dihapus secara permanen
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDeleteUser()" disabled>
+            <i class="fas fa-trash me-2"></i>Hapus User
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // API Base URL
+    const API_BASE = 'http://localhost:3001/api';
+    
+    // Global variables
+    let allBooks = [];
+    let allUsers = [];
+    let allLoans = [];
+    let allReturns = [];
+
+    // Show specific section
+    function showSection(sectionName) {
+      // Hide all sections
+      document.querySelectorAll('.admin-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Remove active class from all menu items
+      document.querySelectorAll('.admin-menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Show selected section
+      document.getElementById(sectionName + '-section').classList.add('active');
+      
+      // Add active class to selected menu item
+      document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+      
+      // Load section-specific data
+      switch(sectionName) {
+        case 'home':
+          loadDashboardData();
+          break;
+        case 'books':
+          loadAllBooks();
+          break;
+        case 'profile':
+          loadProfileData();
+          break;
+        case 'users':
+          loadAllUsers();
+          break;
+        case 'loans':
+          loadLoanManagement();
+          break;
+        case 'settings':
+          loadSettings();
+          break;
+        case 'reports':
+          loadReports();
+          break;
+      }
+    }
+
+    // Load dashboard data
+    async function loadDashboardData() {
+      try {
+        // Load all data in parallel
+        const [booksRes, usersRes, loansRes, returnsRes] = await Promise.all([
+          fetch(`${API_BASE}/books`),
+          fetch(`${API_BASE}/users`),
+          fetch(`${API_BASE}/loans`),
+          fetch(`${API_BASE}/returns`)
+        ]);
+
+        allBooks = await booksRes.json();
+        allUsers = await usersRes.json();
+        allLoans = await loansRes.json();
+        allReturns = await returnsRes.json();
+
+        // Update statistics
+        document.getElementById('totalBooks').textContent = allBooks.length;
+        document.getElementById('totalUsers').textContent = allUsers.length;
+        document.getElementById('activeLoans').textContent = allLoans.length;
+        
+        // Calculate overdue loans
+        const today = new Date();
+        const overdueCount = allLoans.filter(loan => {
+          const returnDate = new Date(loan.tanggalKembali);
+          return returnDate < today;
+        }).length;
+        document.getElementById('overdueLoans').textContent = overdueCount;
+
+        // Load notifications
+        loadNotifications();
+        loadRecentActivity();
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+
+    // Load notifications
+    function loadNotifications() {
+      const notificationsList = document.getElementById('notificationsList');
+      const today = new Date();
+      
+      const overdueLoans = allLoans.filter(loan => {
+        const returnDate = new Date(loan.tanggalKembali);
+        return returnDate < today;
+      });
+
+      if (overdueLoans.length === 0) {
+        notificationsList.innerHTML = '<div class="text-muted">Tidak ada notifikasi penting</div>';
+        return;
+      }
+
+      let notificationsHTML = '';
+      overdueLoans.forEach(loan => {
+        const book = allBooks.find(b => b.idBuku === loan.idBuku);
+        const daysOverdue = Math.ceil((today - new Date(loan.tanggalKembali)) / (1000 * 60 * 60 * 24));
+        
+        notificationsHTML += `
+          <div class="notification-item">
+            <strong>Peminjaman Terlambat</strong><br>
+            <small>Buku: ${book ? book.namaBuku : 'Tidak ditemukan'} (${loan.idBuku})</small><br>
+            <small>Peminjam: ${loan.nama} - Terlambat ${daysOverdue} hari</small>
+          </div>
+        `;
+      });
+
+      notificationsList.innerHTML = notificationsHTML;
+    }
+
+    // Load recent activity
+    function loadRecentActivity() {
+      const recentActivity = document.getElementById('recentActivity');
+      
+      // Combine recent loans and returns
+      const recentLoans = allLoans.slice(-5).map(loan => ({
+        ...loan,
+        type: 'loan',
+        date: loan.tanggalPinjam
+      }));
+      
+      const recentReturns = allReturns.slice(-5).map(ret => ({
+        ...ret,
+        type: 'return',
+        date: ret.tanggalPengembalian
+      }));
+
+      const allActivities = [...recentLoans, ...recentReturns]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 10);
+
+      if (allActivities.length === 0) {
+        recentActivity.innerHTML = '<div class="text-muted">Belum ada aktivitas</div>';
+        return;
+      }
+
+      let activityHTML = '';
+      allActivities.forEach(activity => {
+        const book = allBooks.find(b => b.idBuku === activity.idBuku);
+        const icon = activity.type === 'loan' ? 'fas fa-book-reader text-primary' : 'fas fa-undo text-success';
+        const action = activity.type === 'loan' ? 'Meminjam' : 'Mengembalikan';
+        
+        activityHTML += `
+          <div class="d-flex align-items-center mb-2">
+            <i class="${icon} me-3"></i>
+            <div>
+              <small class="fw-bold">${activity.nama} ${action}</small><br>
+              <small class="text-muted">${book ? book.namaBuku : 'Buku tidak ditemukan'} - ${activity.date}</small>
+            </div>
+          </div>
+        `;
+      });
+
+      recentActivity.innerHTML = activityHTML;
+    }
+
+    // Load loan management data
+    async function loadLoanManagement() {
+      try {
+        const [loansRes, booksRes, usersRes] = await Promise.all([
+          fetch(`${API_BASE}/loans`),
+          fetch(`${API_BASE}/books`),
+          fetch(`${API_BASE}/users`)
+        ]);
+
+        allLoans = await loansRes.json();
+        allBooks = await booksRes.json();
+        allUsers = await usersRes.json();
+
+        loadActiveLoans();
+        loadOverdueLoans();
+      } catch (error) {
+        console.error('Error loading loan management data:', error);
+      }
+    }
+
+    // Load active loans
+    function loadActiveLoans() {
+      const activeLoans = allLoans.filter(loan => loan.status === 'aktif');
+      const activeLoansTableBody = document.getElementById('activeLoansTableBody');
+      
+      if (activeLoans.length === 0) {
+        activeLoansTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Tidak ada peminjaman aktif</td></tr>';
+        return;
+      }
+
+      let activeLoansHTML = '';
+      activeLoans.forEach(loan => {
+        const book = allBooks.find(b => b.idBuku === loan.idBuku);
+        const user = allUsers.find(u => u.id === loan.idUser);
+        const isOverdue = new Date(loan.tanggalKembali) < new Date();
+        const statusClass = isOverdue ? 'danger' : 'success';
+        const statusText = isOverdue ? 'Terlambat' : 'Aktif';
+        
+        activeLoansHTML += `
+          <tr class="${isOverdue ? 'table-warning' : ''}">
+            <td>${loan.id}</td>
+            <td>${book ? book.namaBuku : 'Buku tidak ditemukan'}</td>
+            <td>${user ? user.nama : loan.nama}</td>
+            <td>${loan.tanggalPinjam}</td>
+            <td>${loan.tanggalKembali}</td>
+            <td><span class="badge bg-${statusClass}">${statusText}</span></td>
+            <td>
+              <button class="btn btn-sm btn-success" onclick="confirmReturn('${loan.id}')" title="Konfirmasi Pengembalian">
+                <i class="fas fa-check"></i>
+              </button>
+              <button class="btn btn-sm btn-info" onclick="viewLoanDetails('${loan.id}')" title="Detail Peminjaman">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      activeLoansTableBody.innerHTML = activeLoansHTML;
+    }
+
+    // Load overdue loans
+    function loadOverdueLoans() {
+      const today = new Date();
+      const overdueLoans = allLoans.filter(loan => {
+        const returnDate = new Date(loan.tanggalKembali);
+        return returnDate < today && loan.status === 'aktif';
+      });
+      
+      const overdueLoansTableBody = document.getElementById('overdueLoansTableBody');
+      
+      if (overdueLoans.length === 0) {
+        overdueLoansTableBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">Tidak ada keterlambatan</td></tr>';
+        return;
+      }
+
+      let overdueLoansHTML = '';
+      overdueLoans.forEach(loan => {
+        const book = allBooks.find(b => b.idBuku === loan.idBuku);
+        const user = allUsers.find(u => u.id === loan.idUser);
+        const daysOverdue = Math.ceil((today - new Date(loan.tanggalKembali)) / (1000 * 60 * 60 * 24));
+        const fine = daysOverdue * 1000; // Rp 1000 per hari
+        
+        overdueLoansHTML += `
+          <tr class="table-danger">
+            <td>${loan.id}</td>
+            <td>${book ? book.namaBuku : 'Buku tidak ditemukan'}</td>
+            <td>${user ? user.nama : loan.nama}</td>
+            <td>${loan.tanggalPinjam}</td>
+            <td>${loan.tanggalKembali}</td>
+            <td><span class="badge bg-danger">${daysOverdue} hari</span></td>
+            <td><span class="text-danger fw-bold">Rp ${fine.toLocaleString()}</span></td>
+            <td>
+              <button class="btn btn-sm btn-success" onclick="confirmReturn('${loan.id}')" title="Konfirmasi Pengembalian">
+                <i class="fas fa-check"></i>
+              </button>
+              <button class="btn btn-sm btn-warning" onclick="sendReminder('${loan.id}')" title="Kirim Peringatan">
+                <i class="fas fa-bell"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      overdueLoansTableBody.innerHTML = overdueLoansHTML;
+    }
+
+    // Show active loans tab
+    function showActiveLoans() {
+      const tab = new bootstrap.Tab(document.getElementById('active-loans-tab'));
+      tab.show();
+      loadActiveLoans();
+    }
+
+    // Show overdue loans tab
+    function showOverdueLoans() {
+      const tab = new bootstrap.Tab(document.getElementById('overdue-loans-tab'));
+      tab.show();
+      loadOverdueLoans();
+    }
+
+    // Confirm return
+    function confirmReturn(loanId) {
+      const loan = allLoans.find(l => l.id === loanId);
+      if (!loan) return;
+
+      // Pre-fill the return confirmation form
+      document.getElementById('returnLoanId').value = loan.id;
+      document.getElementById('returnBookId').value = loan.idBuku;
+      document.getElementById('returnBorrowerName').value = loan.nama;
+      
+      // Switch to return confirmation tab
+      const tab = new bootstrap.Tab(document.getElementById('return-confirm-tab'));
+      tab.show();
+    }
+
+    // View loan details
+    function viewLoanDetails(loanId) {
+      const loan = allLoans.find(l => l.id === loanId);
+      if (!loan) return;
+
+      const book = allBooks.find(b => b.idBuku === loan.idBuku);
+      const user = allUsers.find(u => u.id === loan.idUser);
+      const isOverdue = new Date(loan.tanggalKembali) < new Date();
+      const daysOverdue = isOverdue ? Math.ceil((new Date() - new Date(loan.tanggalKembali)) / (1000 * 60 * 60 * 24)) : 0;
+      const fine = daysOverdue * 1000;
+
+      alert(`Detail Peminjaman:
+ID Peminjaman: ${loan.id}
+Buku: ${book ? book.namaBuku : 'Tidak ditemukan'}
+Peminjam: ${user ? user.nama : loan.nama}
+Tanggal Pinjam: ${loan.tanggalPinjam}
+Jatuh Tempo: ${loan.tanggalKembali}
+Status: ${isOverdue ? 'Terlambat' : 'Aktif'}
+${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()}` : ''}`);
+    }
+
+    // Send reminder
+    function sendReminder(loanId) {
+      const loan = allLoans.find(l => l.id === loanId);
+      if (!loan) return;
+
+      const book = allBooks.find(b => b.idBuku === loan.idBuku);
+      const user = allUsers.find(u => u.id === loan.idUser);
+      
+      if (confirm(`Kirim peringatan kepada ${user ? user.nama : loan.nama} untuk mengembalikan buku "${book ? book.namaBuku : 'Tidak ditemukan'}"?`)) {
+        alert('Peringatan telah dikirim!');
+        // In a real application, this would send an email or notification
+      }
+    }
+
+    // Load all users
+    async function loadAllUsers() {
+      try {
+        const response = await fetch(`${API_BASE}/users`);
+        allUsers = await response.json();
+        displayUsers(allUsers);
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="8" class="text-center text-danger">Gagal memuat data user</td></tr>';
+      }
+    }
+
+    // Display users in table
+    function displayUsers(users) {
+      const usersTableBody = document.getElementById('usersTableBody');
+      
+      if (users.length === 0) {
+        usersTableBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">Tidak ada user ditemukan</td></tr>';
+        return;
+      }
+
+      let usersHTML = '';
+      users.forEach(user => {
+        const activeLoans = allLoans.filter(loan => loan.idUser === user.id && loan.status === 'aktif').length;
+        const statusClass = user.status === 'active' ? 'success' : 'danger';
+        const statusText = user.status === 'active' ? 'Aktif' : 'Tidak Aktif';
+        
+        usersHTML += `
+          <tr class="${user.status === 'inactive' ? 'table-secondary' : ''}">
+            <td>${user.id}</td>
+            <td>${user.nama} ${user.status === 'inactive' ? '<i class="fas fa-user-slash text-muted ms-1" title="User Tidak Aktif"></i>' : ''}</td>
+            <td>${user.email}</td>
+            <td>${user.telepon}</td>
+            <td><span class="badge bg-${statusClass}">${statusText}</span></td>
+            <td>${activeLoans}</td>
+            <td>${user.createdAt || 'N/A'}</td>
+            <td>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary" onclick="editUser('${user.id}')" title="Edit User">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-outline-warning" onclick="resetPassword('${user.id}')" title="Reset Password">
+                  <i class="fas fa-key"></i>
+                </button>
+                <button class="btn btn-outline-${user.status === 'active' ? 'danger' : 'success'}" 
+                        onclick="toggleUserStatus('${user.id}')" 
+                        title="${user.status === 'active' ? 'Nonaktifkan User' : 'Aktifkan User'}"
+                        style="min-width: 40px;">
+                  <i class="fas fa-${user.status === 'active' ? 'ban' : 'check'}"></i>
+                </button>
+                <button class="btn btn-outline-danger" 
+                        onclick="deleteUser('${user.id}')" 
+                        title="Hapus User">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      usersTableBody.innerHTML = usersHTML;
+    }
+
+    // Search users
+    function searchUsers() {
+      const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+      const filter = document.getElementById('userFilter').value;
+      
+      let filteredUsers = allUsers.filter(user => 
+        user.nama.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm) ||
+        user.id.toLowerCase().includes(searchTerm)
+      );
+
+      if (filter === 'active') {
+        filteredUsers = filteredUsers.filter(user => user.status === 'active');
+      } else if (filter === 'inactive') {
+        filteredUsers = filteredUsers.filter(user => user.status === 'inactive');
+      }
+
+      displayUsers(filteredUsers);
+    }
+
+    // Show add user modal
+    function showAddUserModal() {
+      const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+      modal.show();
+    }
+
+    // Add new user
+    async function addUser() {
+      const form = document.getElementById('addUserForm');
+      const formData = new FormData(form);
+      const userData = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch(`${API_BASE}/users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+          alert('User berhasil ditambahkan');
+          bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
+          form.reset();
+          loadAllUsers();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Edit user
+    function editUser(userId) {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user) return;
+
+      document.getElementById('editUserId').value = user.id;
+      document.getElementById('editUserName').value = user.nama;
+      document.getElementById('editUserEmail').value = user.email;
+      document.getElementById('editUserPhone').value = user.telepon;
+      document.getElementById('editUserStatus').value = user.status || 'active';
+
+      const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+      modal.show();
+    }
+
+    // Update user
+    async function updateUser() {
+      const userId = document.getElementById('editUserId').value;
+      const form = document.getElementById('editUserForm');
+      const formData = new FormData(form);
+      const userData = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch(`${API_BASE}/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+          alert('User berhasil diupdate');
+          bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+          loadAllUsers();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Reset password
+    async function resetPassword(userId) {
+      const newPassword = prompt('Masukkan password baru:');
+      if (!newPassword) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/users/${userId}/reset-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ password: newPassword })
+        });
+
+        if (response.ok) {
+          alert('Password berhasil direset');
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Toggle user status
+    async function toggleUserStatus(userId) {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user) return;
+
+      const newStatus = user.status === 'active' ? 'inactive' : 'active';
+      const action = newStatus === 'active' ? 'mengaktifkan' : 'menonaktifkan';
+      
+      if (!confirm(`Apakah Anda yakin ingin ${action} user ini?`)) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/users/${userId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        if (response.ok) {
+          alert(`User berhasil ${action}`);
+          loadAllUsers();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Delete user
+    function deleteUser(userId) {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user) return;
+
+      // Check if user has active loans
+      const activeLoans = allLoans.filter(loan => loan.idUser === userId && loan.status === 'aktif');
+      if (activeLoans.length > 0) {
+        alert(`Tidak dapat menghapus user karena masih memiliki ${activeLoans.length} peminjaman aktif. Silakan kembalikan buku terlebih dahulu.`);
+        return;
+      }
+
+      // Show confirmation modal
+      document.getElementById('deleteUserName').textContent = user.nama;
+      document.getElementById('confirmDelete').checked = false;
+      document.getElementById('confirmDeleteBtn').disabled = true;
+      
+      // Store userId for deletion
+      window.userToDelete = userId;
+      
+      const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+      modal.show();
+    }
+
+    // Confirm delete user
+    async function confirmDeleteUser() {
+      const userId = window.userToDelete;
+      
+      try {
+        const response = await fetch(`${API_BASE}/users/${userId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('User berhasil dihapus');
+          bootstrap.Modal.getInstance(document.getElementById('deleteUserModal')).hide();
+          loadAllUsers();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Load all books
+    async function loadAllBooks() {
+      try {
+        const response = await fetch(`${API_BASE}/books`);
+        allBooks = await response.json();
+        displayBooks(allBooks);
+      } catch (error) {
+        console.error('Error loading books:', error);
+        document.getElementById('booksGrid').innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat data buku</div>';
+      }
+    }
+
+    // Display books in grid
+    function displayBooks(books) {
+      const booksGrid = document.getElementById('booksGrid');
+      
+      if (books.length === 0) {
+        booksGrid.innerHTML = '<div class="col-12 text-center text-muted">Tidak ada buku ditemukan</div>';
+        return;
+      }
+
+      let booksHTML = '';
+      books.forEach(book => {
+        booksHTML += `
+          <div class="col-md-3 mb-3">
+            <div class="card book-card">
+              <img src="images/${book.namaBuku.toLowerCase().replace(/\s+/g, '')}.jpg" 
+                   class="card-img-top book-img" 
+                   alt="${book.namaBuku}"
+                   onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+              <div class="card-body">
+                <h6 class="card-title">${book.namaBuku}</h6>
+                <p class="card-text">
+                  <small class="text-muted">${book.penulis}</small><br>
+                  <small class="text-info">${book.penerbit} (${book.tahunTerbit})</small><br>
+                  <span class="badge ${book.stok > 0 ? 'bg-success' : 'bg-danger'}">
+                    Stok: ${book.stok}
+                  </span>
+                </p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-primary" onclick="editBook('${book.idBuku}')">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteBook('${book.idBuku}')">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      booksGrid.innerHTML = booksHTML;
+    }
+
+    // Search books
+    function searchBooks() {
+      const searchTerm = document.getElementById('bookSearch').value.toLowerCase();
+      const filter = document.getElementById('bookFilter').value;
+      
+      let filteredBooks = allBooks.filter(book => 
+        book.namaBuku.toLowerCase().includes(searchTerm) ||
+        book.penulis.toLowerCase().includes(searchTerm) ||
+        book.penerbit.toLowerCase().includes(searchTerm) ||
+        book.idBuku.toLowerCase().includes(searchTerm)
+      );
+
+      if (filter === 'available') {
+        filteredBooks = filteredBooks.filter(book => book.stok > 0);
+      } else if (filter === 'unavailable') {
+        filteredBooks = filteredBooks.filter(book => book.stok === 0);
+      }
+
+      displayBooks(filteredBooks);
+    }
+
+    // Show add book modal
+    function showAddBookModal() {
+      const modal = new bootstrap.Modal(document.getElementById('addBookModal'));
+      modal.show();
+    }
+
+    // Add new book
+    async function addBook() {
+      const form = document.getElementById('addBookForm');
+      const formData = new FormData(form);
+      const bookData = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch(`${API_BASE}/books`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bookData)
+        });
+
+        if (response.ok) {
+          alert('Buku berhasil ditambahkan');
+          bootstrap.Modal.getInstance(document.getElementById('addBookModal')).hide();
+          form.reset();
+          loadAllBooks();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Edit book
+    function editBook(bookId) {
+      const book = allBooks.find(b => b.idBuku === bookId);
+      if (!book) return;
+
+      document.getElementById('editBookId').value = book.idBuku;
+      document.getElementById('editBookTitle').value = book.namaBuku;
+      document.getElementById('editBookAuthor').value = book.penulis;
+      document.getElementById('editBookPublisher').value = book.penerbit;
+      document.getElementById('editBookYear').value = book.tahunTerbit;
+      document.getElementById('editBookStock').value = book.stok;
+
+      const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
+      modal.show();
+    }
+
+    // Update book
+    async function updateBook() {
+      const bookId = document.getElementById('editBookId').value;
+      const form = document.getElementById('editBookForm');
+      const formData = new FormData(form);
+      const bookData = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch(`${API_BASE}/books/${bookId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bookData)
+        });
+
+        if (response.ok) {
+          alert('Buku berhasil diupdate');
+          bootstrap.Modal.getInstance(document.getElementById('editBookModal')).hide();
+          loadAllBooks();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Delete book
+    async function deleteBook(bookId) {
+      if (!confirm('Apakah Anda yakin ingin menghapus buku ini?')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/books/${bookId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('Buku berhasil dihapus');
+          loadAllBooks();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.message);
+        }
+      } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Load reports
+    async function loadReports() {
+      try {
+        const [loansRes, returnsRes] = await Promise.all([
+          fetch(`${API_BASE}/loans`),
+          fetch(`${API_BASE}/returns`)
+        ]);
+
+        allLoans = await loansRes.json();
+        allReturns = await returnsRes.json();
+
+        // Populate user filter
+        const userSelect = document.getElementById('reportUser');
+        userSelect.innerHTML = '<option value="all">Semua User</option>';
+        allUsers.forEach(user => {
+          userSelect.innerHTML += `<option value="${user.id}">${user.nama}</option>`;
+        });
+
+        generateReport();
+      } catch (error) {
+        console.error('Error loading reports:', error);
+      }
+    }
+
+    // Generate report
+    function generateReport() {
+      const period = document.getElementById('reportPeriod').value;
+      const status = document.getElementById('reportStatus').value;
+      const userId = document.getElementById('reportUser').value;
+
+      let reportData = [...allLoans, ...allReturns];
+
+      // Filter by period
+      if (period !== 'all') {
+        const today = new Date();
+        let startDate;
+        
+        switch (period) {
+          case 'today':
+            startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            break;
+          case 'week':
+            startDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case 'month':
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            break;
+        }
+        
+        if (startDate) {
+          reportData = reportData.filter(item => new Date(item.tanggalPinjam || item.tanggalPengembalian) >= startDate);
+        }
+      }
+
+      // Filter by status
+      if (status !== 'all') {
+        if (status === 'active') {
+          reportData = reportData.filter(item => item.status === 'aktif');
+        } else if (status === 'overdue') {
+          const today = new Date();
+          reportData = reportData.filter(item => {
+            const returnDate = new Date(item.tanggalKembali);
+            return returnDate < today && item.status === 'aktif';
+          });
+        } else if (status === 'returned') {
+          reportData = reportData.filter(item => item.status === 'selesai' || item.status === 'dikembalikan');
+        }
+      }
+
+      // Filter by user
+      if (userId !== 'all') {
+        reportData = reportData.filter(item => item.idUser === userId);
+      }
+
+      displayReport(reportData);
+    }
+
+    // Display report
+    function displayReport(data) {
+      const reportResults = document.getElementById('reportResults');
+      
+      if (data.length === 0) {
+        reportResults.innerHTML = '<div class="text-muted text-center">Tidak ada data untuk ditampilkan</div>';
+        return;
+      }
+
+      let reportHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h6 class="mb-0">Laporan Peminjaman (${data.length} data)</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID Buku</th>
+                    <th>Judul Buku</th>
+                    <th>Peminjam</th>
+                    <th>Tanggal Pinjam</th>
+                    <th>Tanggal Kembali</th>
+                    <th>Status</th>
+                    <th>Denda</th>
+                  </tr>
+                </thead>
+                <tbody>
+      `;
+
+      data.forEach(item => {
+        const book = allBooks.find(b => b.idBuku === item.idBuku);
+        const isOverdue = item.status === 'aktif' && new Date(item.tanggalKembali) < new Date();
+        const statusClass = item.status === 'aktif' ? (isOverdue ? 'text-danger' : 'text-success') : 'text-muted';
+        const statusText = item.status === 'aktif' ? (isOverdue ? 'Terlambat' : 'Aktif') : 'Selesai';
+        
+        reportHTML += `
+          <tr>
+            <td>${item.idBuku}</td>
+            <td>${book ? book.namaBuku : 'Tidak ditemukan'}</td>
+            <td>${item.nama}</td>
+            <td>${item.tanggalPinjam}</td>
+            <td>${item.tanggalKembali || item.tanggalPengembalian || '-'}</td>
+            <td><span class="${statusClass}">${statusText}</span></td>
+            <td>${item.denda ? 'Rp ' + item.denda.toLocaleString() : '-'}</td>
+          </tr>
+        `;
+      });
+
+      reportHTML += `
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+
+      reportResults.innerHTML = reportHTML;
+    }
+
+    // Load settings
+    async function loadSettings() {
+      try {
+        // Load system statistics
+        const [booksRes, usersRes, loansRes] = await Promise.all([
+          fetch(`${API_BASE}/books`),
+          fetch(`${API_BASE}/users`),
+          fetch(`${API_BASE}/loans`)
+        ]);
+
+        const books = await booksRes.json();
+        const users = await usersRes.json();
+        const loans = await loansRes.json();
+
+        // Update statistics
+        document.getElementById('settingsTotalBooks').textContent = books.length;
+        document.getElementById('settingsTotalUsers').textContent = users.length;
+        document.getElementById('settingsActiveLoans').textContent = loans.length;
+        
+        // Calculate overdue loans
+        const today = new Date();
+        const overdueCount = loans.filter(loan => {
+          const returnDate = new Date(loan.tanggalKembali);
+          return returnDate < today && loan.status === 'aktif';
+        }).length;
+        document.getElementById('settingsOverdueLoans').textContent = overdueCount;
+
+        // Load settings from localStorage or use defaults
+        loadSystemSettings();
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+
+    // Load system settings
+    function loadSystemSettings() {
+      const settings = JSON.parse(localStorage.getItem('systemSettings') || '{}');
+      
+      document.getElementById('libraryName').value = settings.libraryName || 'PERPUS ISLAM';
+      document.getElementById('maxLoanDays').value = settings.maxLoanDays || 7;
+      document.getElementById('finePerDay').value = settings.finePerDay || 1000;
+      document.getElementById('maxBooksPerUser').value = settings.maxBooksPerUser || 5;
+      document.getElementById('autoRenewal').value = settings.autoRenewal || 'disabled';
+      document.getElementById('notificationDays').value = settings.notificationDays || 2;
+    }
+
+    // Save system settings
+    function saveSystemSettings() {
+      const settings = {
+        libraryName: document.getElementById('libraryName').value,
+        maxLoanDays: parseInt(document.getElementById('maxLoanDays').value),
+        finePerDay: parseInt(document.getElementById('finePerDay').value),
+        maxBooksPerUser: parseInt(document.getElementById('maxBooksPerUser').value),
+        autoRenewal: document.getElementById('autoRenewal').value,
+        notificationDays: parseInt(document.getElementById('notificationDays').value)
+      };
+      
+      localStorage.setItem('systemSettings', JSON.stringify(settings));
+      
+      // Update library name in sidebar
+      const sidebarTitle = document.querySelector('.sidebar h4');
+      if (sidebarTitle) {
+        sidebarTitle.textContent = `📚 ${settings.libraryName}`;
+      }
+      
+      return settings;
+    }
+
+    // Load profile data
+    async function loadProfileData() {
+      try {
+        // Load admin statistics
+        const [booksRes, usersRes, loansRes, returnsRes] = await Promise.all([
+          fetch('/api/books'),
+          fetch('/api/users'),
+          fetch('/api/loans'),
+          fetch('/api/returns')
+        ]);
+
+        const books = await booksRes.json();
+        const users = await usersRes.json();
+        const loans = await loansRes.json();
+        const returns = await returnsRes.json();
+
+        // Update admin statistics
+        document.getElementById('adminTotalBooks').textContent = books.length;
+        document.getElementById('adminTotalUsers').textContent = users.length;
+        
+        const activeLoans = loans.filter(loan => loan.status === 'aktif');
+        document.getElementById('adminActiveLoans').textContent = activeLoans.length;
+
+        // Calculate overdue loans
+        const today = new Date();
+        const overdueLoans = activeLoans.filter(loan => {
+          const returnDate = new Date(loan.tanggalKembali);
+          return today > returnDate;
+        });
+        document.getElementById('adminOverdueLoans').textContent = overdueLoans.length;
+
+      } catch (error) {
+        console.error('Error loading profile data:', error);
+      }
+    }
+
+    // Edit profile function
+    function editProfile() {
+      document.getElementById('viewProfile').style.display = 'none';
+      document.getElementById('editProfile').style.display = 'block';
+    }
+
+    // Cancel edit profile function
+    function cancelEditProfile() {
+      document.getElementById('viewProfile').style.display = 'block';
+      document.getElementById('editProfile').style.display = 'none';
+      document.getElementById('profileMessage').innerHTML = '';
+    }
+
+    // Show admin settings
+    function showAdminSettings() {
+      showSection('settings');
+    }
+
+    // Update admin name in dropdown
+    function updateAdminDropdown(adminName = null) {
+      if (!adminName) {
+        adminName = document.getElementById('editName')?.value || 'Admin';
+      }
+      document.getElementById('adminDropdownName').textContent = adminName;
+      document.getElementById('adminName').textContent = `Halo, ${adminName} 👋`;
+    }
+
+
+    // Profile form submission
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const password = document.getElementById('editPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password && password !== confirmPassword) {
+        document.getElementById('profileMessage').innerHTML = '<div class="alert alert-danger">Password tidak cocok</div>';
+        return;
+      }
+      
+      if (password && password.length < 6) {
+        document.getElementById('profileMessage').innerHTML = '<div class="alert alert-danger">Password minimal 6 karakter</div>';
+        return;
+      }
+      
+      // Update profile display
+      const newName = document.getElementById('editName').value;
+      const newUsername = document.getElementById('editUsername').value;
+      const newEmail = document.getElementById('editEmail').value;
+      const newBio = document.getElementById('editBio').value;
+      
+      // Update view profile
+      document.getElementById('profileName').textContent = newName;
+      document.getElementById('profileUsername').textContent = newUsername;
+      document.getElementById('profileEmail').textContent = newEmail;
+      document.getElementById('detailName').textContent = newName;
+      document.getElementById('detailUsername').textContent = newUsername;
+      document.getElementById('detailEmail').textContent = newEmail;
+      
+      // Update dropdown and header
+      updateAdminDropdown(newName);
+      
+      document.getElementById('profileMessage').innerHTML = '<div class="alert alert-success">Profil berhasil diupdate</div>';
+      
+      // Reset password fields
+      document.getElementById('editPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      
+      // Show success message for 3 seconds then switch back to view
+      setTimeout(() => {
+        document.getElementById('profileMessage').innerHTML = '';
+        cancelEditProfile();
+      }, 2000);
+    });
+
+    // Settings form submission
+    document.getElementById('systemSettingsForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const settings = saveSystemSettings();
+      
+      document.getElementById('settingsMessage').innerHTML = `
+        <div class="alert alert-success">
+          <i class="fas fa-check-circle me-2"></i>Pengaturan berhasil disimpan
+        </div>
+      `;
+      
+      // Show success message for 3 seconds
+      setTimeout(() => {
+        document.getElementById('settingsMessage').innerHTML = '';
+      }, 3000);
+    });
+
+    // Event listeners
+    document.getElementById('bookSearch').addEventListener('input', searchBooks);
+    document.getElementById('bookFilter').addEventListener('change', searchBooks);
+    document.getElementById('userSearch').addEventListener('input', searchUsers);
+    document.getElementById('userFilter').addEventListener('change', searchUsers);
+    
+    // Profile form real-time updates
+    document.getElementById('editName').addEventListener('input', updateAdminDropdown);
+    
+    
+    // Delete confirmation checkbox
+    document.getElementById('confirmDelete').addEventListener('change', function() {
+      document.getElementById('confirmDeleteBtn').disabled = !this.checked;
+    });
+
+    // Return confirmation form
+    document.getElementById('returnConfirmForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const returnData = Object.fromEntries(formData.entries());
+      
+      try {
+        const response = await fetch(`${API_BASE}/admin/confirm-return`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(returnData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          document.getElementById('returnConfirmMessage').innerHTML = `
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i>${result.message}
+              ${result.fine > 0 ? `<br><strong>Denda: Rp ${result.fine.toLocaleString()}</strong>` : ''}
+            </div>
+          `;
+          this.reset();
+          // Refresh loan data
+          loadLoanManagement();
+        } else {
+          document.getElementById('returnConfirmMessage').innerHTML = `
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-circle me-2"></i>${result.message}
+            </div>
+          `;
+        }
+      } catch (error) {
+        document.getElementById('returnConfirmMessage').innerHTML = `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>Terjadi kesalahan: ${error.message}
+          </div>
+        `;
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show home section by default
+      showSection('home');
+    });
+  </script>
+</body>
+</html>
