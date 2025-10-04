@@ -99,11 +99,11 @@
     </div>
     <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
     <div id="submenuPinjam" class="collapse ms-3">
-      <a href="#">➕ Form Pinjam</a>
-      <a href="#">📊 Status Peminjaman</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#pinjamModal">➕ Form Pinjam</a>
+      <a href="#" onclick="loadLoanStatus()">📊 Status Peminjaman</a>
     </div>
-    <a href="#">↩️ Pengembalian Buku</a>
-    <a href="#">🕓 Riwayat Peminjaman</a>
+    <a href="#" data-bs-toggle="modal" data-bs-target="#pengembalianModal">↩️ Pengembalian Buku</a>
+    <a href="#" onclick="loadLoanHistory()">🕓 Riwayat Peminjaman</a>
     <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal">🚪 Logout</a>
   </div>
 
@@ -193,7 +193,7 @@
       </div>
       <div class="col-md-2">
         <div class="card">
-          <img src="https://covers.openlibrary.org/b/id/11153284-L.jpg" class="card-img-top" alt="Sapiens">
+          <img src="https://covers.openlibrary.org/b/id/11153284-L.jpg" class="card-img-top" alt="sapiens">
           <div class="card-body p-2 text-center">
             <small>Sapiens</small>
           </div>
@@ -269,6 +269,77 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-primary" onclick="openPinjamModal()">Pinjam Buku</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pinjam Buku -->
+  <div class="modal fade" id="pinjamModal" tabindex="-1" aria-labelledby="pinjamModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pinjamModalLabel">Form Pinjam Buku</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="pinjamForm">
+            <div class="mb-3">
+              <label for="pinjamIdBuku" class="form-label">ID Buku</label>
+              <input type="text" class="form-control" id="pinjamIdBuku" name="idBuku" required>
+              <div class="form-text">Masukkan ID buku yang ingin dipinjam (contoh: B001)</div>
+            </div>
+            <div class="mb-3">
+              <label for="pinjamNama" class="form-label">Nama Peminjam</label>
+              <select class="form-select" id="pinjamNama" name="nama" required>
+                <option value="">Pilih nama peminjam</option>
+                <option value="Andiva">Andiva</option>
+                <option value="Budi Santoso">Budi Santoso</option>
+                <option value="Siti Nurhaliza">Siti Nurhaliza</option>
+              </select>
+            </div>
+            <div id="pinjamMessage" class="mt-3"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" onclick="submitPinjam()">Pinjam Buku</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pengembalian Buku -->
+  <div class="modal fade" id="pengembalianModal" tabindex="-1" aria-labelledby="pengembalianModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pengembalianModalLabel">Form Pengembalian Buku</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="pengembalianForm">
+            <div class="mb-3">
+              <label for="pengembalianIdBuku" class="form-label">ID Buku</label>
+              <input type="text" class="form-control" id="pengembalianIdBuku" name="idBuku" required>
+              <div class="form-text">Masukkan ID buku yang akan dikembalikan (contoh: B001)</div>
+            </div>
+            <div class="mb-3">
+              <label for="pengembalianNama" class="form-label">Nama Peminjam</label>
+              <select class="form-select" id="pengembalianNama" name="nama" required>
+                <option value="">Pilih nama peminjam</option>
+                <option value="Andiva">Andiva</option>
+                <option value="Budi Santoso">Budi Santoso</option>
+                <option value="Siti Nurhaliza">Siti Nurhaliza</option>
+              </select>
+            </div>
+            <div id="pengembalianMessage" class="mt-3"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-success" onclick="submitPengembalian()">Kembalikan Buku</button>
         </div>
       </div>
     </div>
@@ -277,6 +348,9 @@
   <script>
     // API Base URL
     const API_BASE = 'http://localhost:3001/api';
+    
+    // Global books array
+    let books = [];
     
     // Synopsis map (sinopsis singkat)
     const BOOK_SYNOPSIS = {
@@ -401,12 +475,16 @@
     async function loadPopularBooks() {
       try {
         const response = await fetch(`${API_BASE}/books/popular`);
-        const books = await response.json();
+        const popularBooks = await response.json();
+        
+        // Load all books for global access
+        const allBooksResponse = await fetch(`${API_BASE}/books`);
+        books = await allBooksResponse.json();
         
         const booksContainer = document.querySelector('.popular-books');
         booksContainer.innerHTML = '';
         
-        books.forEach(book => {
+        popularBooks.forEach(book => {
           const bookCard = document.createElement('div');
           bookCard.className = 'col-md-2';
           bookCard.innerHTML = `
@@ -443,7 +521,7 @@
       
       try {
         const response = await fetch(`${API_BASE}/books`);
-        const books = await response.json();
+        books = await response.json();
         displayAllBooks(books);
       } catch (error) {
         console.error('Error loading all books:', error);
@@ -557,8 +635,13 @@
       
       try {
         const response = await fetch(`${API_BASE}/books/available`);
-        const books = await response.json();
-        displayAvailableBooks(books);
+        const availableBooks = await response.json();
+        
+        // Load all books for global access
+        const allBooksResponse = await fetch(`${API_BASE}/books`);
+        books = await allBooksResponse.json();
+        
+        displayAvailableBooks(availableBooks);
       } catch (error) {
         console.error('Error loading available books:', error);
         if (resultsContainer) {
@@ -694,6 +777,233 @@
       });
     }
     
+    // Function to open pinjam modal from book detail
+    function openPinjamModal() {
+      const bookModal = bootstrap.Modal.getInstance(document.getElementById('bookModal'));
+      const pinjamModal = new bootstrap.Modal(document.getElementById('pinjamModal'));
+      
+      // Get book ID from current book detail
+      const bookId = document.getElementById('bookTitle').textContent;
+      const book = books.find(b => b.namaBuku === bookId);
+      if (book) {
+        document.getElementById('pinjamIdBuku').value = book.idBuku;
+      }
+      
+      bookModal.hide();
+      pinjamModal.show();
+    }
+    
+    // Function to submit pinjam form
+    async function submitPinjam() {
+      const form = document.getElementById('pinjamForm');
+      const messageDiv = document.getElementById('pinjamMessage');
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Clear previous message
+      messageDiv.innerHTML = '';
+      
+      try {
+        const response = await fetch(`${API_BASE}/loans`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          messageDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+          form.reset();
+          // Refresh user data and books
+          loadUserData();
+          loadPopularBooks();
+        } else {
+          messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+        }
+      } catch (error) {
+        messageDiv.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${error.message}</div>`;
+      }
+    }
+    
+    // Function to submit pengembalian form
+    async function submitPengembalian() {
+      const form = document.getElementById('pengembalianForm');
+      const messageDiv = document.getElementById('pengembalianMessage');
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Clear previous message
+      messageDiv.innerHTML = '';
+      
+      try {
+        const response = await fetch(`${API_BASE}/returns`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          messageDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+          if (result.return.denda > 0) {
+            messageDiv.innerHTML += `<div class="alert alert-warning">Denda: Rp ${result.return.denda.toLocaleString()}</div>`;
+          }
+          form.reset();
+          // Refresh user data and books
+          loadUserData();
+          loadPopularBooks();
+        } else {
+          messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+        }
+      } catch (error) {
+        messageDiv.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${error.message}</div>`;
+      }
+    }
+    
+    // Function to load loan status
+    async function loadLoanStatus() {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      // Show loading state
+      if (sectionTitle) {
+        sectionTitle.textContent = 'Memuat Status Peminjaman...';
+      }
+      if (resultsContainer) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE}/loans`);
+        const loans = await response.json();
+        
+        if (sectionTitle) {
+          sectionTitle.textContent = `Status Peminjaman (${loans.length} aktif)`;
+        }
+        
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '';
+          
+          if (loans.length === 0) {
+            resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-book-open me-2"></i>Tidak ada peminjaman aktif</div>';
+            return;
+          }
+          
+          const listGroup = document.createElement('div');
+          listGroup.className = 'list-group';
+          
+          loans.forEach(loan => {
+            const listItem = document.createElement('div');
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            
+            const book = books.find(b => b.idBuku === loan.idBuku);
+            const bookName = book ? book.namaBuku : 'Buku tidak ditemukan';
+            
+            listItem.innerHTML = `
+              <div>
+                <h6 class="mb-1">${bookName}</h6>
+                <small class="text-muted">ID: ${loan.idBuku} | Peminjam: ${loan.nama}</small>
+                <br>
+                <small class="text-info">Pinjam: ${loan.tanggalPinjam} | Jatuh tempo: ${loan.tanggalKembali}</small>
+              </div>
+              <span class="badge ${loan.terlambat ? 'bg-danger' : 'bg-success'}">
+                ${loan.terlambat ? 'Terlambat' : 'On-time'}
+              </span>
+            `;
+            
+            listGroup.appendChild(listItem);
+          });
+          
+          resultsContainer.appendChild(listGroup);
+        }
+      } catch (error) {
+        console.error('Error loading loan status:', error);
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat status peminjaman</div>';
+        }
+        if (sectionTitle) {
+          sectionTitle.textContent = 'Status Peminjaman';
+        }
+      }
+    }
+    
+    // Function to load loan history
+    async function loadLoanHistory() {
+      const resultsContainer = document.querySelector('.popular-books');
+      const sectionTitle = document.getElementById('sectionTitle');
+      
+      // Show loading state
+      if (sectionTitle) {
+        sectionTitle.textContent = 'Memuat Riwayat Peminjaman...';
+      }
+      if (resultsContainer) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE}/returns`);
+        const returns = await response.json();
+        
+        if (sectionTitle) {
+          sectionTitle.textContent = `Riwayat Peminjaman (${returns.length} selesai)`;
+        }
+        
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '';
+          
+          if (returns.length === 0) {
+            resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-history me-2"></i>Belum ada riwayat peminjaman</div>';
+            return;
+          }
+          
+          const listGroup = document.createElement('div');
+          listGroup.className = 'list-group';
+          
+          returns.forEach(returnItem => {
+            const listItem = document.createElement('div');
+            listItem.className = 'list-group-item';
+            
+            const book = books.find(b => b.idBuku === returnItem.idBuku);
+            const bookName = book ? book.namaBuku : 'Buku tidak ditemukan';
+            
+            listItem.innerHTML = `
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="mb-1">${bookName}</h6>
+                  <small class="text-muted">ID: ${returnItem.idBuku} | Peminjam: ${returnItem.nama}</small>
+                  <br>
+                  <small class="text-info">Pinjam: ${returnItem.tanggalPinjam} | Kembali: ${returnItem.tanggalPengembalian}</small>
+                </div>
+                <div class="text-end">
+                  <span class="badge ${returnItem.denda > 0 ? 'bg-warning' : 'bg-success'}">
+                    ${returnItem.denda > 0 ? `Denda: Rp ${returnItem.denda.toLocaleString()}` : 'Tepat Waktu'}
+                  </span>
+                </div>
+              </div>
+            `;
+            
+            listGroup.appendChild(listItem);
+          });
+          
+          resultsContainer.appendChild(listGroup);
+        }
+      } catch (error) {
+        console.error('Error loading loan history:', error);
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat riwayat peminjaman</div>';
+        }
+        if (sectionTitle) {
+          sectionTitle.textContent = 'Riwayat Peminjaman';
+        }
+      }
+    }
+
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
       loadUserData();
