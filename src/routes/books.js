@@ -67,14 +67,14 @@ router.put('/:id', (req, res) => {
   const { namaBuku, penulis, penerbit, tahunTerbit, stok } = req.body;
   const idx = store.books.findIndex(b => b.idBuku === id);
   if (idx === -1) return res.status(404).json({ message: 'Buku tidak ditemukan' });
-  store.books[idx] = {
-    ...store.books[idx],
-    namaBuku,
-    penulis,
-    penerbit,
-    tahunTerbit: parseInt(tahunTerbit),
-    stok: parseInt(stok),
-  };
+  const current = store.books[idx];
+  const updated = { ...current };
+  if (namaBuku !== undefined) updated.namaBuku = namaBuku;
+  if (penulis !== undefined) updated.penulis = penulis;
+  if (penerbit !== undefined) updated.penerbit = penerbit;
+  if (tahunTerbit !== undefined) updated.tahunTerbit = parseInt(tahunTerbit);
+  if (stok !== undefined) updated.stok = parseInt(stok);
+  store.books[idx] = updated;
   try { store.saveBooks(); } catch (_) {}
   res.json({ message: 'Buku berhasil diupdate', book: store.books[idx] });
 });

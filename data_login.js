@@ -15,7 +15,7 @@
     "phone": "1234",
     "email": "123@gmail.com",
     "password": "123",
-    "role": "user"
+    "role": "admin"
   },
   {
     "id": "U003",
@@ -25,5 +25,15 @@
     "email": "rev@gmail.com",
     "password": "123",
     "role": "user"
+  },
+  {
+    "id": "U004",
+    "username": "dika",
+    "gender": "Pria",
+    "phone": "1111",
+    "email": "aaaa",
+    "password": "123",
+    "role": "user",
+    "status": "active"
   }
 ]

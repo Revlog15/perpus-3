@@ -5,7 +5,7 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 11
+    "stok": 10
   },
   {
     "idBuku": "B002",
@@ -29,7 +29,7 @@
     "penerbit": "Republika",
     "tahunTerbit": 2004,
     "penulis": "Habiburrahman El Shirazy",
-    "stok": 8
+    "stok": 9
   },
   {
     "idBuku": "B005",
@@ -85,7 +85,7 @@
     "penerbit": "Republika",
     "tahunTerbit": 2014,
     "penulis": "Tere Liye",
-    "stok": 15
+    "stok": 14
   },
   {
     "idBuku": "B012",

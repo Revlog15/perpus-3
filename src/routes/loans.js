@@ -5,7 +5,10 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   const { userId, status } = req.query;
-  let data = store.loans;
+  let data = store.loans.map(l => ({
+    ...l,
+    nama: l.nama || (store.users.find(u => u.id === l.idUser)?.nama || store.users.find(u => u.id === l.idUser)?.username || ''),
+  }));
   if (userId) data = data.filter(l => l.idUser === userId);
   if (status) data = data.filter(l => l.status === status);
   res.json(data);
@@ -38,6 +41,8 @@ router.post('/', (req, res) => {
   book.stok -= 1;
   try { store.saveBooks(); } catch (_) {}
   try { store.saveLoans(); } catch (_) {}
+  // hint frontends to refresh
+  // (Triggered via admin/user storage listeners by setting a timestamp through client on success)
   res.status(201).json({ message: 'Buku berhasil dipinjam', loan: newLoan });
 });
 

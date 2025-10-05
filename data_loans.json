@@ -78,5 +78,75 @@
     "tanggalKembali": "2025-10-12",
     "status": "aktif",
     "terlambat": false
+  },
+  {
+    "id": "L009",
+    "idBuku": "B001",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L010",
+    "idBuku": "B003",
+    "idUser": "U003",
+    "nama": "revlog",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L011",
+    "idBuku": "B001",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "aktif",
+    "terlambat": false
+  },
+  {
+    "id": "L012",
+    "idBuku": "B002",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L013",
+    "idBuku": "B003",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L014",
+    "idBuku": "B004",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L015",
+    "idBuku": "B011",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "aktif",
+    "terlambat": false
   }
 ]

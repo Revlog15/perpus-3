@@ -4,7 +4,14 @@ const store = require('../store');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.json(store.users);
+  const normalized = (store.users || []).map(u => ({
+    ...u,
+    nama: u.nama || u.username || '',
+    telepon: u.telepon || u.phone || '',
+    status: u.status || 'active',
+    createdAt: u.createdAt || '',
+  }));
+  res.json(normalized);
 });
 
 router.post('/', (req, res) => {

@@ -78,6 +78,11 @@
       height: 200px;
       object-fit: cover;
     }
+    /* Recent activity scroll */
+    #recentActivity {
+      max-height: 320px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -764,7 +769,7 @@
         <div class="modal-body">Apakah Anda yakin ingin logout?</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <a href="/" class="btn btn-danger">Ya, Logout</a>
+          <a href="/" class="btn btn-danger" onclick="try{localStorage.clear()}catch(e){}">Ya, Logout</a>
         </div>
       </div>
     </div>
@@ -784,29 +789,29 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="bookId" class="form-label">ID Buku</label>
-                  <input type="text" class="form-control" id="bookId" required>
+                  <input type="text" class="form-control" id="bookId" name="idBuku" required>
                 </div>
                 <div class="mb-3">
                   <label for="bookTitle" class="form-label">Judul Buku</label>
-                  <input type="text" class="form-control" id="bookTitle" required>
+                  <input type="text" class="form-control" id="bookTitle" name="namaBuku" required>
                 </div>
                 <div class="mb-3">
                   <label for="bookAuthor" class="form-label">Penulis</label>
-                  <input type="text" class="form-control" id="bookAuthor" required>
+                  <input type="text" class="form-control" id="bookAuthor" name="penulis" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="bookPublisher" class="form-label">Penerbit</label>
-                  <input type="text" class="form-control" id="bookPublisher" required>
+                  <input type="text" class="form-control" id="bookPublisher" name="penerbit" required>
                 </div>
                 <div class="mb-3">
                   <label for="bookYear" class="form-label">Tahun Terbit</label>
-                  <input type="number" class="form-control" id="bookYear" required>
+                  <input type="number" class="form-control" id="bookYear" name="tahunTerbit" required>
                 </div>
                 <div class="mb-3">
                   <label for="bookStock" class="form-label">Stok</label>
-                  <input type="number" class="form-control" id="bookStock" required min="0">
+                  <input type="number" class="form-control" id="bookStock" name="stok" required min="0">
                 </div>
               </div>
             </div>
@@ -835,25 +840,25 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="editBookTitle" class="form-label">Judul Buku</label>
-                  <input type="text" class="form-control" id="editBookTitle" required>
+                  <input type="text" class="form-control" id="editBookTitle" name="namaBuku" required>
                 </div>
                 <div class="mb-3">
                   <label for="editBookAuthor" class="form-label">Penulis</label>
-                  <input type="text" class="form-control" id="editBookAuthor" required>
+                  <input type="text" class="form-control" id="editBookAuthor" name="penulis" required>
                 </div>
                 <div class="mb-3">
                   <label for="editBookPublisher" class="form-label">Penerbit</label>
-                  <input type="text" class="form-control" id="editBookPublisher" required>
+                  <input type="text" class="form-control" id="editBookPublisher" name="penerbit" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="editBookYear" class="form-label">Tahun Terbit</label>
-                  <input type="number" class="form-control" id="editBookYear" required>
+                  <input type="number" class="form-control" id="editBookYear" name="tahunTerbit" required>
                 </div>
                 <div class="mb-3">
                   <label for="editBookStock" class="form-label">Stok</label>
-                  <input type="number" class="form-control" id="editBookStock" required min="0">
+                  <input type="number" class="form-control" id="editBookStock" name="stok" required min="0">
                 </div>
               </div>
             </div>
@@ -1689,6 +1694,10 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           bootstrap.Modal.getInstance(document.getElementById('addBookModal')).hide();
           form.reset();
           loadAllBooks();
+          // refresh stats without page reload
+          if (typeof loadDashboardData === 'function') loadDashboardData();
+          if (typeof loadSettings === 'function') loadSettings();
+          try { localStorage.setItem('books:updated', String(Date.now())); } catch (e) {}
         } else {
           const error = await response.json();
           alert('Error: ' + error.message);
@@ -1734,6 +1743,9 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           alert('Buku berhasil diupdate');
           bootstrap.Modal.getInstance(document.getElementById('editBookModal')).hide();
           loadAllBooks();
+          if (typeof loadDashboardData === 'function') loadDashboardData();
+          if (typeof loadSettings === 'function') loadSettings();
+          try { localStorage.setItem('books:updated', String(Date.now())); } catch (e) {}
         } else {
           const error = await response.json();
           alert('Error: ' + error.message);
@@ -2163,6 +2175,74 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       // Show home section by default
       showSection('home');
     });
+  </script>
+  <script>
+    // Live update when account switches in another tab/window
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'username' || e.key === 'userid') {
+        try {
+          // Refresh visible admin section
+          const active = document.querySelector('.admin-section.active');
+          if (!active) { showSection('home'); return; }
+          const id = active.id.replace('-section', '');
+          showSection(id);
+          updateAdminDropdown();
+        } catch (_) {}
+      }
+      if (e.key === 'loans:updated' || e.key === 'returns:updated' || e.key === 'books:updated') {
+        try {
+          // Refresh dashboard counters and recent activity
+          if (typeof loadDashboardData === 'function') loadDashboardData();
+          if (typeof loadLoanManagement === 'function') loadLoanManagement();
+          // If books section is active, refresh grid too
+          const active = document.querySelector('.admin-section.active');
+          if (active && active.id === 'books-section') {
+            if (typeof loadAllBooks === 'function') loadAllBooks();
+          }
+        } catch (_) {}
+      }
+    });
+  </script>
+  <script>
+    // Same-tab lightweight polling to keep dashboard and active section fresh without manual refresh
+    (function(){
+      setInterval(() => {
+        try {
+          const active = document.querySelector('.admin-section.active');
+          // Always keep home dashboard numbers and recent activity fresh
+          if (typeof loadDashboardData === 'function') loadDashboardData();
+          if (!active) return;
+          if (active.id === 'books-section') {
+            if (typeof loadAllBooks === 'function') loadAllBooks();
+          } else if (active.id === 'loans-section') {
+            if (typeof loadLoanManagement === 'function') loadLoanManagement();
+          } else if (active.id === 'reports-section') {
+            if (typeof loadReports === 'function') loadReports();
+          }
+        } catch (_) {}
+      }, 2000);
+    })();
+  </script>
+  <script>
+    // Same-tab live session detection (no manual refresh)
+    (function(){
+      let lastUid = localStorage.getItem('userid');
+      let lastUname = localStorage.getItem('username');
+      setInterval(() => {
+        const uid = localStorage.getItem('userid');
+        const uname = localStorage.getItem('username');
+        if (uid !== lastUid || uname !== lastUname) {
+          lastUid = uid; lastUname = uname;
+          try {
+            const active = document.querySelector('.admin-section.active');
+            if (!active) { showSection('home'); return; }
+            const id = active.id.replace('-section', '');
+            showSection(id);
+            updateAdminDropdown();
+          } catch (_) {}
+        }
+      }, 1000);
+    })();
   </script>
 </body>
 </html>

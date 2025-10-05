@@ -165,7 +165,7 @@
       <div class="col-md-4">
         <div class="card-info card-green">
           <h6>Jatuh Tempo Terdekat</h6>
-          <p>Matematika Lanjut<br><small>3 hari lagi</small></p>
+          <p>—</p>
         </div>
       </div>
     </div>
@@ -236,7 +236,7 @@
         <div class="modal-body">Apakah Anda serius mau logout?</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-          <a href="/" class="btn btn-danger">Ya, Logout</a>
+          <a href="/" class="btn btn-danger" onclick="try{localStorage.clear()}catch(e){}">Ya, Logout</a>
         </div>
       </div>
     </div>
@@ -343,6 +343,58 @@
         const el = document.getElementById('greetingName');
         if (el) el.textContent = name;
       }
+    })();
+  </script>
+  <script>
+    // Live update when account switches in another tab/window
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'username' || e.key === 'userid' || e.key === 'books:updated') {
+        try {
+          loadUserData();
+          // reload current section data best-effort
+          const sectionTitle = document.getElementById('sectionTitle')?.textContent || '';
+          if (sectionTitle.includes('Populer')) {
+            loadPopularBooks();
+          } else if (sectionTitle.includes('Semua Buku')) {
+            loadAllBooks();
+          } else if (sectionTitle.includes('Buku Tersedia')) {
+            loadAvailableBooks();
+          } else if (sectionTitle.includes('Buku Terbaru')) {
+            loadLatestBooks();
+          }
+          // keep top cards updated
+          refreshDashboardCardsLive();
+          if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+        } catch (_) {}
+      }
+    });
+  </script>
+  <script>
+    // Same-tab live session detection (no manual refresh)
+    (function(){
+      let lastUid = localStorage.getItem('userid');
+      let lastUname = localStorage.getItem('username');
+      setInterval(() => {
+        const uid = localStorage.getItem('userid');
+        const uname = localStorage.getItem('username');
+        if (uid !== lastUid || uname !== lastUname) {
+          lastUid = uid; lastUname = uname;
+          try {
+            loadUserData();
+            const sectionTitle = document.getElementById('sectionTitle')?.textContent || '';
+            if (sectionTitle.includes('Populer')) {
+              loadPopularBooks();
+            } else if (sectionTitle.includes('Semua Buku')) {
+              loadAllBooks();
+            } else if (sectionTitle.includes('Buku Tersedia')) {
+              loadAvailableBooks();
+            } else if (sectionTitle.includes('Buku Terbaru')) {
+              loadLatestBooks();
+            }
+            if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+          } catch (_) {}
+        }
+      }, 1000);
     })();
   </script>
   <script>
@@ -517,6 +569,48 @@
         // silent fail to avoid breaking UI
         console.error('Failed to load dashboard data:', err);
       }
+    }
+
+    // Live refresh for dashboard cards (Buku Dipinjam & Jatuh Tempo Terdekat)
+    async function refreshDashboardCardsLive() {
+      const userId = localStorage.getItem('userid');
+      if (!userId) return;
+      try {
+        const [loansRes, booksRes] = await Promise.all([
+          fetch(`${API_BASE}/loans?userId=${encodeURIComponent(userId)}&status=aktif`),
+          fetch(`${API_BASE}/books`)
+        ]);
+        const [activeLoans, allBooks] = await Promise.all([
+          loansRes.json(),
+          booksRes.json()
+        ]);
+        // Buku Dipinjam
+        const borrowedCount = Array.isArray(activeLoans) ? activeLoans.length : 0;
+        const borrowedEl = document.querySelector('.card-blue h3');
+        if (borrowedEl) borrowedEl.textContent = String(borrowedCount);
+        // Jatuh Tempo Terdekat
+        const today = new Date();
+        let nearest = null;
+        (activeLoans || []).forEach(l => {
+          const due = new Date(l.tanggalKembali);
+          if (!nearest || due < nearest) nearest = due;
+        });
+        const dueEl = document.querySelector('.card-green p');
+        if (dueEl) {
+          if (!nearest) {
+            dueEl.innerHTML = '—';
+          } else {
+            const sameDueLoans = activeLoans.filter(l => new Date(l.tanggalKembali).toDateString() === nearest.toDateString());
+            const titles = sameDueLoans.map(l => {
+              const book = allBooks.find(b => b.idBuku === l.idBuku);
+              return book ? book.namaBuku : l.idBuku;
+            });
+            const uniqueTitles = [...new Set(titles)];
+            const daysLeft = Math.max(0, Math.ceil((nearest - today) / (1000 * 60 * 60 * 24)));
+            dueEl.innerHTML = `${uniqueTitles.join(', ')}<br><small>${daysLeft} hari lagi</small>`;
+          }
+        }
+      } catch (_) {}
     }
     
     // Load popular books
@@ -868,6 +962,8 @@
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
       loadUserData();
+      // live refresh every 2s to keep cards updated
+      setInterval(refreshDashboardCardsLive, 2000);
       loadPopularBooks();
       setupSearch();
       setupSubmenuHandlers();
@@ -931,6 +1027,7 @@
           document.getElementById('pinjamForm')?.reset();
           // refresh status/daftar
           if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+          try { localStorage.setItem('loans:updated', String(Date.now())); } catch (e) {}
         }
       } catch (e) {
         if (msg) msg.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${e.message}</div>`;
@@ -966,6 +1063,7 @@
           document.getElementById('pengembalianForm')?.reset();
           if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
           if (typeof window.loadLoanHistory === 'function') window.loadLoanHistory();
+          try { localStorage.setItem('returns:updated', String(Date.now())); } catch (e) {}
         }
       } catch (e) {
         if (msg) msg.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${e.message}</div>`;

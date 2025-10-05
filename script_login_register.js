@@ -58,16 +58,25 @@ function handleLogin() {
     .then(res => res.json().catch(() => null))
     .then(data => {
       if (data && data.message && data.message.includes("Login berhasil")) {
-        // store name for greeting
-  if (data.username) localStorage.setItem('username', data.username);
-  if (data.id) localStorage.setItem('userid', data.id);
+        // clear previous session and store new session
+        try { localStorage.removeItem('username'); } catch (e) {}
+        try { localStorage.removeItem('userid'); } catch (e) {}
+        if (data.username) localStorage.setItem('username', data.username);
+        if (data.id) localStorage.setItem('userid', data.id);
         showMessage("Login berhasil! Redirecting...");
         setTimeout(() => {
           if (data.role === 'admin') window.location.href = 'admin.html';
           else window.location.href = 'user.html';
         }, 1000);
       } else {
-        showMessage("Email atau password salah!", true);
+        if (data && typeof data.message === 'string') {
+          const msg = data.message.includes('dinonaktifkan')
+            ? 'Akun Anda dinonaktifkan, Silakan hubungi admin'
+            : data.message;
+          showMessage(msg, true);
+        } else {
+          showMessage("Email atau password salah!", true);
+        }
       }
     })
     .catch(() => showMessage("Server error!", true));

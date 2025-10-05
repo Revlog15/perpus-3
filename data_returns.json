@@ -64,5 +64,71 @@
     "tanggalPengembalian": "2025-10-05",
     "denda": 0,
     "status": "selesai"
+  },
+  {
+    "id": "R007",
+    "idBuku": "B001",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R008",
+    "idBuku": "B002",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R009",
+    "idBuku": "B003",
+    "idUser": "U003",
+    "nama": "revlog",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R010",
+    "idBuku": "B003",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R011",
+    "idBuku": "B004",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R012",
+    "idBuku": "B004",
+    "idUser": "U004",
+    "nama": "dika",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
   }
 ]
