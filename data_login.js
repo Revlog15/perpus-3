@@ -1,7 +1,7 @@
 [
   {
     "id": "U000",
-    "name": "Admin",
+    "username": "admin",
     "gender": "N/A",
     "phone": "0000000000",
     "email": "admin@gmail.com",
@@ -10,7 +10,7 @@
   },
   {
     "id": "U001",
-    "name": "rifky",
+    "username": "rifky",
     "gender": "Pria",
     "phone": "1234",
     "email": "123@gmail.com",

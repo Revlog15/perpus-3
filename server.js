@@ -71,26 +71,31 @@ app.get('/', (req, res) => {
 
 // Handle login
 app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).send('Email dan password harus diisi');
+  // accept identifier which can be username or email
+  const { identifier, password } = req.body;
+  if (!identifier || !password) return res.status(400).send('Identifier dan password harus diisi');
 
-  const found = authUsers.find(u => u.email.toLowerCase() === String(email).toLowerCase() && u.password === password);
+  const found = authUsers.find(u => (
+    (u.email && u.email.toLowerCase() === String(identifier).toLowerCase()) ||
+    (u.username && u.username.toLowerCase() === String(identifier).toLowerCase())
+  ) && u.password === password);
+
   if (found) {
-    return res.json({ message: 'Login berhasil', role: found.role || 'user', name: found.name, id: found.id, email: found.email });
+    return res.json({ message: 'Login berhasil', role: found.role || 'user', username: found.username, id: found.id, email: found.email });
   }
   return res.status(401).json({ message: 'Gagal login' });
 });
 
 // Handle register
 app.post('/register', (req, res) => {
-  const { name, gender, phone, email, password, confirmPassword } = req.body;
-  if (!name || !phone || !email || !password || !confirmPassword) return res.status(400).send('Semua field harus diisi');
+  const { username, gender, phone, email, password, confirmPassword } = req.body;
+  if (!username || !phone || !email || !password || !confirmPassword) return res.status(400).send('Semua field harus diisi');
   if (password !== confirmPassword) return res.status(400).send('Konfirmasi password tidak cocok');
 
-  const existing = authUsers.find(u => u.email.toLowerCase() === String(email).toLowerCase());
-  if (existing) return res.status(400).send('Email sudah terdaftar');
+  const existing = authUsers.find(u => (u.email && u.email.toLowerCase() === String(email).toLowerCase()) || (u.username && u.username.toLowerCase() === String(username).toLowerCase()));
+  if (existing) return res.status(400).send('Username atau Email sudah terdaftar');
 
-  const newUser = { id: `U${String(authUsers.length + 1).padStart(3, '0')}`, name, gender, phone, email, password, role: 'user' };
+  const newUser = { id: `U${String(authUsers.length + 1).padStart(3, '0')}`, username, gender, phone, email, password, role: 'user' };
   authUsers.push(newUser);
   try { saveUsersSync(); } catch (e) { /* logged */ }
   return res.send('Registrasi berhasil');
