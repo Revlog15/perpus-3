@@ -1,6 +1,4 @@
-// History (Riwayat Peminjaman) module
-
-const API_BASE = window.API_BASE || 'http://localhost:3001/api';
+import { API_BASE } from './api.js';
 
 export async function renderHistory(target) {
   target.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';

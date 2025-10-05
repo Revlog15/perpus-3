@@ -1,6 +1,4 @@
-// Returns (Pengembalian) module
-
-const API_BASE = window.API_BASE || 'http://localhost:3001/api';
+import { API_BASE } from './api.js';
 
 export function renderReturnForm(target) {
   target.innerHTML = `

@@ -68,5 +68,15 @@
     "tanggalKembali": "2025-10-12",
     "status": "dikembalikan",
     "terlambat": false
+  },
+  {
+    "id": "L008",
+    "idBuku": "B021",
+    "idUser": "U003",
+    "nama": "revlog",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "aktif",
+    "terlambat": false
   }
 ]
