@@ -55,11 +55,17 @@ function handleLogin() {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
   })
-    .then(res => res.text())
+    .then(res => res.json().catch(() => null))
     .then(data => {
-      if (data.includes("Login berhasil")) {
-        showMessage("Login berhasil! Redirect ke main menu...");
-        setTimeout(() => (window.location.href = "main.html"), 2000);
+      if (data && data.message && data.message.includes("Login berhasil")) {
+        // store name for greeting
+  if (data.name) localStorage.setItem('username', data.name);
+  if (data.id) localStorage.setItem('userid', data.id);
+        showMessage("Login berhasil! Redirecting...");
+        setTimeout(() => {
+          if (data.role === 'admin') window.location.href = 'admin.html';
+          else window.location.href = 'user.html';
+        }, 1000);
       } else {
         showMessage("Email atau password salah!", true);
       }

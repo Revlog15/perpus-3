@@ -111,7 +111,7 @@
   <div class="content">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3>Halo, Andiva 👋</h3>
+  <h3>Halo, <span id="greetingName">Andiva</span> 👋</h3>
       <div class="dropdown">
         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">👤 Andiva</button>
         <ul class="dropdown-menu dropdown-menu-end">
@@ -236,7 +236,7 @@
         <div class="modal-body">Apakah Anda serius mau logout?</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-          <a href="#" class="btn btn-danger">Ya, Logout</a>
+          <a href="/" class="btn btn-danger">Ya, Logout</a>
         </div>
       </div>
     </div>
@@ -335,6 +335,16 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Populate greeting from login
+    (function(){
+      const name = localStorage.getItem('username');
+      if (name) {
+        const el = document.getElementById('greetingName');
+        if (el) el.textContent = name;
+      }
+    })();
+  </script>
   <script>
     // API Base URL
     const API_BASE = 'http://localhost:3001/api';
@@ -788,7 +798,10 @@
       const form = document.getElementById('pinjamForm');
       const messageDiv = document.getElementById('pinjamMessage');
       const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+  const data = Object.fromEntries(formData.entries());
+  // Attach logged-in user id if available
+  const uid = localStorage.getItem('userid');
+  if (uid) data.idUser = uid;
       
       // Clear previous message
       messageDiv.innerHTML = '';

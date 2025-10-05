@@ -9,170 +9,92 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
+app.use(express.urlencoded({ extended: true }));
 
 // Database (books data)
-const books = [
-  {
-    "idBuku": "B001",
-    "namaBuku": "Laskar Pelangi",
-    "penerbit": "Bentang Pustaka",
-    "tahunTerbit": 2005,
-    "penulis": "Andrea Hirata",
-    "stok": 12
-  },
-  {
-    "idBuku": "B002",
-    "namaBuku": "Bumi Manusia",
-    "penerbit": "Hasta Mitra",
-    "tahunTerbit": 1980,
-    "penulis": "Pramoedya Ananta Toer",
-    "stok": 7
-  },
-  {
-    "idBuku": "B003",
-    "namaBuku": "Negeri 5 Menara",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2009,
-    "penulis": "Ahmad Fuadi",
-    "stok": 10
-  },
-  {
-    "idBuku": "B004",
-    "namaBuku": "Ayat-Ayat Cinta",
-    "penerbit": "Republika",
-    "tahunTerbit": 2004,
-    "penulis": "Habiburrahman El Shirazy",
-    "stok": 8
-  },
-  {
-    "idBuku": "B005",
-    "namaBuku": "Filosofi Kopi",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2006,
-    "penulis": "Dewi Lestari",
-    "stok": 11
-  },
-  {
-    "idBuku": "B006",
-    "namaBuku": "Perahu Kertas",
-    "penerbit": "Bentang Pustaka",
-    "tahunTerbit": 2009,
-    "penulis": "Dewi Lestari",
-    "stok": 9
-  },
-  {
-    "idBuku": "B007",
-    "namaBuku": "Pulang",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2015,
-    "penulis": "Leila S. Chudori",
-    "stok": 6
-  },
-  {
-    "idBuku": "B008",
-    "namaBuku": "Orang-Orang Biasa",
-    "penerbit": "Bentang Pustaka",
-    "tahunTerbit": 2019,
-    "penulis": "Andrea Hirata",
-    "stok": 10
-  },
-  {
-    "idBuku": "B009",
-    "namaBuku": "Tentang Kamu",
-    "penerbit": "Republika",
-    "tahunTerbit": 2016,
-    "penulis": "Tere Liye",
-    "stok": 14
-  },
-  {
-    "idBuku": "B010",
-    "namaBuku": "Hujan",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2016,
-    "penulis": "Tere Liye",
-    "stok": 13
-  },
-  {
-    "idBuku": "B011",
-    "namaBuku": "Rindu",
-    "penerbit": "Republika",
-    "tahunTerbit": 2014,
-    "penulis": "Tere Liye",
-    "stok": 15
-  },
-  {
-    "idBuku": "B012",
-    "namaBuku": "Cantik Itu Luka",
-    "penerbit": "Kepustakaan Populer Gramedia",
-    "tahunTerbit": 2002,
-    "penulis": "Eka Kurniawan",
-    "stok": 7
-  },
-  {
-    "idBuku": "B013",
-    "namaBuku": "Sejarah Dunia yang Disembunyikan",
-    "penerbit": "Pustaka Al-Kautsar",
-    "tahunTerbit": 2004,
-    "penulis": "Jonathan Black",
-    "stok": 9
-  },
-  {
-    "idBuku": "B014",
-    "namaBuku": "Atomic Habits",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2018,
-    "penulis": "James Clear",
-    "stok": 20
-  },
-  {
-    "idBuku": "B015",
-    "namaBuku": "Sapiens: Riwayat Singkat Umat Manusia",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2017,
-    "penulis": "Yuval Noah Harari",
-    "stok": 10
-  },
-  {
-    "idBuku": "B016",
-    "namaBuku": "Homo Deus",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2018,
-    "penulis": "Yuval Noah Harari",
-    "stok": 8
-  },
-  {
-    "idBuku": "B017",
-    "namaBuku": "The Power of Habit",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2012,
-    "penulis": "Charles Duhigg",
-    "stok": 18
-  },
-  {
-    "idBuku": "B018",
-    "namaBuku": "Rich Dad Poor Dad",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2000,
-    "penulis": "Robert T. Kiyosaki",
-    "stok": 16
-  },
-  {
-    "idBuku": "B019",
-    "namaBuku": "Think and Grow Rich",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2010,
-    "penulis": "Napoleon Hill",
-    "stok": 12
-  },
-  {
-    "idBuku": "B020",
-    "namaBuku": "7 Habits of Highly Effective People",
-    "penerbit": "Gramedia",
-    "tahunTerbit": 2009,
-    "penulis": "Stephen R. Covey",
-    "stok": 11
+// Database (books data) — load from external JSON file
+const fs = require('fs');
+const booksJsonPath = path.join(__dirname, 'data_buku.json');
+let books = [];
+
+try {
+  const raw = fs.readFileSync(booksJsonPath, 'utf8');
+  books = JSON.parse(raw);
+} catch (err) {
+  console.error(`Failed to read or parse data_buku.json: ${err.message}`);
+  books = [];
+}
+
+// Persistence helper: atomic save
+function saveBooksSync() {
+  const tmpPath = booksJsonPath + '.tmp';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify(books, null, 2), 'utf8');
+    fs.renameSync(tmpPath, booksJsonPath);
+    // console.log('data_buku.json updated');
+  } catch (err) {
+    console.error('Failed to save data_buku.json:', err);
+    if (fs.existsSync(tmpPath)) {
+      try { fs.unlinkSync(tmpPath); } catch (e) { /* ignore */ }
+    }
   }
-];
+}
+
+// --- simple user storage for login/register (data_login.js) ---
+const usersJsonPath = path.join(__dirname, 'data_login.js');
+let authUsers = [];
+try {
+  const rawU = fs.readFileSync(usersJsonPath, 'utf8');
+  authUsers = JSON.parse(rawU);
+} catch (err) {
+  console.error(`Failed to read data_login.js: ${err.message}`);
+  authUsers = [];
+}
+
+function saveUsersSync() {
+  const tmpPath = usersJsonPath + '.tmp';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify(authUsers, null, 2), 'utf8');
+    fs.renameSync(tmpPath, usersJsonPath);
+  } catch (err) {
+    console.error('Failed to save data_login.js:', err);
+    if (fs.existsSync(tmpPath)) {
+      try { fs.unlinkSync(tmpPath); } catch (e) { }
+    }
+  }
+}
+
+// Serve login page as root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login_register.html'));
+});
+
+// Handle login
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).send('Email dan password harus diisi');
+
+  const found = authUsers.find(u => u.email.toLowerCase() === String(email).toLowerCase() && u.password === password);
+  if (found) {
+    return res.json({ message: 'Login berhasil', role: found.role || 'user', name: found.name, id: found.id, email: found.email });
+  }
+  return res.status(401).json({ message: 'Gagal login' });
+});
+
+// Handle register
+app.post('/register', (req, res) => {
+  const { name, gender, phone, email, password, confirmPassword } = req.body;
+  if (!name || !phone || !email || !password || !confirmPassword) return res.status(400).send('Semua field harus diisi');
+  if (password !== confirmPassword) return res.status(400).send('Konfirmasi password tidak cocok');
+
+  const existing = authUsers.find(u => u.email.toLowerCase() === String(email).toLowerCase());
+  if (existing) return res.status(400).send('Email sudah terdaftar');
+
+  const newUser = { id: `U${String(authUsers.length + 1).padStart(3, '0')}`, name, gender, phone, email, password, role: 'user' };
+  authUsers.push(newUser);
+  try { saveUsersSync(); } catch (e) { /* logged */ }
+  return res.send('Registrasi berhasil');
+});
 
 // User data (simulated)
 const user = {
@@ -204,50 +126,11 @@ const users = [
     telepon: "081234567892"
   }
 ];
-
-// Loans data (peminjaman aktif)
-let loans = [
-  {
-    id: "L001",
-    idBuku: "B001",
-    idUser: "U001",
-    nama: "Andiva",
-    tanggalPinjam: "2024-01-15",
-    tanggalKembali: "2024-01-22",
-    status: "aktif",
-    terlambat: false
-  },
-  {
-    id: "L002", 
-    idBuku: "B014",
-    idUser: "U001",
-    nama: "Andiva",
-    tanggalPinjam: "2024-01-20",
-    tanggalKembali: "2024-01-27",
-    status: "aktif",
-    terlambat: false
-  }
-];
-
-// Returns data (riwayat pengembalian)
-let returns = [
-  {
-    id: "R001",
-    idBuku: "B002",
-    idUser: "U001", 
-    nama: "Andiva",
-    tanggalPinjam: "2024-01-01",
-    tanggalKembali: "2024-01-08",
-    tanggalPengembalian: "2024-01-08",
-    denda: 0,
-    status: "selesai"
-  }
-];
+// Loans and returns are loaded from pinjam_buku.js
+const { loans, returns } = require('./pinjam_buku');
 
 // Routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'user.html'));
-});
+// root serves login_register.html earlier; user/admin routes below
 
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
@@ -314,7 +197,7 @@ app.get('/api/loans', (req, res) => {
 
 // Create new loan
 app.post('/api/loans', (req, res) => {
-  const { idBuku, nama } = req.body;
+  const { idBuku, nama, idUser } = req.body;
   
   // Validasi input
   if (!idBuku || !nama) {
@@ -332,10 +215,20 @@ app.post('/api/loans', (req, res) => {
     return res.status(400).json({ message: 'Buku tidak tersedia (stok habis)' });
   }
   
-  // Cari user atau buat user baru jika tidak ada
-  let user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
-  if (!user) {
-    // Buat user baru dengan ID unik
+  // Determine user by idUser (preferred) or by nama
+  let user = null;
+  if (idUser) {
+    user = users.find(u => u.id === idUser) || authUsers.find(u => u.id === idUser) || null;
+    if (user && user.name) {
+      // normalize user object shape
+      user = { id: user.id, nama: user.name, email: user.email || '' };
+    }
+  }
+  if (!user && nama) {
+    user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
+  }
+  if (!user && nama) {
+    // Buat user baru dengan ID unik (fallback)
     const newUserId = `U${String(users.length + 1).padStart(3, '0')}`;
     user = {
       id: newUserId,
@@ -372,6 +265,8 @@ app.post('/api/loans', (req, res) => {
   
   // Kurangi stok buku
   book.stok -= 1;
+  // Persist book changes
+  try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   
   // Update user data
   user.bukuDipinjam = loans.filter(l => l.idUser === user.id && l.status === 'aktif').length;
@@ -444,6 +339,7 @@ app.post('/api/returns', (req, res) => {
   const book = books.find(b => b.idBuku === idBuku);
   if (book) {
     book.stok += 1;
+    try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   }
   
   // Update user data
@@ -495,6 +391,7 @@ app.post('/api/books', (req, res) => {
   };
   
   books.push(newBook);
+  try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   res.status(201).json({ message: 'Buku berhasil ditambahkan', book: newBook });
 });
 
@@ -517,6 +414,7 @@ app.put('/api/books/:id', (req, res) => {
     tahunTerbit: parseInt(tahunTerbit),
     stok: parseInt(stok)
   };
+  try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   
   res.json({ message: 'Buku berhasil diupdate', book: books[bookIndex] });
 });
@@ -537,6 +435,7 @@ app.delete('/api/books/:id', (req, res) => {
   }
   
   books.splice(bookIndex, 1);
+  try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   res.json({ message: 'Buku berhasil dihapus' });
 });
 
@@ -739,6 +638,7 @@ app.post('/api/admin/confirm-return', (req, res) => {
   const book = books.find(b => b.idBuku === returnBookId);
   if (book) {
     book.stok += 1;
+    try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   }
   
   // Update user data
