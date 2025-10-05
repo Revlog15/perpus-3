@@ -64,6 +64,54 @@ function saveUsersSync() {
   }
 }
 
+// --- loans and returns persistent storage (JSON files) ---
+const loansJsonPath = path.join(__dirname, 'data_loans.json');
+const returnsJsonPath = path.join(__dirname, 'data_returns.json');
+let loans = [];
+let returns = [];
+try {
+  if (fs.existsSync(loansJsonPath)) {
+    loans = JSON.parse(fs.readFileSync(loansJsonPath, 'utf8')) || [];
+  }
+} catch (e) {
+  console.error('Failed to read data_loans.json:', e.message);
+  loans = [];
+}
+try {
+  if (fs.existsSync(returnsJsonPath)) {
+    returns = JSON.parse(fs.readFileSync(returnsJsonPath, 'utf8')) || [];
+  }
+} catch (e) {
+  console.error('Failed to read data_returns.json:', e.message);
+  returns = [];
+}
+
+function saveLoansSync() {
+  const tmpPath = loansJsonPath + '.tmp';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify(loans, null, 2), 'utf8');
+    fs.renameSync(tmpPath, loansJsonPath);
+  } catch (err) {
+    console.error('Failed to save data_loans.json:', err);
+    if (fs.existsSync(tmpPath)) {
+      try { fs.unlinkSync(tmpPath); } catch (e) { }
+    }
+  }
+}
+
+function saveReturnsSync() {
+  const tmpPath = returnsJsonPath + '.tmp';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify(returns, null, 2), 'utf8');
+    fs.renameSync(tmpPath, returnsJsonPath);
+  } catch (err) {
+    console.error('Failed to save data_returns.json:', err);
+    if (fs.existsSync(tmpPath)) {
+      try { fs.unlinkSync(tmpPath); } catch (e) { }
+    }
+  }
+}
+
 // Serve login page as root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'login_register.html'));
@@ -101,38 +149,7 @@ app.post('/register', (req, res) => {
   return res.send('Registrasi berhasil');
 });
 
-// User data (simulated)
-const user = {
-  nama: "Andiva",
-  bukuDipinjam: 2,
-  denda: 5000,
-  jatuhTempo: "Matematika Lanjut",
-  hariJatuhTempo: 3
-};
-
-// Dummy users data
-const users = [
-  {
-    id: "U001",
-    nama: "Andiva",
-    email: "andiva@email.com",
-    telepon: "081234567890"
-  },
-  {
-    id: "U002", 
-    nama: "Budi Santoso",
-    email: "budi@email.com",
-    telepon: "081234567891"
-  },
-  {
-    id: "U003",
-    nama: "Siti Nurhaliza", 
-    email: "siti@email.com",
-    telepon: "081234567892"
-  }
-];
-// Loans and returns are loaded from pinjam_buku.js
-const { loans, returns } = require('./pinjam_buku');
+// Remove simulated user and dummy users. Loans/returns now persisted via JSON above.
 
 // Routes
 // root serves login_register.html earlier; user/admin routes below
@@ -154,7 +171,9 @@ app.get('/api/books/available', (req, res) => {
 
 // Get latest books (tahun terbit >= 2015)
 app.get('/api/books/latest', (req, res) => {
-  const latestBooks = books.filter(book => book.tahunTerbit >= 2015);
+  const currentYear = new Date().getFullYear();
+  const cutoff = currentYear - 1; // published within last 1 year
+  const latestBooks = books.filter(book => Number(book.tahunTerbit) >= cutoff);
   res.json(latestBooks);
 });
 
@@ -192,169 +211,104 @@ app.get('/api/user', (req, res) => {
 
 // Get all users
 app.get('/api/users', (req, res) => {
-  res.json(users);
+  res.json(authUsers);
 });
 
 // Get all loans
 app.get('/api/loans', (req, res) => {
-  res.json(loans);
+  const { userId, status } = req.query;
+  let data = loans;
+  if (userId) data = data.filter(l => l.idUser === userId);
+  if (status) data = data.filter(l => l.status === status);
+  res.json(data);
 });
 
 // Create new loan
 app.post('/api/loans', (req, res) => {
-  const { idBuku, nama, idUser } = req.body;
-  
-  // Validasi input
-  if (!idBuku || !nama) {
-    return res.status(400).json({ message: 'ID Buku dan Nama harus diisi' });
-  }
-  
-  // Cari buku
+  const { idBuku, idUser } = req.body;
+  if (!idBuku || !idUser) return res.status(400).json({ message: 'ID Buku dan ID User harus diisi' });
+
+  const user = authUsers.find(u => u.id === idUser);
+  if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
+
   const book = books.find(b => b.idBuku === idBuku);
-  if (!book) {
-    return res.status(404).json({ message: 'Buku tidak ditemukan' });
-  }
-  
-  // Cek stok
-  if (book.stok <= 0) {
-    return res.status(400).json({ message: 'Buku tidak tersedia (stok habis)' });
-  }
-  
-  // Determine user by idUser (preferred) or by nama
-  let user = null;
-  if (idUser) {
-    user = users.find(u => u.id === idUser) || authUsers.find(u => u.id === idUser) || null;
-    if (user && user.name) {
-      // normalize user object shape
-      user = { id: user.id, nama: user.name, email: user.email || '' };
-    }
-  }
-  if (!user && nama) {
-    user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
-  }
-  if (!user && nama) {
-    // Buat user baru dengan ID unik (fallback)
-    const newUserId = `U${String(users.length + 1).padStart(3, '0')}`;
-    user = {
-      id: newUserId,
-      nama: nama,
-      email: `${nama.toLowerCase().replace(/\s+/g, '')}@email.com`,
-      telepon: "000000000000"
-    };
-    users.push(user);
-  }
-  
-  // Cek apakah user sudah meminjam buku yang sama
-  const existingLoan = loans.find(l => l.idBuku === idBuku && l.idUser === user.id && l.status === 'aktif');
-  if (existingLoan) {
-    return res.status(400).json({ message: 'Anda sudah meminjam buku ini' });
-  }
-  
-  // Buat peminjaman baru
+  if (!book) return res.status(404).json({ message: 'Buku tidak ditemukan' });
+  if (book.stok <= 0) return res.status(400).json({ message: 'Buku tidak tersedia (stok habis)' });
+
+  const existingLoan = loans.find(l => l.idBuku === idBuku && l.idUser === idUser && l.status === 'aktif');
+  if (existingLoan) return res.status(400).json({ message: 'Anda sudah meminjam buku ini' });
+
   const today = new Date().toISOString().split('T')[0];
   const returnDate = new Date();
-  returnDate.setDate(returnDate.getDate() + 7); // 7 hari dari sekarang
-  
+  returnDate.setDate(returnDate.getDate() + 7);
+
   const newLoan = {
     id: `L${String(loans.length + 1).padStart(3, '0')}`,
-    idBuku: idBuku,
-    idUser: user.id,
-    nama: user.nama,
+    idBuku,
+    idUser,
+    nama: user.username || user.nama || '',
     tanggalPinjam: today,
     tanggalKembali: returnDate.toISOString().split('T')[0],
     status: 'aktif',
     terlambat: false
   };
-  
+
   loans.push(newLoan);
-  
-  // Kurangi stok buku
   book.stok -= 1;
-  // Persist book changes
-  try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
-  
-  // Update user data
-  user.bukuDipinjam = loans.filter(l => l.idUser === user.id && l.status === 'aktif').length;
-  
-  res.status(201).json({ 
-    message: 'Buku berhasil dipinjam', 
-    loan: newLoan 
-  });
+  try { saveBooksSync(); } catch (e) { }
+  try { saveLoansSync(); } catch (e) { }
+
+  return res.status(201).json({ message: 'Buku berhasil dipinjam', loan: newLoan });
 });
 
 // Get all returns
 app.get('/api/returns', (req, res) => {
-  res.json(returns);
+  const { userId } = req.query;
+  let data = returns;
+  if (userId) data = data.filter(r => r.idUser === userId);
+  res.json(data);
 });
 
 // Create new return
 app.post('/api/returns', (req, res) => {
-  const { idBuku, nama } = req.body;
-  
-  // Validasi input
-  if (!idBuku || !nama) {
-    return res.status(400).json({ message: 'ID Buku dan Nama harus diisi' });
-  }
-  
-  // Cari user atau buat user baru jika tidak ada
-  let user = users.find(u => u.nama.toLowerCase() === nama.toLowerCase());
-  if (!user) {
-    // Buat user baru dengan ID unik
-    const newUserId = `U${String(users.length + 1).padStart(3, '0')}`;
-    user = {
-      id: newUserId,
-      nama: nama,
-      email: `${nama.toLowerCase().replace(/\s+/g, '')}@email.com`,
-      telepon: "000000000000"
-    };
-    users.push(user);
-  }
-  
-  // Cari peminjaman aktif
-  const activeLoan = loans.find(l => l.idBuku === idBuku && l.idUser === user.id && l.status === 'aktif');
-  if (!activeLoan) {
-    return res.status(404).json({ message: 'Tidak ada peminjaman aktif untuk buku ini' });
-  }
-  
-  // Hitung denda
+  const { idBuku, idUser } = req.body;
+  if (!idBuku || !idUser) return res.status(400).json({ message: 'ID Buku dan ID User harus diisi' });
+
+  const user = authUsers.find(u => u.id === idUser);
+  if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
+
+  const activeLoan = loans.find(l => l.idBuku === idBuku && l.idUser === idUser && l.status === 'aktif');
+  if (!activeLoan) return res.status(404).json({ message: 'Tidak ada peminjaman aktif untuk buku ini' });
+
   const today = new Date();
   const returnDate = new Date(activeLoan.tanggalKembali);
   const daysLate = Math.max(0, Math.ceil((today - returnDate) / (1000 * 60 * 60 * 24)));
-  const denda = daysLate * 1000; // Rp 1000 per hari terlambat
-  
-  // Buat record pengembalian
+  const denda = daysLate * 1000;
+
   const newReturn = {
     id: `R${String(returns.length + 1).padStart(3, '0')}`,
-    idBuku: idBuku,
-    idUser: user.id,
-    nama: user.nama,
+    idBuku,
+    idUser,
+    nama: user.username || user.nama || '',
     tanggalPinjam: activeLoan.tanggalPinjam,
     tanggalKembali: activeLoan.tanggalKembali,
     tanggalPengembalian: today.toISOString().split('T')[0],
-    denda: denda,
+    denda,
     status: 'selesai'
   };
-  
+
   returns.push(newReturn);
-  
-  // Update status peminjaman
   activeLoan.status = 'dikembalikan';
-  
-  // Tambah stok buku
+
   const book = books.find(b => b.idBuku === idBuku);
   if (book) {
     book.stok += 1;
-    try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
+    try { saveBooksSync(); } catch (e) { }
   }
-  
-  // Update user data
-  user.bukuDipinjam = loans.filter(l => l.idUser === user.id && l.status === 'aktif').length;
-  user.denda = denda;
-  
-  res.status(201).json({ 
-    message: 'Buku berhasil dikembalikan', 
-    return: newReturn 
-  });
+  try { saveLoansSync(); } catch (e) { }
+  try { saveReturnsSync(); } catch (e) { }
+
+  return res.status(201).json({ message: 'Buku berhasil dikembalikan', return: newReturn });
 });
 
 // Get loan history for user
@@ -454,8 +408,8 @@ app.get('/api/admin/stats', (req, res) => {
   
   res.json({
     totalBooks: books.length,
-    totalUsers: users.length,
-    activeLoans: loans.length,
+    totalUsers: authUsers.length,
+    activeLoans: loans.filter(l => l.status === 'aktif').length,
     overdueLoans: overdueLoans.length,
     totalReturns: returns.length
   });
@@ -646,11 +600,8 @@ app.post('/api/admin/confirm-return', (req, res) => {
     try { saveBooksSync(); } catch (e) { /* logged in saveBooksSync */ }
   }
   
-  // Update user data
-  const user = users.find(u => u.id === activeLoan.idUser);
-  if (user) {
-    user.bukuDipinjam = loans.filter(l => l.idUser === user.id && l.status === 'aktif').length;
-  }
+  try { saveLoansSync(); } catch (e) { }
+  try { saveReturnsSync(); } catch (e) { }
   
   res.status(201).json({ 
     message: 'Pengembalian berhasil dikonfirmasi', 

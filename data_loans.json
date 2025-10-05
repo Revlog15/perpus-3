@@ -1,0 +1,72 @@
+[
+  {
+    "id": "L001",
+    "idBuku": "B010",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L002",
+    "idBuku": "B001",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L003",
+    "idBuku": "B001",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L004",
+    "idBuku": "B009",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L005",
+    "idBuku": "B003",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L006",
+    "idBuku": "B001",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "aktif",
+    "terlambat": false
+  },
+  {
+    "id": "L007",
+    "idBuku": "B012",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "status": "dikembalikan",
+    "terlambat": false
+  }
+]

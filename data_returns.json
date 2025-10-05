@@ -1,0 +1,68 @@
+[
+  {
+    "id": "R001",
+    "idBuku": "B001",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R002",
+    "idBuku": "B010",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R003",
+    "idBuku": "B003",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R004",
+    "idBuku": "B009",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R005",
+    "idBuku": "B001",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R006",
+    "idBuku": "B012",
+    "idUser": "U001",
+    "nama": "rifky",
+    "tanggalPinjam": "2025-10-05",
+    "tanggalKembali": "2025-10-12",
+    "tanggalPengembalian": "2025-10-05",
+    "denda": 0,
+    "status": "selesai"
+  }
+]

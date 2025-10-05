@@ -5,7 +5,7 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 12
+    "stok": 11
   },
   {
     "idBuku": "B002",
@@ -157,6 +157,30 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2009,
     "penulis": "Stephen R. Covey",
+    "stok": 11
+  },
+  {
+    "idBuku": "B021",
+    "namaBuku": "House of Flame and Shadow",
+    "penerbit": "Bloomsbury",
+    "tahunTerbit": 2024,
+    "penulis": "Sarah J. Maas",
+    "stok": 9
+  },
+  {
+    "idBuku": "B022",
+    "namaBuku": "The Familiar",
+    "penerbit": "Flatiron Books",
+    "tahunTerbit": 2024,
+    "penulis": "Leigh Bardugo",
+    "stok": 13
+  },
+  {
+    "idBuku": "B023",
+    "namaBuku": "First Lie Wins",
+    "penerbit": "Random House",
+    "tahunTerbit": 2024,
+    "penulis": "Ashley Elston",
     "stok": 11
   }
 ]

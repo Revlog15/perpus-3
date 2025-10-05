@@ -5,10 +5,29 @@ const API_BASE = window.API_BASE || 'http://localhost:3001/api';
 export async function renderHistory(target) {
   target.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
   try {
-    const res = await fetch(`${API_BASE}/history`);
-    const history = await res.json();
-    target.innerHTML = '<h5 class="mb-3">Riwayat Peminjaman</h5>';
-    if (!history || history.length === 0) {
+    const idUser = localStorage.getItem('userid');
+    if (!idUser) {
+      target.innerHTML = '<div class="text-danger text-center">Silakan login untuk melihat riwayat</div>';
+      return;
+    }
+    const [historyRes, booksRes] = await Promise.all([
+      fetch(`${API_BASE}/loans/history/${encodeURIComponent(idUser)}`),
+      fetch(`${API_BASE}/books`)
+    ]);
+    const [history, books] = await Promise.all([
+      historyRes.json(),
+      booksRes.json()
+    ]);
+    target.innerHTML = '';
+    const getTitle = (id) => {
+      const book = Array.isArray(books) ? books.find(b => b.idBuku === id) : null;
+      return book ? book.namaBuku : id;
+    };
+    const allRows = [
+      ...(history.activeLoans || []).map(l => ({ tanggal: l.tanggalPinjam, idBuku: l.idBuku, judul: getTitle(l.idBuku), aksi: 'Pinjam' })),
+      ...(history.returnHistory || []).map(r => ({ tanggal: r.tanggalPengembalian, idBuku: r.idBuku, judul: getTitle(r.idBuku), aksi: r.denda > 0 ? `Kembali (Denda Rp ${r.denda.toLocaleString()})` : 'Kembali' }))
+    ];
+    if (!allRows || allRows.length === 0) {
       target.innerHTML += '<div class="text-muted">Belum ada riwayat peminjaman</div>';
       return;
     }
@@ -25,7 +44,7 @@ export async function renderHistory(target) {
       </thead>
       <tbody></tbody>`;
     const tbody = table.querySelector('tbody');
-    history.forEach(h => {
+    allRows.forEach(h => {
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${h.tanggal}</td><td>${h.idBuku}</td><td>${h.judul}</td><td>${h.aksi}</td>`;
       tbody.appendChild(tr);

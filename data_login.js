@@ -16,5 +16,14 @@
     "email": "123@gmail.com",
     "password": "123",
     "role": "user"
+  },
+  {
+    "id": "U003",
+    "username": "revlog",
+    "gender": "Pria",
+    "phone": "12345",
+    "email": "rev@gmail.com",
+    "password": "123",
+    "role": "user"
   }
 ]
