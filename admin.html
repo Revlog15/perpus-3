@@ -204,7 +204,7 @@
     </div>
 
     <!-- Profile Admin Section -->
-    <div id="profile-section" class="admin-section" style="display: none;">
+  <div id="profile-section" class="admin-section">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h4><i class="fas fa-user-shield me-2"></i>Profile Admin</h4>
         <button class="btn btn-primary" onclick="editProfile()">
@@ -222,9 +222,9 @@
                   <i class="fas fa-user-shield fa-4x text-primary"></i>
                 </div>
                 <h5 id="profileName">Admin Perpustakaan</h5>
-                <p class="text-muted" id="profileRole">Administrator</p>
-                <p class="text-muted" id="profileEmail">admin@perpustakaan.com</p>
-                <p class="text-muted" id="profileUsername">admin</p>
+                <p class="text-muted mb-1"><strong>Role:</strong> <span id="profileRole">Administrator</span></p>
+                <p class="text-muted mb-1"><strong>Email:</strong> <span id="profileEmail">admin@perpustakaan.com</span></p>
+                <p class="text-muted mb-1"><strong>Username:</strong> <span id="profileUsername">admin</span></p>
                 <div class="mt-3">
                   <span class="badge bg-success">Aktif</span>
                 </div>
@@ -2188,6 +2188,19 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         });
         document.getElementById('adminOverdueLoans').textContent = overdueLoans.length;
 
+        // Ambil data admin dari data_login.js
+        fetch('data_login.js')
+          .then(response => response.json())
+          .then(users => {
+            // Cari user dengan role admin dan username 'admin'
+            const admin = users.find(u => u.role === 'admin' && u.username === 'admin');
+            if (admin) {
+              document.getElementById('profileEmail').textContent = admin.email || '-';
+              document.getElementById('detailEmail').textContent = admin.email || '-';
+              document.getElementById('profileUsername').textContent = admin.username;
+              document.getElementById('detailUsername').textContent = admin.username;
+            }
+          });
       } catch (error) {
         console.error('Error loading profile data:', error);
       }

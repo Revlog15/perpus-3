@@ -34,5 +34,15 @@
     "password": "123",
     "role": "user",
     "status": "active"
+  },
+  {
+    "id": "U005",
+    "username": "muhammadyoga",
+    "gender": "Pria",
+    "phone": "081234567",
+    "email": "yoga@gmail.com",
+    "password": "yoga123",
+    "role": "user",
+    "status": "active"
   }
 ]

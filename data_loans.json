@@ -148,5 +148,15 @@
     "tanggalKembali": "2025-10-12",
     "status": "aktif",
     "terlambat": false
+  },
+  {
+    "id": "L016",
+    "idBuku": "B010",
+    "idUser": "U005",
+    "nama": "muhammadyoga",
+    "tanggalPinjam": "2025-10-06",
+    "tanggalKembali": "2025-10-13",
+    "status": "dikembalikan",
+    "terlambat": false
   }
 ]

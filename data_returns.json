@@ -130,5 +130,16 @@
     "tanggalPengembalian": "2025-10-05",
     "denda": 0,
     "status": "selesai"
+  },
+  {
+    "id": "R013",
+    "idBuku": "B010",
+    "idUser": "U005",
+    "nama": "muhammadyoga",
+    "tanggalPinjam": "2025-10-06",
+    "tanggalKembali": "2025-10-13",
+    "tanggalPengembalian": "2025-10-06",
+    "denda": 0,
+    "status": "selesai"
   }
 ]

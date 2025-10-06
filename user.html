@@ -93,9 +93,7 @@
     <a href="#">🏠 Home</a>
     <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
     <div id="submenuDaftar" class="collapse ms-3">
-      <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
-      <a href="#">✅ Buku Tersedia</a>
-      <a href="#">🆕 Buku Terbaru</a>
+  <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
     </div>
     <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
     <div id="submenuPinjam" class="collapse ms-3">
@@ -122,10 +120,19 @@
       </div>
     </div>
     <div id="searchSemuaBuku" class="collapse mb-3">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku">
-        <button class="btn btn-primary" type="button">Cari</button>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku" id="searchBukuInput">
+        <button class="btn btn-primary" type="button" id="btnCariBuku">Cari</button>
       </div>
+      <div class="mb-2">
+        <label for="sortBuku" class="form-label mb-1">Urutkan:</label>
+        <select class="form-select form-select-sm w-auto d-inline-block" id="sortBuku">
+          <option value="title-asc">Judul (A-Z)</option>
+          <option value="year-desc">Tahun Terbaru</option>
+          <option value="year-asc">Tahun Terlama</option>
+        </select>
+      </div>
+      <div id="semuaBukuList"></div>
     </div>
 
     <div class="hero mb-4">
@@ -1069,6 +1076,70 @@
         if (msg) msg.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${e.message}</div>`;
       }
     };
+  </script>
+  <script type="module">
+    import { renderAllBooks } from './public/js/books.js';
+    let allBooksCache = [];
+    const semuaBukuList = document.getElementById('semuaBukuList');
+    const sortBuku = document.getElementById('sortBuku');
+    const searchBukuInput = document.getElementById('searchBukuInput');
+    const btnCariBuku = document.getElementById('btnCariBuku');
+
+    async function loadAllBooksAndRender() {
+      semuaBukuList.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      try {
+        const res = await fetch('/api/books');
+        let books = await res.json();
+        allBooksCache = books;
+        renderBooksWithSortAndSearch();
+      } catch (e) {
+        semuaBukuList.innerHTML = '<div class="text-danger text-center">Gagal memuat semua buku</div>';
+      }
+    }
+
+    function renderBooksWithSortAndSearch() {
+      let books = [...allBooksCache];
+      // Filter by search
+      const keyword = searchBukuInput.value.trim().toLowerCase();
+      if (keyword) {
+        books = books.filter(b =>
+          (b.namaBuku || '').toLowerCase().includes(keyword) ||
+          (b.penulis || '').toLowerCase().includes(keyword) ||
+          (b.isbn || '').toLowerCase().includes(keyword)
+        );
+      }
+      // Sort
+      const sortVal = sortBuku.value;
+      if (sortVal === 'title-asc') {
+        books.sort((a, b) => (a.namaBuku || '').localeCompare(b.namaBuku || ''));
+      } else if (sortVal === 'year-desc') {
+        books.sort((a, b) => (b.tahunTerbit || 0) - (a.tahunTerbit || 0));
+      } else if (sortVal === 'year-asc') {
+        books.sort((a, b) => (a.tahunTerbit || 0) - (b.tahunTerbit || 0));
+      }
+      semuaBukuList.innerHTML = '';
+      if (books.length === 0) {
+        semuaBukuList.innerHTML = '<div class="text-muted text-center py-5">Tidak ada buku ditemukan</div>';
+        return;
+      }
+      import('./public/js/books.js').then(mod => {
+        mod.renderGrid(semuaBukuList, books);
+      });
+    }
+
+    // Event listeners
+    sortBuku?.addEventListener('change', renderBooksWithSortAndSearch);
+    btnCariBuku?.addEventListener('click', renderBooksWithSortAndSearch);
+    searchBukuInput?.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') renderBooksWithSortAndSearch();
+    });
+
+    // Tampilkan daftar buku saat menu dibuka
+    document.querySelectorAll('a[href="#searchSemuaBuku"]').forEach(a => {
+      a.addEventListener('click', () => {
+        setTimeout(loadAllBooksAndRender, 300);
+      });
+    });
   </script>
 </body>
 </html>
