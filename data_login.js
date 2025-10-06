@@ -31,7 +31,6 @@
     "username": "dika",
     "gender": "Pria",
     "phone": "1111",
-    "email": "aaaa",
     "password": "123",
     "role": "user",
     "status": "active"
