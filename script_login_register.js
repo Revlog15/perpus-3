@@ -16,7 +16,7 @@ function toggleForm(type) {
     document.getElementById("loginEmail").focus();
   } else {
     document.getElementById("registerForm").classList.remove("hidden");
-    document.getElementById("regName").focus();
+    document.getElementById("regUsername").focus();
   }
 }
 
@@ -42,10 +42,10 @@ function showMessage(msg, isError = false) {
 
 // handle login
 function handleLogin() {
-  const email = document.getElementById("loginEmail").value;
+  const identifier = document.getElementById("loginEmail").value; // accepts username or email
   const password = document.getElementById("loginPassword").value;
 
-  if (email === "" || password === "") {
+  if (identifier === "" || password === "") {
     showMessage("Isi semua field!", true);
     return;
   }
@@ -53,21 +53,30 @@ function handleLogin() {
   fetch("/login", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+    body: `identifier=${encodeURIComponent(identifier)}&password=${encodeURIComponent(password)}`
   })
     .then(res => res.json().catch(() => null))
     .then(data => {
       if (data && data.message && data.message.includes("Login berhasil")) {
-        // store name for greeting
-  if (data.name) localStorage.setItem('username', data.name);
-  if (data.id) localStorage.setItem('userid', data.id);
+        // clear previous session and store new session
+        try { localStorage.removeItem('username'); } catch (e) {}
+        try { localStorage.removeItem('userid'); } catch (e) {}
+        if (data.username) localStorage.setItem('username', data.username);
+        if (data.id) localStorage.setItem('userid', data.id);
         showMessage("Login berhasil! Redirecting...");
         setTimeout(() => {
           if (data.role === 'admin') window.location.href = 'admin.html';
           else window.location.href = 'user.html';
         }, 1000);
       } else {
-        showMessage("Email atau password salah!", true);
+        if (data && typeof data.message === 'string') {
+          const msg = data.message.includes('dinonaktifkan')
+            ? 'Akun Anda dinonaktifkan, Silakan hubungi admin'
+            : data.message;
+          showMessage(msg, true);
+        } else {
+          showMessage("Email atau password salah!", true);
+        }
       }
     })
     .catch(() => showMessage("Server error!", true));
@@ -75,7 +84,7 @@ function handleLogin() {
 
 // handle register
 function handleRegister() {
-  const name = document.getElementById("regName").value;
+  const username = document.getElementById("regUsername").value;
   const gender = document.querySelector("input[name='gender']:checked");
   const phone = document.getElementById("regPhone").value;
   const email = document.getElementById("regEmail").value;
@@ -83,7 +92,7 @@ function handleRegister() {
   const confirmPassword = document.getElementById("regConfirmPassword").value;
 
   // validasi dasar
-  if (!name || !gender || !phone || !email || !password || !confirmPassword) {
+  if (!username || !gender || !phone || !email || !password || !confirmPassword) {
     showMessage("Isi semua field!", true);
     return;
   }
@@ -102,15 +111,15 @@ function handleRegister() {
   fetch("/register", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `name=${encodeURIComponent(name)}&gender=${encodeURIComponent(gender.value)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&confirmPassword=${encodeURIComponent(confirmPassword)}`
+    body: `username=${encodeURIComponent(username)}&gender=${encodeURIComponent(gender.value)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&confirmPassword=${encodeURIComponent(confirmPassword)}`
   })
     .then(res => res.text())
     .then(data => {
       if (data.includes("Registrasi berhasil")) {
         showMessage("Register berhasil! Silakan login...");
         toggleForm("login");
-      } else if (data.includes("Email sudah terdaftar")) {
-        showMessage("Email sudah terdaftar!", true);
+      } else if (data.includes("Username atau Email sudah terdaftar")) {
+        showMessage("Username atau Email sudah terdaftar!", true);
       } else if (data.includes("Konfirmasi password tidak cocok")) {
         showMessage("Password tidak cocok!", true);
       } else {
@@ -151,7 +160,7 @@ function checkPhoneInput() {
 
 // cek semua field agar tombol aktif hanya jika lengkap & valid
 function checkFormValidity() {
-  const name = document.getElementById("regName").value.trim();
+  const name = document.getElementById("regUsername").value.trim();
   const gender = document.querySelector("input[name='gender']:checked");
   const phone = document.getElementById("regPhone").value.trim();
   const email = document.getElementById("regEmail").value.trim();
@@ -195,7 +204,7 @@ window.onload = () => {
   document.getElementById("loginEmail").focus();
 
   // cek validitas setiap kali user isi input
-  ["regName", "regPhone", "regEmail", "regPassword", "regConfirmPassword"].forEach(id => {
+  ["regUsername", "regPhone", "regEmail", "regPassword", "regConfirmPassword"].forEach(id => {
     document.getElementById(id).addEventListener("input", checkFormValidity);
   });
 

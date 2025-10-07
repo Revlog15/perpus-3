@@ -93,9 +93,7 @@
     <a href="#">🏠 Home</a>
     <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
     <div id="submenuDaftar" class="collapse ms-3">
-      <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
-      <a href="#">✅ Buku Tersedia</a>
-      <a href="#">🆕 Buku Terbaru</a>
+  <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
     </div>
     <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
     <div id="submenuPinjam" class="collapse ms-3">
@@ -122,10 +120,19 @@
       </div>
     </div>
     <div id="searchSemuaBuku" class="collapse mb-3">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku">
-        <button class="btn btn-primary" type="button">Cari</button>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku" id="searchBukuInput">
+        <button class="btn btn-primary" type="button" id="btnCariBuku">Cari</button>
       </div>
+      <div class="mb-2">
+        <label for="sortBuku" class="form-label mb-1">Urutkan:</label>
+        <select class="form-select form-select-sm w-auto d-inline-block" id="sortBuku">
+          <option value="title-asc">Judul (A-Z)</option>
+          <option value="year-desc">Tahun Terbaru</option>
+          <option value="year-asc">Tahun Terlama</option>
+        </select>
+      </div>
+      <div id="semuaBukuList"></div>
     </div>
 
     <div class="hero mb-4">
@@ -165,7 +172,7 @@
       <div class="col-md-4">
         <div class="card-info card-green">
           <h6>Jatuh Tempo Terdekat</h6>
-          <p>Matematika Lanjut<br><small>3 hari lagi</small></p>
+          <p>—</p>
         </div>
       </div>
     </div>
@@ -236,7 +243,7 @@
         <div class="modal-body">Apakah Anda serius mau logout?</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-          <a href="/" class="btn btn-danger">Ya, Logout</a>
+          <a href="/" class="btn btn-danger" onclick="try{localStorage.clear()}catch(e){}">Ya, Logout</a>
         </div>
       </div>
     </div>
@@ -291,8 +298,8 @@
               <div class="form-text">Masukkan ID buku yang ingin dipinjam (contoh: B001)</div>
             </div>
             <div class="mb-3">
-              <label for="pinjamNama" class="form-label">Nama Peminjam</label>
-              <input type="text" class="form-control" id="pinjamNama" name="nama" required placeholder="Masukkan nama lengkap">
+              <label class="form-label">Akun</label>
+              <input type="text" class="form-control" value="Menggunakan akun yang login" disabled>
             </div>
             <div id="pinjamMessage" class="mt-3"></div>
           </form>
@@ -321,8 +328,8 @@
               <div class="form-text">Masukkan ID buku yang akan dikembalikan (contoh: B001)</div>
             </div>
             <div class="mb-3">
-              <label for="pengembalianNama" class="form-label">Nama Peminjam</label>
-              <input type="text" class="form-control" id="pengembalianNama" name="nama" required placeholder="Masukkan nama lengkap">
+              <label class="form-label">Akun</label>
+              <input type="text" class="form-control" value="Menggunakan akun yang login" disabled>
             </div>
             <div id="pengembalianMessage" class="mt-3"></div>
           </form>
@@ -343,6 +350,58 @@
         const el = document.getElementById('greetingName');
         if (el) el.textContent = name;
       }
+    })();
+  </script>
+  <script>
+    // Live update when account switches in another tab/window
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'username' || e.key === 'userid' || e.key === 'books:updated') {
+        try {
+          loadUserData();
+          // reload current section data best-effort
+          const sectionTitle = document.getElementById('sectionTitle')?.textContent || '';
+          if (sectionTitle.includes('Populer')) {
+            loadPopularBooks();
+          } else if (sectionTitle.includes('Semua Buku')) {
+            loadAllBooks();
+          } else if (sectionTitle.includes('Buku Tersedia')) {
+            loadAvailableBooks();
+          } else if (sectionTitle.includes('Buku Terbaru')) {
+            loadLatestBooks();
+          }
+          // keep top cards updated
+          refreshDashboardCardsLive();
+          if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+        } catch (_) {}
+      }
+    });
+  </script>
+  <script>
+    // Same-tab live session detection (no manual refresh)
+    (function(){
+      let lastUid = localStorage.getItem('userid');
+      let lastUname = localStorage.getItem('username');
+      setInterval(() => {
+        const uid = localStorage.getItem('userid');
+        const uname = localStorage.getItem('username');
+        if (uid !== lastUid || uname !== lastUname) {
+          lastUid = uid; lastUname = uname;
+          try {
+            loadUserData();
+            const sectionTitle = document.getElementById('sectionTitle')?.textContent || '';
+            if (sectionTitle.includes('Populer')) {
+              loadPopularBooks();
+            } else if (sectionTitle.includes('Semua Buku')) {
+              loadAllBooks();
+            } else if (sectionTitle.includes('Buku Tersedia')) {
+              loadAvailableBooks();
+            } else if (sectionTitle.includes('Buku Terbaru')) {
+              loadLatestBooks();
+            }
+            if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+          } catch (_) {}
+        }
+      }, 1000);
     })();
   </script>
   <script>
@@ -452,23 +511,113 @@
       tryNext();
     }
     
-    // Load user data
+    // Load user data and dashboard metrics based on current login
     async function loadUserData() {
+      const name = localStorage.getItem('username') || 'User';
+      const userId = localStorage.getItem('userid');
+      const h3 = document.querySelector('h3');
+      const dd = document.querySelector('.dropdown-toggle');
+      if (h3) h3.textContent = `Halo, ${name} 👋`;
+      if (dd) dd.textContent = `👤 ${name}`;
+
+      // If not logged in, keep default dashboard numbers
+      if (!userId) return;
+
       try {
-        const response = await fetch(`${API_BASE}/user`);
-        const user = await response.json();
-        
-        // Update user name in header
-        document.querySelector('h3').textContent = `Halo, ${user.nama} 👋`;
-        document.querySelector('.dropdown-toggle').textContent = `👤 ${user.nama}`;
-        
-        // Update dashboard info
-        document.querySelector('.card-blue h3').textContent = user.bukuDipinjam;
-        document.querySelector('.card-orange h3').textContent = `Rp ${user.denda.toLocaleString()}`;
-        document.querySelector('.card-green p').innerHTML = `${user.jatuhTempo}<br><small>${user.hariJatuhTempo} hari lagi</small>`;
-      } catch (error) {
-        console.error('Error loading user data:', error);
+        // Load active loans for this user
+        const [loansRes, returnsRes, booksRes] = await Promise.all([
+          fetch(`${API_BASE}/loans?userId=${encodeURIComponent(userId)}&status=aktif`),
+          fetch(`${API_BASE}/returns?userId=${encodeURIComponent(userId)}`),
+          fetch(`${API_BASE}/books`)
+        ]);
+        const [activeLoans, userReturns, allBooks] = await Promise.all([
+          loansRes.json(),
+          returnsRes.json(),
+          booksRes.json()
+        ]);
+
+        // Buku Dipinjam
+        const borrowedCount = Array.isArray(activeLoans) ? activeLoans.length : 0;
+        const borrowedEl = document.querySelector('.card-blue h3');
+        if (borrowedEl) borrowedEl.textContent = String(borrowedCount);
+
+        // Denda saat ini: hitung denda untuk pinjaman yang sudah lewat jatuh tempo
+        const today = new Date();
+        const finePerDay = 1000; // harus sinkron dengan server
+        let totalFine = 0;
+        activeLoans.forEach(l => {
+          const due = new Date(l.tanggalKembali);
+          if (due < today && l.status === 'aktif') {
+            const daysLate = Math.max(0, Math.ceil((today - due) / (1000 * 60 * 60 * 24)));
+            totalFine += daysLate * finePerDay;
+          }
+        });
+        const fineEl = document.querySelector('.card-orange h3');
+        if (fineEl) fineEl.textContent = `Rp ${totalFine.toLocaleString()}`;
+
+        // Jatuh tempo terdekat — tampilkan semua judul jika tanggalnya sama
+        let nearest = null;
+        activeLoans.forEach(l => {
+          const due = new Date(l.tanggalKembali);
+          if (!nearest || due < nearest) nearest = due;
+        });
+        const dueEl = document.querySelector('.card-green p');
+        if (nearest && dueEl) {
+          const sameDueLoans = activeLoans.filter(l => new Date(l.tanggalKembali).toDateString() === nearest.toDateString());
+          const titles = sameDueLoans.map(l => {
+            const book = allBooks.find(b => b.idBuku === l.idBuku);
+            return book ? book.namaBuku : l.idBuku;
+          });
+          const uniqueTitles = [...new Set(titles)];
+          const daysLeft = Math.max(0, Math.ceil((nearest - today) / (1000 * 60 * 60 * 24)));
+          dueEl.innerHTML = `${uniqueTitles.join(', ')}<br><small>${daysLeft} hari lagi</small>`;
+        }
+      } catch (err) {
+        // silent fail to avoid breaking UI
+        console.error('Failed to load dashboard data:', err);
       }
+    }
+
+    // Live refresh for dashboard cards (Buku Dipinjam & Jatuh Tempo Terdekat)
+    async function refreshDashboardCardsLive() {
+      const userId = localStorage.getItem('userid');
+      if (!userId) return;
+      try {
+        const [loansRes, booksRes] = await Promise.all([
+          fetch(`${API_BASE}/loans?userId=${encodeURIComponent(userId)}&status=aktif`),
+          fetch(`${API_BASE}/books`)
+        ]);
+        const [activeLoans, allBooks] = await Promise.all([
+          loansRes.json(),
+          booksRes.json()
+        ]);
+        // Buku Dipinjam
+        const borrowedCount = Array.isArray(activeLoans) ? activeLoans.length : 0;
+        const borrowedEl = document.querySelector('.card-blue h3');
+        if (borrowedEl) borrowedEl.textContent = String(borrowedCount);
+        // Jatuh Tempo Terdekat
+        const today = new Date();
+        let nearest = null;
+        (activeLoans || []).forEach(l => {
+          const due = new Date(l.tanggalKembali);
+          if (!nearest || due < nearest) nearest = due;
+        });
+        const dueEl = document.querySelector('.card-green p');
+        if (dueEl) {
+          if (!nearest) {
+            dueEl.innerHTML = '—';
+          } else {
+            const sameDueLoans = activeLoans.filter(l => new Date(l.tanggalKembali).toDateString() === nearest.toDateString());
+            const titles = sameDueLoans.map(l => {
+              const book = allBooks.find(b => b.idBuku === l.idBuku);
+              return book ? book.namaBuku : l.idBuku;
+            });
+            const uniqueTitles = [...new Set(titles)];
+            const daysLeft = Math.max(0, Math.ceil((nearest - today) / (1000 * 60 * 60 * 24)));
+            dueEl.innerHTML = `${uniqueTitles.join(', ')}<br><small>${daysLeft} hari lagi</small>`;
+          }
+        }
+      } catch (_) {}
     }
     
     // Load popular books
@@ -708,25 +857,63 @@
       });
     }
     
-    // Show no latest books message
-    function showNoLatestBooks() {
+    // Load latest books (published within the last 1 year)
+    async function loadLatestBooks() {
       const resultsContainer = document.querySelector('.popular-books');
       const sectionTitle = document.getElementById('sectionTitle');
-      
-      if (!resultsContainer) return;
-      
-      // Update section title
-      if (sectionTitle) {
-        sectionTitle.textContent = 'Buku Terbaru';
+      if (sectionTitle) sectionTitle.textContent = 'Buku Terbaru';
+      if (resultsContainer) {
+        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
       }
-      
-      resultsContainer.innerHTML = `
-        <div class="col-12 text-center py-5">
-          <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-          <h5 class="text-muted">Belum Ada Buku Terbaru</h5>
-          <p class="text-muted">Koleksi buku terbaru akan segera hadir. Silakan cek kembali nanti.</p>
-        </div>
-      `;
+      try {
+        const response = await fetch(`${API_BASE}/books/latest`);
+        const latestBooks = await response.json();
+        const allBooksResponse = await fetch(`${API_BASE}/books`);
+        books = await allBooksResponse.json();
+        if (!resultsContainer) return;
+        resultsContainer.innerHTML = '';
+        if (!latestBooks || latestBooks.length === 0) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center text-muted py-5"><i class="fas fa-book-open fa-3x mb-3"></i><div>Belum ada buku terbaru</div></div>';
+          return;
+        }
+        latestBooks.forEach(book => {
+          const bookCard = document.createElement('div');
+          bookCard.className = 'col-md-2 mb-3';
+          bookCard.innerHTML = `
+            <div class="card h-100">
+              <img class="card-img-top" alt="${book.namaBuku}">
+              <div class="card-body p-3">
+                <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
+                <p class="card-text">
+                  <small class="text-muted d-block mb-1">
+                    <i class="fas fa-user me-1"></i>${book.penulis}
+                  </small>
+                  <small class="text-info d-block mb-1">
+                    <i class="fas fa-building me-1"></i>${book.penerbit}
+                  </small>
+                  <small class="text-secondary d-block mb-2">
+                    <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
+                  </small>
+                  <span class="badge ${book.stok > 0 ? 'bg-success' : 'bg-danger'}">
+                    <i class="fas fa-box me-1"></i>Stok: ${book.stok}
+                  </span>
+                </p>
+              </div>
+              <div class="card-footer bg-transparent border-0 p-2">
+                <small class="text-muted">
+                  <i class="fas fa-barcode me-1"></i>ID: ${book.idBuku}
+                </small>
+              </div>
+            </div>`;
+          setBookImage(bookCard.querySelector('.card-img-top'), book);
+          bookCard.querySelector('.card').addEventListener('click', () => openBookModal(book));
+          resultsContainer.appendChild(bookCard);
+        });
+      } catch (e) {
+        if (resultsContainer) {
+          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat buku terbaru</div>';
+        }
+      }
     }
     
     // Setup submenu click handlers
@@ -770,249 +957,188 @@
             if (searchBar) {
               const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
             }
-            // Show no latest books message
-            showNoLatestBooks();
+            // Load latest books from server
+            loadLatestBooks();
           });
         }
       });
     }
     
-    // Function to open pinjam modal from book detail
-    function openPinjamModal() {
-      const bookModal = bootstrap.Modal.getInstance(document.getElementById('bookModal'));
-      const pinjamModal = new bootstrap.Modal(document.getElementById('pinjamModal'));
-      
-      // Get book ID from current book detail
-      const bookId = document.getElementById('bookTitle').textContent;
-      const book = books.find(b => b.namaBuku === bookId);
-      if (book) {
-        document.getElementById('pinjamIdBuku').value = book.idBuku;
-      }
-      
-      bookModal.hide();
-      pinjamModal.show();
-    }
-    
-    // Function to submit pinjam form
-    async function submitPinjam() {
-      const form = document.getElementById('pinjamForm');
-      const messageDiv = document.getElementById('pinjamMessage');
-      const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
-  // Attach logged-in user id if available
-  const uid = localStorage.getItem('userid');
-  if (uid) data.idUser = uid;
-      
-      // Clear previous message
-      messageDiv.innerHTML = '';
-      
-      try {
-        const response = await fetch(`${API_BASE}/loans`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-          messageDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-          form.reset();
-          // Refresh user data and books
-          loadUserData();
-          loadPopularBooks();
-        } else {
-          messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
-        }
-      } catch (error) {
-        messageDiv.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${error.message}</div>`;
-      }
-    }
-    
-    // Function to submit pengembalian form
-    async function submitPengembalian() {
-      const form = document.getElementById('pengembalianForm');
-      const messageDiv = document.getElementById('pengembalianMessage');
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-      
-      // Clear previous message
-      messageDiv.innerHTML = '';
-      
-      try {
-        const response = await fetch(`${API_BASE}/returns`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-          messageDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-          if (result.return.denda > 0) {
-            messageDiv.innerHTML += `<div class="alert alert-warning">Denda: Rp ${result.return.denda.toLocaleString()}</div>`;
-          }
-          form.reset();
-          // Refresh user data and books
-          loadUserData();
-          loadPopularBooks();
-        } else {
-          messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
-        }
-      } catch (error) {
-        messageDiv.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${error.message}</div>`;
-      }
-    }
-    
-    // Function to load loan status
-    async function loadLoanStatus() {
-      const resultsContainer = document.querySelector('.popular-books');
-      const sectionTitle = document.getElementById('sectionTitle');
-      
-      // Show loading state
-      if (sectionTitle) {
-        sectionTitle.textContent = 'Memuat Status Peminjaman...';
-      }
-      if (resultsContainer) {
-        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-      }
-      
-      try {
-        const response = await fetch(`${API_BASE}/loans`);
-        const loans = await response.json();
-        
-        if (sectionTitle) {
-          sectionTitle.textContent = `Status Peminjaman (${loans.length} aktif)`;
-        }
-        
-        if (resultsContainer) {
-          resultsContainer.innerHTML = '';
-          
-          if (loans.length === 0) {
-            resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-book-open me-2"></i>Tidak ada peminjaman aktif</div>';
-            return;
-          }
-          
-          const listGroup = document.createElement('div');
-          listGroup.className = 'list-group';
-          
-          loans.forEach(loan => {
-            const listItem = document.createElement('div');
-            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-            
-            const book = books.find(b => b.idBuku === loan.idBuku);
-            const bookName = book ? book.namaBuku : 'Buku tidak ditemukan';
-            
-            listItem.innerHTML = `
-              <div>
-                <h6 class="mb-1">${bookName}</h6>
-                <small class="text-muted">ID: ${loan.idBuku} | Peminjam: ${loan.nama}</small>
-                <br>
-                <small class="text-info">Pinjam: ${loan.tanggalPinjam} | Jatuh tempo: ${loan.tanggalKembali}</small>
-              </div>
-              <span class="badge ${loan.terlambat ? 'bg-danger' : 'bg-success'}">
-                ${loan.terlambat ? 'Terlambat' : 'On-time'}
-              </span>
-            `;
-            
-            listGroup.appendChild(listItem);
-          });
-          
-          resultsContainer.appendChild(listGroup);
-        }
-      } catch (error) {
-        console.error('Error loading loan status:', error);
-        if (resultsContainer) {
-          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat status peminjaman</div>';
-        }
-        if (sectionTitle) {
-          sectionTitle.textContent = 'Status Peminjaman';
-        }
-      }
-    }
-    
-    // Function to load loan history
-    async function loadLoanHistory() {
-      const resultsContainer = document.querySelector('.popular-books');
-      const sectionTitle = document.getElementById('sectionTitle');
-      
-      // Show loading state
-      if (sectionTitle) {
-        sectionTitle.textContent = 'Memuat Riwayat Peminjaman...';
-      }
-      if (resultsContainer) {
-        resultsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-      }
-      
-      try {
-        const response = await fetch(`${API_BASE}/returns`);
-        const returns = await response.json();
-        
-        if (sectionTitle) {
-          sectionTitle.textContent = `Riwayat Peminjaman (${returns.length} selesai)`;
-        }
-        
-        if (resultsContainer) {
-          resultsContainer.innerHTML = '';
-          
-          if (returns.length === 0) {
-            resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-history me-2"></i>Belum ada riwayat peminjaman</div>';
-            return;
-          }
-          
-          const listGroup = document.createElement('div');
-          listGroup.className = 'list-group';
-          
-          returns.forEach(returnItem => {
-            const listItem = document.createElement('div');
-            listItem.className = 'list-group-item';
-            
-            const book = books.find(b => b.idBuku === returnItem.idBuku);
-            const bookName = book ? book.namaBuku : 'Buku tidak ditemukan';
-            
-            listItem.innerHTML = `
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <h6 class="mb-1">${bookName}</h6>
-                  <small class="text-muted">ID: ${returnItem.idBuku} | Peminjam: ${returnItem.nama}</small>
-                  <br>
-                  <small class="text-info">Pinjam: ${returnItem.tanggalPinjam} | Kembali: ${returnItem.tanggalPengembalian}</small>
-                </div>
-                <div class="text-end">
-                  <span class="badge ${returnItem.denda > 0 ? 'bg-warning' : 'bg-success'}">
-                    ${returnItem.denda > 0 ? `Denda: Rp ${returnItem.denda.toLocaleString()}` : 'Tepat Waktu'}
-                  </span>
-                </div>
-              </div>
-            `;
-            
-            listGroup.appendChild(listItem);
-          });
-          
-          resultsContainer.appendChild(listGroup);
-        }
-      } catch (error) {
-        console.error('Error loading loan history:', error);
-        if (resultsContainer) {
-          resultsContainer.innerHTML = '<div class="col-12 text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Gagal memuat riwayat peminjaman</div>';
-        }
-        if (sectionTitle) {
-          sectionTitle.textContent = 'Riwayat Peminjaman';
-        }
-      }
-    }
+    // Loan functions moved to external file: data_pinjam.js
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
       loadUserData();
+      // live refresh every 2s to keep cards updated
+      setInterval(refreshDashboardCardsLive, 2000);
       loadPopularBooks();
       setupSearch();
       setupSubmenuHandlers();
+    });
+  </script>
+  <script type="module">
+    import { renderLoanForm, renderLoanStatus } from './public/js/loans.js';
+    import { renderReturnForm } from './public/js/returns.js';
+    import { renderHistory } from './public/js/history.js';
+
+    // Bridge existing buttons to module functions used in UI text/links
+    window.loadLoanStatus = () => {
+      const container = document.querySelector('.popular-books');
+      const title = document.getElementById('sectionTitle');
+      if (title) title.textContent = 'Status Peminjaman';
+      if (container) renderLoanStatus(container);
+    };
+    window.loadLoanHistory = () => {
+      const container = document.querySelector('.popular-books');
+      const title = document.getElementById('sectionTitle');
+      if (title) title.textContent = 'Riwayat Peminjaman';
+      if (container) renderHistory(container);
+    };
+
+    // Implement handlers locally for modal actions using logged-in user
+    const API_BASE_MODULE = 'http://localhost:3001/api';
+    window.openPinjamModal = function openPinjamModal() {
+      // Prefill ID buku dari detail yang sedang terbuka
+      const bookIdEl = document.getElementById('bookTitle');
+      const idField = document.getElementById('pinjamIdBuku');
+      if (bookIdEl && idField && Array.isArray(window.books)) {
+        const title = bookIdEl.textContent;
+        const found = window.books.find(b => b.namaBuku === title);
+        if (found) idField.value = found.idBuku;
+      }
+      const pinjamModal = new bootstrap.Modal(document.getElementById('pinjamModal'));
+      pinjamModal.show();
+    };
+
+    window.submitPinjam = async function submitPinjam() {
+      const idUser = localStorage.getItem('userid');
+      const msg = document.getElementById('pinjamMessage');
+      if (!idUser) {
+        if (msg) msg.innerHTML = '<div class="alert alert-danger">Silakan login terlebih dahulu</div>';
+        return;
+      }
+      const idBuku = document.getElementById('pinjamIdBuku')?.value?.trim();
+      if (!idBuku) {
+        if (msg) msg.innerHTML = '<div class="alert alert-danger">ID Buku wajib diisi</div>';
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_MODULE}/loans`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idBuku, idUser })
+        });
+        const out = await res.json();
+        if (msg) msg.innerHTML = `<div class="alert ${res.ok ? 'alert-success' : 'alert-danger'}">${out.message || (res.ok ? 'Buku berhasil dipinjam' : 'Gagal meminjam')}</div>`;
+        if (res.ok) {
+          document.getElementById('pinjamForm')?.reset();
+          // refresh status/daftar
+          if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+          try { localStorage.setItem('loans:updated', String(Date.now())); } catch (e) {}
+        }
+      } catch (e) {
+        if (msg) msg.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${e.message}</div>`;
+      }
+    };
+
+    window.submitPengembalian = async function submitPengembalian() {
+      const idUser = localStorage.getItem('userid');
+      const msg = document.getElementById('pengembalianMessage');
+      if (!idUser) {
+        if (msg) msg.innerHTML = '<div class="alert alert-danger">Silakan login terlebih dahulu</div>';
+        return;
+      }
+      const idBuku = document.getElementById('pengembalianIdBuku')?.value?.trim();
+      if (!idBuku) {
+        if (msg) msg.innerHTML = '<div class="alert alert-danger">ID Buku wajib diisi</div>';
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_MODULE}/returns`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idBuku, idUser })
+        });
+        const out = await res.json();
+        if (msg) {
+          msg.innerHTML = `<div class="alert ${res.ok ? 'alert-success' : 'alert-danger'}">${out.message || (res.ok ? 'Buku berhasil dikembalikan' : 'Gagal mengembalikan')}</div>`;
+          if (res.ok && out.return && typeof out.return.denda === 'number' && out.return.denda > 0) {
+            msg.innerHTML += `<div class="alert alert-warning mt-2">Denda: Rp ${out.return.denda.toLocaleString()}</div>`;
+          }
+        }
+        if (res.ok) {
+          document.getElementById('pengembalianForm')?.reset();
+          if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+          if (typeof window.loadLoanHistory === 'function') window.loadLoanHistory();
+          try { localStorage.setItem('returns:updated', String(Date.now())); } catch (e) {}
+        }
+      } catch (e) {
+        if (msg) msg.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${e.message}</div>`;
+      }
+    };
+  </script>
+  <script type="module">
+    import { renderAllBooks } from './public/js/books.js';
+    let allBooksCache = [];
+    const semuaBukuList = document.getElementById('semuaBukuList');
+    const sortBuku = document.getElementById('sortBuku');
+    const searchBukuInput = document.getElementById('searchBukuInput');
+    const btnCariBuku = document.getElementById('btnCariBuku');
+
+    async function loadAllBooksAndRender() {
+      semuaBukuList.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      try {
+        const res = await fetch('/api/books');
+        let books = await res.json();
+        allBooksCache = books;
+        renderBooksWithSortAndSearch();
+      } catch (e) {
+        semuaBukuList.innerHTML = '<div class="text-danger text-center">Gagal memuat semua buku</div>';
+      }
+    }
+
+    function renderBooksWithSortAndSearch() {
+      let books = [...allBooksCache];
+      // Filter by search
+      const keyword = searchBukuInput.value.trim().toLowerCase();
+      if (keyword) {
+        books = books.filter(b =>
+          (b.namaBuku || '').toLowerCase().includes(keyword) ||
+          (b.penulis || '').toLowerCase().includes(keyword) ||
+          (b.isbn || '').toLowerCase().includes(keyword)
+        );
+      }
+      // Sort
+      const sortVal = sortBuku.value;
+      if (sortVal === 'title-asc') {
+        books.sort((a, b) => (a.namaBuku || '').localeCompare(b.namaBuku || ''));
+      } else if (sortVal === 'year-desc') {
+        books.sort((a, b) => (b.tahunTerbit || 0) - (a.tahunTerbit || 0));
+      } else if (sortVal === 'year-asc') {
+        books.sort((a, b) => (a.tahunTerbit || 0) - (b.tahunTerbit || 0));
+      }
+      semuaBukuList.innerHTML = '';
+      if (books.length === 0) {
+        semuaBukuList.innerHTML = '<div class="text-muted text-center py-5">Tidak ada buku ditemukan</div>';
+        return;
+      }
+      import('./public/js/books.js').then(mod => {
+        mod.renderGrid(semuaBukuList, books);
+      });
+    }
+
+    // Event listeners
+    sortBuku?.addEventListener('change', renderBooksWithSortAndSearch);
+    btnCariBuku?.addEventListener('click', renderBooksWithSortAndSearch);
+    searchBukuInput?.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') renderBooksWithSortAndSearch();
+    });
+
+    // Tampilkan daftar buku saat menu dibuka
+    document.querySelectorAll('a[href="#searchSemuaBuku"]').forEach(a => {
+      a.addEventListener('click', () => {
+        setTimeout(loadAllBooksAndRender, 300);
+      });
     });
   </script>
 </body>

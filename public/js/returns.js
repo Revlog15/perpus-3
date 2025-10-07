@@ -1,6 +1,4 @@
-// Returns (Pengembalian) module
-
-const API_BASE = window.API_BASE || 'http://localhost:3001/api';
+import { API_BASE } from './api.js';
 
 export function renderReturnForm(target) {
   target.innerHTML = `
@@ -11,8 +9,8 @@ export function renderReturnForm(target) {
         <input type="text" class="form-control" name="idBuku" required>
       </div>
       <div class="col-md-6">
-        <label class="form-label">Nama Peminjam</label>
-        <input type="text" class="form-control" name="nama" required>
+        <label class="form-label">User</label>
+        <input type="text" class="form-control" value="Akan memakai akun login" disabled>
       </div>
       <div class="col-12">
         <button class="btn btn-success" type="submit">Kembalikan</button>
@@ -27,6 +25,13 @@ export function renderReturnForm(target) {
     e.preventDefault();
     msg.textContent = '';
     const data = Object.fromEntries(new FormData(form).entries());
+    const idUser = localStorage.getItem('userid');
+    if (!idUser) {
+      msg.className = 'alert alert-danger';
+      msg.textContent = 'Silakan login terlebih dahulu';
+      return;
+    }
+    data.idUser = idUser;
     try {
       const res = await fetch(`${API_BASE}/returns`, {
         method: 'POST',

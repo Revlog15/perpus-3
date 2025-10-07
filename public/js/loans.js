@@ -1,6 +1,4 @@
-// Loans (Pinjam) module
-
-const API_BASE = window.API_BASE || 'http://localhost:3001/api';
+import { API_BASE } from './api.js';
 
 export function renderLoanForm(target) {
   target.innerHTML = `
@@ -11,8 +9,8 @@ export function renderLoanForm(target) {
         <input type="text" class="form-control" name="idBuku" required>
       </div>
       <div class="col-md-6">
-        <label class="form-label">Nama Peminjam</label>
-        <input type="text" class="form-control" name="nama" required>
+        <label class="form-label">User</label>
+        <input type="text" class="form-control" value="Akan memakai akun login" disabled>
       </div>
       <div class="col-12">
         <button class="btn btn-primary" type="submit">Pinjam</button>
@@ -27,6 +25,13 @@ export function renderLoanForm(target) {
     e.preventDefault();
     msg.textContent = '';
     const data = Object.fromEntries(new FormData(form).entries());
+    const idUser = localStorage.getItem('userid');
+    if (!idUser) {
+      msg.className = 'alert alert-danger';
+      msg.textContent = 'Silakan login terlebih dahulu';
+      return;
+    }
+    data.idUser = idUser;
     try {
       const res = await fetch(`${API_BASE}/loans`, {
         method: 'POST',
@@ -47,11 +52,13 @@ export function renderLoanForm(target) {
 export async function renderLoanStatus(target) {
   target.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
   try {
-    const res = await fetch(`${API_BASE}/loans`);
+    const idUser = localStorage.getItem('userid');
+    const qs = idUser ? `?userId=${encodeURIComponent(idUser)}&status=aktif` : '';
+    const res = await fetch(`${API_BASE}/loans${qs}`);
     const loans = await res.json();
-    target.innerHTML = '<h5 class="mb-3">Status Peminjaman</h5>';
+    target.innerHTML = '';
     if (!loans || loans.length === 0) {
-      target.innerHTML += '<div class="text-muted">Belum ada peminjaman aktif</div>';
+      target.innerHTML = '<div class="text-muted">Belum ada peminjaman aktif</div>';
       return;
     }
     const list = document.createElement('div');
@@ -59,7 +66,7 @@ export async function renderLoanStatus(target) {
     loans.forEach(l => {
       const item = document.createElement('div');
       item.className = 'list-group-item d-flex justify-content-between align-items-center';
-      item.innerHTML = `<span><strong>${l.idBuku}</strong> · ${l.nama} · Jatuh tempo: ${l.jatuhTempo}</span><span class="badge bg-${l.terlambat ? 'danger' : 'success'}">${l.terlambat ? 'Terlambat' : 'On-time'}</span>`;
+      item.innerHTML = `<span><strong>${l.idBuku}</strong> · ${l.nama} · Jatuh tempo: ${l.tanggalKembali}</span><span class="badge bg-${l.terlambat ? 'danger' : 'success'}">${l.terlambat ? 'Terlambat' : 'On-time'}</span>`;
       list.appendChild(item);
     });
     target.appendChild(list);

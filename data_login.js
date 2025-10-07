@@ -1,7 +1,7 @@
 [
   {
     "id": "U000",
-    "name": "Admin",
+    "username": "admin",
     "gender": "N/A",
     "phone": "0000000000",
     "email": "admin@gmail.com",
@@ -10,20 +10,40 @@
   },
   {
     "id": "U001",
-    "name": "rifky",
+    "username": "rifky",
     "gender": "Pria",
     "phone": "1234",
     "email": "123@gmail.com",
     "password": "123",
-    "role": "user"
+    "role": "admin"
   },
   {
     "id": "U003",
-    "name": "Revand Putra",
+    "username": "revlog",
     "gender": "Pria",
     "phone": "12345",
     "email": "rev@gmail.com",
-    "password": "1234",
+    "password": "123",
     "role": "user"
+  },
+  {
+    "id": "U004",
+    "username": "dika",
+    "gender": "Pria",
+    "phone": "1111",
+    "password": "123",
+    "role": "user",
+    "status": "active"
+  },
+  {
+    "id": "U005",
+    "username": "muhammadyoga",
+    "gender": "Pria",
+    "phone": "081234567",
+    "email": "yoga@gmail.com",
+    "password": "yoga123",
+    "role": "user",
+    "status": "active"
+
   }
 ]
