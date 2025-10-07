@@ -477,7 +477,7 @@
         .toLowerCase();
     }
     function getImageCandidates(book) {
-      const baseDir = 'images';
+      const baseDir = '/images';
       const title = book?.namaBuku || '';
       const rawJpg = `${baseDir}/${title}.jpg`;
       const rawPng = `${baseDir}/${title}.png`;
@@ -977,9 +977,9 @@
     });
   </script>
   <script type="module">
-    import { renderLoanForm, renderLoanStatus } from './public/js/loans.js';
-    import { renderReturnForm } from './public/js/returns.js';
-    import { renderHistory } from './public/js/history.js';
+    import { renderLoanForm, renderLoanStatus } from '../../public/js/loans.js';
+    import { renderReturnForm } from '../../public/js/returns.js';
+    import { renderHistory } from '../../public/js/history.js';
 
     // Bridge existing buttons to module functions used in UI text/links
     window.loadLoanStatus = () => {
@@ -1078,7 +1078,7 @@
     };
   </script>
   <script type="module">
-    import { renderAllBooks } from './public/js/books.js';
+    import { renderAllBooks } from '../../public/js/books.js';
     let allBooksCache = [];
     const semuaBukuList = document.getElementById('semuaBukuList');
     const sortBuku = document.getElementById('sortBuku');

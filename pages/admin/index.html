@@ -1639,7 +1639,7 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         booksHTML += `
           <div class="col-md-3 mb-3">
             <div class="card book-card">
-              <img src="images/${book.namaBuku.toLowerCase().replace(/\s+/g, '')}.jpg" 
+              <img src="/images/${book.namaBuku.toLowerCase().replace(/\s+/g, '')}.jpg" 
                    class="card-img-top book-img" 
                    alt="${book.namaBuku}"
                    onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
@@ -2189,7 +2189,7 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         document.getElementById('adminOverdueLoans').textContent = overdueLoans.length;
 
         // Ambil data admin dari data_login.js
-        fetch('data_login.js')
+        fetch('/data/data_login.js')
           .then(response => response.json())
           .then(users => {
             // Cari user dengan role admin dan username 'admin'

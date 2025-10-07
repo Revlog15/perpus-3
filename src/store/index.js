@@ -3,10 +3,10 @@ const { readJsonSafeSync, writeJsonAtomicSync } = require('../lib/storage');
 
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
 
-const booksJsonPath = path.join(ROOT_DIR, 'data_buku.json');
-const usersJsonPath = path.join(ROOT_DIR, 'data_login.js');
-const loansJsonPath = path.join(ROOT_DIR, 'data_loans.json');
-const returnsJsonPath = path.join(ROOT_DIR, 'data_returns.json');
+const booksJsonPath = path.join(ROOT_DIR, 'data', 'data_buku.json');
+const usersJsonPath = path.join(ROOT_DIR, 'data', 'data_login.js');
+const loansJsonPath = path.join(ROOT_DIR, 'data', 'data_loans.json');
+const returnsJsonPath = path.join(ROOT_DIR, 'data', 'data_returns.json');
 
 const store = {
   books: readJsonSafeSync(booksJsonPath, []),

@@ -16,7 +16,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'login_register.html'));
 });
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+  res.sendFile(path.join(__dirname, 'pages/admin/index.html'));
+});
+app.get('/user', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages/user/index.html'));
 });
 
 // Routers
