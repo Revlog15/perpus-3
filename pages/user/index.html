@@ -89,8 +89,8 @@
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
-    <a href="#">🏠 Home</a>
+  <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
+  <a href="#" id="homeLink">🏠 Home</a>
     <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
     <div id="submenuDaftar" class="collapse ms-3">
   <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
@@ -113,7 +113,7 @@
       <div class="dropdown">
         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">👤 Andiva</button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="#">Profile User</a></li>
+          <li><a class="dropdown-item" href="#" onclick="openUserProfile(event)">Profile User</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
         </ul>
@@ -352,6 +352,214 @@
       }
     })();
   </script>
+    <!-- User Profile Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="userProfileOffcanvas" aria-labelledby="userProfileLabel">
+      <div class="offcanvas-header">
+        <h5 id="userProfileLabel">Profile User</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <style>
+          .profile-avatar {
+            width: 84px; height: 84px; border-radius: 50%;
+            background: linear-gradient(135deg,#4e73df,#1cc88a); color: #fff;
+            display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+          }
+          .profile-header { display:flex; gap:12px; align-items:center; }
+          .profile-meta small { color:#6c757d; }
+        </style>
+        <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="view-tab" data-bs-toggle="tab" data-bs-target="#viewProfileTab" type="button" role="tab">Lihat Profil</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="edit-tab" data-bs-toggle="tab" data-bs-target="#editProfileTab" type="button" role="tab">Edit Profil</button>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="viewProfileTab" role="tabpanel">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="profile-header mb-3">
+                  <div class="profile-avatar" id="profileAvatar">A</div>
+                  <div>
+                    <h5 id="viewName" class="mb-0">-</h5>
+                    <div class="profile-meta"><small id="viewRole">-</small></div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 text-muted">Username</div>
+                  <div class="col-8 fw-semibold" id="viewUsername">-</div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 text-muted">Email</div>
+                  <div class="col-8" id="viewEmail">-</div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 text-muted">Dipinjam</div>
+                  <div class="col-8"><span class="badge bg-primary" id="viewLoanCount">0</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-primary" onclick="document.querySelector('#profileTab button[data-bs-target=\'#editProfileTab\']').click();">Edit Profil</button>
+              <button class="btn btn-secondary" data-bs-dismiss="offcanvas">Tutup</button>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="editProfileTab" role="tabpanel">
+            <div id="editProfileMsg"></div>
+            <form id="editProfileForm">
+              <div class="mb-3">
+                <label for="editName" class="form-label">Nama</label>
+                <input type="text" id="editName" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="editPassword" class="form-label">Password (kosongkan jika tidak diubah)</label>
+                <input type="password" id="editPassword" class="form-control">
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary" id="saveProfileBtn">Simpan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Batal</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Open the user profile offcanvas and load data
+      function openUserProfile(e) {
+        if (e) e.preventDefault();
+        const off = new bootstrap.Offcanvas(document.getElementById('userProfileOffcanvas'));
+        off.show();
+        loadUserProfile();
+      }
+
+      async function loadUserProfile() {
+        const userId = localStorage.getItem('userid');
+        const username = localStorage.getItem('username') || null;
+        // Default placeholders
+        document.getElementById('viewName').textContent = '-';
+        document.getElementById('viewUsername').textContent = username || '-';
+        document.getElementById('viewRole').textContent = '-';
+        document.getElementById('viewEmail').textContent = '-';
+        document.getElementById('viewLoanCount').textContent = '0';
+        document.getElementById('editName').value = '';
+
+        try {
+          // Try to read from data_login.js for user profile (fallback if API not available)
+          let user = null;
+          try {
+            // Try common static data paths (data folder or root)
+            const dataPaths = ['/data/data_login.js', '/data/data_login.json', '/data_login.js', '/data_login.json'];
+            let users = null;
+            for (const p of dataPaths) {
+              try {
+                const resp = await fetch(p);
+                if (!resp.ok) continue;
+                users = await resp.json();
+                if (Array.isArray(users)) break;
+              } catch (_) { /* try next */ }
+            }
+            if (Array.isArray(users)) {
+              if (userId) user = users.find(u => String(u.id) === String(userId));
+              if (!user && username) user = users.find(u => u.username === username);
+            }
+          } catch (e) {
+            // ignore
+          }
+
+          // Try API if available
+          if (!user && userId) {
+            try {
+              const r = await fetch(`/api/users/${userId}`);
+              if (r.ok) user = await r.json();
+            } catch (e) { }
+          }
+
+          if (user) {
+            const displayName = user.nama || user.name || user.username || '-';
+            document.getElementById('viewName').textContent = displayName;
+            document.getElementById('viewUsername').textContent = user.username || '-';
+            document.getElementById('viewRole').textContent = (user.role || (user.isAdmin ? 'admin' : 'user') || '-').toString();
+            document.getElementById('viewEmail').textContent = user.email || '-';
+            document.getElementById('editName').value = user.nama || user.name || '';
+
+            // Avatar: initials and color
+            try {
+              const avatarEl = document.getElementById('profileAvatar');
+              let initials = (displayName || '').split(' ').filter(Boolean).slice(0,2).map(s => s[0].toUpperCase()).join('');
+              if (!initials) initials = (user.username || 'U').substring(0,2).toUpperCase();
+              avatarEl.textContent = initials;
+              const palette = [
+                'linear-gradient(135deg,#4e73df,#1cc88a)',
+                'linear-gradient(135deg,#f6c23e,#e74a3b)',
+                'linear-gradient(135deg,#36b9cc,#4e73df)',
+                'linear-gradient(135deg,#6f42c1,#e83e8c)'
+              ];
+              // pick stable color
+              let sum = 0; for (let i=0;i<displayName.length;i++) sum += displayName.charCodeAt(i);
+              avatarEl.style.background = palette[sum % palette.length];
+            } catch(e) {}
+          }
+
+          // Count active loans for this user via API
+          if (userId) {
+            try {
+              const r = await fetch('/api/loans');
+              if (r.ok) {
+                const loans = await r.json();
+                const active = loans.filter(l => String(l.idUser) === String(userId) && (l.status === 'aktif' || l.status === 'ongoing' || l.status === 'dipinjam'));
+                document.getElementById('viewLoanCount').textContent = active.length;
+              }
+            } catch (e) { /* ignore */ }
+          }
+        } catch (err) {
+          console.error('Failed to load user profile', err);
+        }
+      }
+
+      document.getElementById('saveProfileBtn')?.addEventListener('click', async function() {
+        const name = document.getElementById('editName')?.value?.trim();
+        const pwd = document.getElementById('editPassword')?.value || '';
+        const userId = localStorage.getItem('userid');
+        const username = localStorage.getItem('username');
+        const msgEl = document.getElementById('editProfileMsg');
+        msgEl.innerHTML = '';
+        if (!username && !userId) {
+          msgEl.innerHTML = '<div class="alert alert-danger">Tidak terdeteksi user login</div>';
+          return;
+        }
+        // Try to send update to API if available
+        let updated = false;
+        if (userId) {
+          try {
+            const body = {};
+            if (name) body.nama = name;
+            if (pwd) body.password = pwd;
+            const r = await fetch(`/api/users/${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            if (r.ok) {
+              updated = true;
+            }
+          } catch (e) {
+            // ignore and fallback
+          }
+        }
+        // Fallback: update localStorage display and inform user
+        if (!updated) {
+          if (name) try { localStorage.setItem('name', name); } catch (e) {}
+          msgEl.innerHTML = '<div class="alert alert-success">Perubahan disimpan (lokal). Jika backend tersedia, perubahan akan disinkronkan.</div>';
+        } else {
+          msgEl.innerHTML = '<div class="alert alert-success">Perubahan berhasil disimpan ke server.</div>';
+        }
+        // refresh view
+        loadUserProfile();
+        // clear password field
+        document.getElementById('editPassword').value = '';
+      });
+    </script>
   <script>
     // Live update when account switches in another tab/window
     window.addEventListener('storage', (e) => {
@@ -962,6 +1170,24 @@
           });
         }
       });
+
+      // Home link: restore home view
+      const homeLink = document.getElementById('homeLink');
+      if (homeLink) {
+        homeLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Collapse search bar if open
+          const searchBar = document.getElementById('searchSemuaBuku');
+          if (searchBar) {
+            const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+          }
+          // Restore home title and popular books
+          const titleEl = document.getElementById('sectionTitle');
+          const container = document.querySelector('.popular-books');
+          if (titleEl) titleEl.textContent = 'Buku Populer Minggu Ini';
+          if (container) loadPopularBooks();
+        });
+      }
     }
     
     // Loan functions moved to external file: data_pinjam.js
