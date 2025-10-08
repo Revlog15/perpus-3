@@ -65,8 +65,8 @@ function handleLogin() {
         if (data.id) localStorage.setItem('userid', data.id);
         showMessage("Login berhasil! Redirecting...");
         setTimeout(() => {
-          if (data.role === 'admin') window.location.href = 'admin.html';
-          else window.location.href = 'user.html';
+          if (data.role === 'admin') window.location.href = '/admin';
+          else window.location.href = '/user';
         }, 1000);
       } else {
         if (data && typeof data.message === 'string') {
