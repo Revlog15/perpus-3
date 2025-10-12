@@ -1180,27 +1180,74 @@
     // Load loan management data
     async function loadLoanManagement() {
       try {
+        console.log('Loading loan management data...');
+        console.log('API_BASE:', API_BASE);
+        
         const [loansRes, booksRes, usersRes] = await Promise.all([
           fetch(`${API_BASE}/loans`),
           fetch(`${API_BASE}/books`),
           fetch(`${API_BASE}/users`)
         ]);
 
+        console.log('API responses status:', { 
+          loans: loansRes.status, 
+          books: booksRes.status, 
+          users: usersRes.status 
+        });
+
+        if (!loansRes.ok) {
+          throw new Error(`Loans API failed: ${loansRes.status}`);
+        }
+        if (!booksRes.ok) {
+          throw new Error(`Books API failed: ${booksRes.status}`);
+        }
+        if (!usersRes.ok) {
+          throw new Error(`Users API failed: ${usersRes.status}`);
+        }
+
         allLoans = await loansRes.json();
         allBooks = await booksRes.json();
         allUsers = await usersRes.json();
+
+        console.log('Loaded data:', { 
+          loansCount: allLoans.length, 
+          booksCount: allBooks.length, 
+          usersCount: allUsers.length 
+        });
+        console.log('All loans data:', allLoans);
 
         loadActiveLoans();
         loadOverdueLoans();
       } catch (error) {
         console.error('Error loading loan management data:', error);
+        // Show error in the table
+        const activeLoansTableBody = document.getElementById('activeLoansTableBody');
+        if (activeLoansTableBody) {
+          activeLoansTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Gagal memuat data peminjaman</td></tr>';
+        }
       }
     }
 
     // Load active loans
     function loadActiveLoans() {
-      const activeLoans = allLoans.filter(loan => loan.status === 'aktif');
+      console.log('All loans:', allLoans);
+      
+      // Try different status values in case of case sensitivity
+      const activeLoans = allLoans.filter(loan => 
+        loan.status === 'aktif' || 
+        loan.status === 'Aktif' || 
+        loan.status === 'active' || 
+        loan.status === 'Active'
+      );
+      
+      console.log('Active loans found:', activeLoans);
+      
       const activeLoansTableBody = document.getElementById('activeLoansTableBody');
+      
+      if (!activeLoansTableBody) {
+        console.error('activeLoansTableBody element not found!');
+        return;
+      }
       
       if (activeLoans.length === 0) {
         activeLoansTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Tidak ada peminjaman aktif</td></tr>';
@@ -1209,11 +1256,27 @@
 
       let activeLoansHTML = '';
       activeLoans.forEach(loan => {
+        console.log('Processing loan:', loan);
+        
         const book = allBooks.find(b => b.idBuku === loan.idBuku);
         const user = allUsers.find(u => u.id === loan.idUser);
-        const isOverdue = new Date(loan.tanggalKembali) < new Date();
+        
+        console.log('Found book:', book);
+        console.log('Found user:', user);
+        
+        // Simple date comparison - just compare date strings
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+        const isOverdue = loan.tanggalKembali < today;
         const statusClass = isOverdue ? 'danger' : 'success';
         const statusText = isOverdue ? 'Terlambat' : 'Aktif';
+        
+        // Calculate days overdue if applicable
+        let daysOverdue = 0;
+        if (isOverdue) {
+          const returnDate = new Date(loan.tanggalKembali);
+          const todayDate = new Date();
+          daysOverdue = Math.ceil((todayDate - returnDate) / (1000 * 60 * 60 * 24));
+        }
         
         activeLoansHTML += `
           <tr class="${isOverdue ? 'table-warning' : ''}">
@@ -1221,7 +1284,7 @@
             <td>${book ? book.namaBuku : 'Buku tidak ditemukan'}</td>
             <td>${user ? user.nama : loan.nama}</td>
             <td>${loan.tanggalPinjam}</td>
-            <td>${loan.tanggalKembali}</td>
+            <td>${loan.tanggalKembali}${isOverdue ? ` <small class="text-danger">(${daysOverdue} hari terlambat)</small>` : ''}</td>
             <td><span class="badge bg-${statusClass}">${statusText}</span></td>
             <td>
               <button class="btn btn-sm btn-success" onclick="confirmReturn('${loan.id}')" title="Konfirmasi Pengembalian">
@@ -1235,15 +1298,20 @@
         `;
       });
 
+      console.log('Generated HTML:', activeLoansHTML);
       activeLoansTableBody.innerHTML = activeLoansHTML;
     }
 
     // Load overdue loans
     function loadOverdueLoans() {
       const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to start of day
+      
       const overdueLoans = allLoans.filter(loan => {
+        if (loan.status !== 'aktif') return false;
         const returnDate = new Date(loan.tanggalKembali);
-        return returnDate < today && loan.status === 'aktif';
+        returnDate.setHours(0, 0, 0, 0); // Reset time to start of day
+        return returnDate < today;
       });
       
       const overdueLoansTableBody = document.getElementById('overdueLoansTableBody');
@@ -1383,7 +1451,11 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
             <td>${user.telepon}</td>
             <td><span class="badge bg-${statusClass}">${statusText}</span></td>
             <td>${activeLoans}</td>
-            <td>${user.createdAt || 'N/A'}</td>
+            <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString('id-ID', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            }) : 'N/A'}</td>
             <td>
               <div class="btn-group btn-group-sm">
                 <button class="btn btn-outline-primary" onclick="editUser('${user.id}')" title="Edit User">

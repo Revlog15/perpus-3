@@ -93,7 +93,7 @@
   <a href="#" id="homeLink">🏠 Home</a>
     <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
     <div id="submenuDaftar" class="collapse ms-3">
-  <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
+  <a href="#" onclick="showAllBooks()">📚 Semua Buku</a>
     </div>
     <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
     <div id="submenuPinjam" class="collapse ms-3">
@@ -119,21 +119,6 @@
         </ul>
       </div>
     </div>
-    <div id="searchSemuaBuku" class="collapse mb-3">
-      <div class="input-group mb-2">
-        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku" id="searchBukuInput">
-        <button class="btn btn-primary" type="button" id="btnCariBuku">Cari</button>
-      </div>
-      <div class="mb-2">
-        <label for="sortBuku" class="form-label mb-1">Urutkan:</label>
-        <select class="form-select form-select-sm w-auto d-inline-block" id="sortBuku">
-          <option value="title-asc">Judul (A-Z)</option>
-          <option value="year-desc">Tahun Terbaru</option>
-          <option value="year-asc">Tahun Terlama</option>
-        </select>
-      </div>
-      <div id="semuaBukuList"></div>
-    </div>
 
     <div class="hero mb-4">
       <div>
@@ -141,6 +126,7 @@
         <p>Temukan inspirasi dari ribuan koleksi buku digital kami.</p>
       </div>
     </div>
+
 
     <!-- Tentang Perpustakaan -->
     <div class="card mb-4">
@@ -964,7 +950,11 @@
             }
           } else {
             // If search is empty, show all books
-            loadAllBooks();
+            if (typeof loadAllBooksAndRender === 'function') {
+              loadAllBooksAndRender();
+            } else {
+              loadAllBooks();
+            }
           }
         });
         
@@ -972,6 +962,17 @@
           if (e.key === 'Enter') {
             searchButton.click();
           }
+        });
+      }
+    }
+
+    // Sort functionality
+    function setupSortHandlers() {
+      const sortSelect = document.querySelector('#searchSemuaBuku select');
+      if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+          // Apply sorting and filtering to current data
+          renderBooksWithSortAndSearch();
         });
       }
     }
@@ -1124,22 +1125,81 @@
       }
     }
     
+    // Show all books page with search and sort
+    function showAllBooks() {
+      // Hide all other content (but not the search section we're about to create)
+      document.querySelectorAll('.card').forEach(card => {
+        if (!card.closest('.modal') && !card.closest('#searchSemuaBuku')) {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Create or show search and books section
+      let searchSection = document.getElementById('searchSemuaBuku');
+      if (!searchSection) {
+        searchSection = document.createElement('div');
+        searchSection.id = 'searchSemuaBuku';
+        searchSection.className = 'mb-3';
+        searchSection.innerHTML = `
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="row align-items-end">
+                <div class="col-md-8">
+                  <label for="searchBukuInput" class="form-label">Cari Buku</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku" id="searchBukuInput">
+                    <button class="btn btn-primary" type="button" id="btnCariBuku">Cari</button>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="sortBuku" class="form-label">Urutkan</label>
+                  <select class="form-select" id="sortBuku">
+                    <option value="title-asc">Judul (A-Z)</option>
+                    <option value="year-desc">Tahun Terbaru</option>
+                    <option value="year-asc">Tahun Terlama</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="semuaBukuList"></div>
+        `;
+        
+        // Insert search section after the dashboard info cards (row with 3 cards)
+        const dashboardRow = document.querySelector('.row.mb-4');
+        if (dashboardRow) {
+          dashboardRow.insertAdjacentElement('afterend', searchSection);
+        } else {
+          document.querySelector('.content').appendChild(searchSection);
+        }
+        
+        // Setup search functionality after creating the elements
+        setTimeout(() => {
+          setupSearch();
+          setupSortHandlers();
+        }, 50);
+      }
+      
+      searchSection.style.display = 'block';
+      
+      // Update section title
+      const titleEl = document.getElementById('sectionTitle');
+      if (titleEl) {
+        titleEl.textContent = 'Semua Buku';
+      }
+      
+      // Load books
+      setTimeout(() => {
+        if (typeof loadAllBooksAndRender === 'function') {
+          loadAllBooksAndRender();
+        } else {
+          loadAllBooks();
+        }
+      }, 100);
+    }
+
     // Setup submenu click handlers
     function setupSubmenuHandlers() {
-      // Semua Buku submenu
-      const semuaBukuLink = document.querySelector('a[href="#searchSemuaBuku"]');
-      if (semuaBukuLink) {
-        semuaBukuLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          // Show search bar
-          const searchBar = document.getElementById('searchSemuaBuku');
-          if (searchBar) {
-            const bsCollapse = new bootstrap.Collapse(searchBar, { show: true });
-          }
-          // Load all books
-          loadAllBooks();
-        });
-      }
       
       // Buku Tersedia submenu
       const allLinks = document.querySelectorAll('a[href="#"]');
@@ -1147,11 +1207,17 @@
         if (link.textContent.includes('Buku Tersedia')) {
           link.addEventListener('click', (e) => {
             e.preventDefault();
-            // Hide search bar
-            const searchBar = document.getElementById('searchSemuaBuku');
-            if (searchBar) {
-              const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+            // Hide search section
+            const searchSection = document.getElementById('searchSemuaBuku');
+            if (searchSection) {
+              searchSection.style.display = 'none';
             }
+            // Show all cards
+            document.querySelectorAll('.card').forEach(card => {
+              if (!card.closest('.modal')) {
+                card.style.display = 'block';
+              }
+            });
             // Load available books
             loadAvailableBooks();
           });
@@ -1160,11 +1226,17 @@
         if (link.textContent.includes('Buku Terbaru')) {
           link.addEventListener('click', (e) => {
             e.preventDefault();
-            // Hide search bar
-            const searchBar = document.getElementById('searchSemuaBuku');
-            if (searchBar) {
-              const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+            // Hide search section
+            const searchSection = document.getElementById('searchSemuaBuku');
+            if (searchSection) {
+              searchSection.style.display = 'none';
             }
+            // Show all cards
+            document.querySelectorAll('.card').forEach(card => {
+              if (!card.closest('.modal')) {
+                card.style.display = 'block';
+              }
+            });
             // Load latest books from server
             loadLatestBooks();
           });
@@ -1176,11 +1248,17 @@
       if (homeLink) {
         homeLink.addEventListener('click', (e) => {
           e.preventDefault();
-          // Collapse search bar if open
-          const searchBar = document.getElementById('searchSemuaBuku');
-          if (searchBar) {
-            const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+          // Hide search section if exists
+          const searchSection = document.getElementById('searchSemuaBuku');
+          if (searchSection) {
+            searchSection.style.display = 'none';
           }
+          // Show all cards again
+          document.querySelectorAll('.card').forEach(card => {
+            if (!card.closest('.modal')) {
+              card.style.display = 'block';
+            }
+          });
           // Restore home title and popular books
           const titleEl = document.getElementById('sectionTitle');
           const container = document.querySelector('.popular-books');
@@ -1209,12 +1287,24 @@
 
     // Bridge existing buttons to module functions used in UI text/links
     window.loadLoanStatus = () => {
+      // Hide search section if exists
+      const searchSection = document.getElementById('searchSemuaBuku');
+      if (searchSection) {
+        searchSection.style.display = 'none';
+      }
+      
       const container = document.querySelector('.popular-books');
       const title = document.getElementById('sectionTitle');
       if (title) title.textContent = 'Status Peminjaman';
       if (container) renderLoanStatus(container);
     };
     window.loadLoanHistory = () => {
+      // Hide search section if exists
+      const searchSection = document.getElementById('searchSemuaBuku');
+      if (searchSection) {
+        searchSection.style.display = 'none';
+      }
+      
       const container = document.querySelector('.popular-books');
       const title = document.getElementById('sectionTitle');
       if (title) title.textContent = 'Riwayat Peminjaman';
@@ -1306,12 +1396,11 @@
   <script type="module">
     import { renderAllBooks } from '../../public/js/books.js';
     let allBooksCache = [];
-    const semuaBukuList = document.getElementById('semuaBukuList');
-    const sortBuku = document.getElementById('sortBuku');
-    const searchBukuInput = document.getElementById('searchBukuInput');
-    const btnCariBuku = document.getElementById('btnCariBuku');
 
     async function loadAllBooksAndRender() {
+      const semuaBukuList = document.getElementById('semuaBukuList');
+      if (!semuaBukuList) return;
+      
       semuaBukuList.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
       try {
         const res = await fetch('/api/books');
@@ -1324,9 +1413,15 @@
     }
 
     function renderBooksWithSortAndSearch() {
+      const semuaBukuList = document.getElementById('semuaBukuList');
+      const searchBukuInput = document.getElementById('searchBukuInput');
+      const sortBuku = document.getElementById('sortBuku');
+      
+      if (!semuaBukuList) return;
+      
       let books = [...allBooksCache];
       // Filter by search
-      const keyword = searchBukuInput.value.trim().toLowerCase();
+      const keyword = searchBukuInput ? searchBukuInput.value.trim().toLowerCase() : '';
       if (keyword) {
         books = books.filter(b =>
           (b.namaBuku || '').toLowerCase().includes(keyword) ||
@@ -1335,7 +1430,7 @@
         );
       }
       // Sort
-      const sortVal = sortBuku.value;
+      const sortVal = sortBuku ? sortBuku.value : 'title-asc';
       if (sortVal === 'title-asc') {
         books.sort((a, b) => (a.namaBuku || '').localeCompare(b.namaBuku || ''));
       } else if (sortVal === 'year-desc') {
@@ -1353,19 +1448,7 @@
       });
     }
 
-    // Event listeners
-    sortBuku?.addEventListener('change', renderBooksWithSortAndSearch);
-    btnCariBuku?.addEventListener('click', renderBooksWithSortAndSearch);
-    searchBukuInput?.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') renderBooksWithSortAndSearch();
-    });
-
-    // Tampilkan daftar buku saat menu dibuka
-    document.querySelectorAll('a[href="#searchSemuaBuku"]').forEach(a => {
-      a.addEventListener('click', () => {
-        setTimeout(loadAllBooksAndRender, 300);
-      });
-    });
+    // Event listeners for dynamically created search elements will be handled in setupSearch() and setupSortHandlers()
   </script>
 </body>
 </html>

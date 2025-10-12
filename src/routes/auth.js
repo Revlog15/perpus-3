@@ -31,7 +31,7 @@ router.post('/register', (req, res) => {
   if (password !== confirmPassword) return res.status(400).send('Konfirmasi password tidak cocok');
   const existing = store.users.find(u => (u.email && u.email.toLowerCase() === String(email).toLowerCase()) || (u.username && u.username.toLowerCase() === String(username).toLowerCase()));
   if (existing) return res.status(400).send('Username atau Email sudah terdaftar');
-  const newUser = { id: `U${String(store.users.length + 1).padStart(3, '0')}`, username, gender, phone, email, password, role: 'user', status: 'active' };
+  const newUser = { id: `U${String(store.users.length + 1).padStart(3, '0')}`, username, gender, phone, email, password, role: 'user', status: 'active', createdAt: new Date().toISOString().split('T')[0] };
   store.users.push(newUser);
   try { store.saveUsers(); } catch (_) {}
   return res.send('Registrasi berhasil');

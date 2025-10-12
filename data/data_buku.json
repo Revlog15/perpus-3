@@ -5,7 +5,7 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 10
+    "stok": 11
   },
   {
     "idBuku": "B002",
@@ -13,7 +13,7 @@
     "penerbit": "Hasta Mitra",
     "tahunTerbit": 1980,
     "penulis": "Pramoedya Ananta Toer",
-    "stok": 10
+    "stok": 8
   },
   {
     "idBuku": "B003",
@@ -21,7 +21,7 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2009,
     "penulis": "Ahmad Fuadi",
-    "stok": 10
+    "stok": 9
   },
   {
     "idBuku": "B004",
@@ -29,7 +29,7 @@
     "penerbit": "Republika",
     "tahunTerbit": 2004,
     "penulis": "Habiburrahman El Shirazy",
-    "stok": 9
+    "stok": 7
   },
   {
     "idBuku": "B005",
