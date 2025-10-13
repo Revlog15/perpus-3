@@ -968,13 +968,12 @@
 
     // Sort functionality
     function setupSortHandlers() {
-      const sortSelect = document.querySelector('#searchSemuaBuku select');
-      if (sortSelect) {
-        sortSelect.addEventListener('change', () => {
-          // Apply sorting and filtering to current data
+      // Use event delegation to survive DOM re-rendering
+      document.addEventListener('change', (e) => {
+        if (e.target && e.target.id === 'sortBuku') {
           renderBooksWithSortAndSearch();
-        });
-      }
+        }
+      });
     }
     
     
@@ -1181,6 +1180,9 @@
       }
       
       searchSection.style.display = 'block';
+      // Hide default popular-books grid to avoid duplicate lists
+      const popularGrid = document.querySelector('.popular-books');
+      if (popularGrid) popularGrid.innerHTML = '';
       
       // Update section title
       const titleEl = document.getElementById('sectionTitle');
@@ -1419,6 +1421,15 @@
       
       if (!semuaBukuList) return;
       
+      // Lazy-load cache if empty
+      if (!Array.isArray(allBooksCache) || allBooksCache.length === 0) {
+        fetch('/api/books')
+          .then(r => r.json())
+          .then(data => { allBooksCache = Array.isArray(data) ? data : []; renderBooksWithSortAndSearch(); })
+          .catch(() => {});
+        return;
+      }
+      
       let books = [...allBooksCache];
       // Filter by search
       const keyword = searchBukuInput ? searchBukuInput.value.trim().toLowerCase() : '';
@@ -1432,19 +1443,33 @@
       // Sort
       const sortVal = sortBuku ? sortBuku.value : 'title-asc';
       if (sortVal === 'title-asc') {
-        books.sort((a, b) => (a.namaBuku || '').localeCompare(b.namaBuku || ''));
+        books.sort((a, b) => (a.namaBuku || '').toString().localeCompare((b.namaBuku || '').toString(), 'id', { sensitivity: 'base' }));
       } else if (sortVal === 'year-desc') {
-        books.sort((a, b) => (b.tahunTerbit || 0) - (a.tahunTerbit || 0));
+        books.sort((a, b) => (parseInt(b.tahunTerbit, 10) || 0) - (parseInt(a.tahunTerbit, 10) || 0));
       } else if (sortVal === 'year-asc') {
-        books.sort((a, b) => (a.tahunTerbit || 0) - (b.tahunTerbit || 0));
+        books.sort((a, b) => (parseInt(a.tahunTerbit, 10) || 0) - (parseInt(b.tahunTerbit, 10) || 0));
       }
       semuaBukuList.innerHTML = '';
       if (books.length === 0) {
         semuaBukuList.innerHTML = '<div class="text-muted text-center py-5">Tidak ada buku ditemukan</div>';
         return;
       }
-      import('./public/js/books.js').then(mod => {
+      import('../../public/js/books.js').then(mod => {
+        // Clear target then render sorted content
+        semuaBukuList.innerHTML = '';
         mod.renderGrid(semuaBukuList, books);
+      }).catch(() => {
+        // Fallback simple render if module path fails
+        const row = document.createElement('div');
+        row.className = 'row';
+        books.forEach(book => {
+          const col = document.createElement('div');
+          col.className = 'col-md-2 mb-3';
+          col.innerHTML = `<div class="card h-100"><div class="card-body p-2 text-center"><small class="d-block fw-semibold text-truncate">${book.namaBuku || '-'}</small><small class="text-muted d-block">${book.penulis || ''}</small><small class="text-secondary d-block">${book.tahunTerbit || ''}</small></div></div>`;
+          row.appendChild(col);
+        });
+        semuaBukuList.innerHTML = '';
+        semuaBukuList.appendChild(row);
       });
     }
 

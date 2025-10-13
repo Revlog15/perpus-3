@@ -1081,13 +1081,14 @@
         // Update statistics
         document.getElementById('totalBooks').textContent = allBooks.length;
         document.getElementById('totalUsers').textContent = allUsers.length;
-        document.getElementById('activeLoans').textContent = allLoans.length;
+        const activeLoansCount = allLoans.filter(loan => loan.status === 'aktif').length;
+        document.getElementById('activeLoans').textContent = activeLoansCount;
         
         // Calculate overdue loans
         const today = new Date();
         const overdueCount = allLoans.filter(loan => {
           const returnDate = new Date(loan.tanggalKembali);
-          return returnDate < today;
+          return returnDate < today && loan.status === 'aktif';
         }).length;
         document.getElementById('overdueLoans').textContent = overdueCount;
 
@@ -1233,12 +1234,7 @@
       console.log('All loans:', allLoans);
       
       // Try different status values in case of case sensitivity
-      const activeLoans = allLoans.filter(loan => 
-        loan.status === 'aktif' || 
-        loan.status === 'Aktif' || 
-        loan.status === 'active' || 
-        loan.status === 'Active'
-      );
+      const activeLoans = allLoans.filter(loan => (loan.status || '').toLowerCase() === 'aktif');
       
       console.log('Active loans found:', activeLoans);
       
@@ -1892,6 +1888,13 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           userSelect.innerHTML += `<option value="${user.id}">${user.nama}</option>`;
         });
 
+        // Set default filters to show ALL data on first load
+        const periodSel = document.getElementById('reportPeriod');
+        const statusSel = document.getElementById('reportStatus');
+        if (periodSel) periodSel.value = 'all';
+        if (statusSel) statusSel.value = 'all';
+        if (userSelect) userSelect.value = 'all';
+
         generateReport();
       } catch (error) {
         console.error('Error loading reports:', error);
@@ -2178,7 +2181,8 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         // Update statistics
         document.getElementById('settingsTotalBooks').textContent = books.length;
         document.getElementById('settingsTotalUsers').textContent = users.length;
-        document.getElementById('settingsActiveLoans').textContent = loans.length;
+        const activeCount = loans.filter(l => (l.status || '').toLowerCase() === 'aktif').length;
+        document.getElementById('settingsActiveLoans').textContent = activeCount;
         
         // Calculate overdue loans
         const today = new Date();
