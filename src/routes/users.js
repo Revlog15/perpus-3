@@ -8,6 +8,7 @@ router.get('/', (req, res) => {
     ...u,
     nama: u.nama || u.username || '',
     telepon: u.telepon || u.phone || '',
+    role: u.role || 'user',
     status: u.status || 'active',
     createdAt: u.createdAt || '',
   }));
@@ -15,12 +16,12 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { nama, email, telepon, password } = req.body;
-  if (!nama || !email || !telepon || !password) return res.status(400).json({ message: 'Semua field harus diisi' });
-  const existingUser = store.users.find(u => (u.email || '').toLowerCase() === String(email).toLowerCase());
-  if (existingUser) return res.status(400).json({ message: 'Email sudah digunakan' });
+  const { username, email, telepon, password } = req.body;
+  if (!username || !email || !telepon || !password) return res.status(400).json({ message: 'Semua field harus diisi' });
+  const existingUser = store.users.find(u => (u.email || '').toLowerCase() === String(email).toLowerCase() || (u.username || '').toLowerCase() === String(username).toLowerCase());
+  if (existingUser) return res.status(400).json({ message: 'Email atau Username sudah digunakan' });
   const newUserId = `U${String(store.users.length + 1).padStart(3, '0')}`;
-  const newUser = { id: newUserId, nama, email, telepon, password, status: 'active', createdAt: new Date().toISOString().split('T')[0] };
+  const newUser = { id: newUserId, username, email, telepon, password, role: 'user', status: 'active', createdAt: new Date().toISOString().split('T')[0] };
   store.users.push(newUser);
   try { store.saveUsers(); } catch (_) {}
   res.status(201).json({ message: 'User berhasil ditambahkan', user: newUser });
@@ -28,12 +29,12 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { nama, email, telepon, password, status } = req.body;
+  const { username, email, telepon, password, status } = req.body;
   const idx = store.users.findIndex(u => u.id === id);
   if (idx === -1) return res.status(404).json({ message: 'User tidak ditemukan' });
-  const exists = store.users.find(u => (u.email || '').toLowerCase() === String(email).toLowerCase() && u.id !== id);
+  const exists = store.users.find(u => ((u.email || '').toLowerCase() === String(email).toLowerCase() || (u.username || '').toLowerCase() === String(username).toLowerCase()) && u.id !== id);
   if (exists) return res.status(400).json({ message: 'Email sudah digunakan' });
-  const updateData = { nama, email, telepon, status: status || 'active' };
+  const updateData = { username, email, telepon, status: status || 'active' };
   if (password) updateData.password = password;
   store.users[idx] = { ...store.users[idx], ...updateData };
   try { store.saveUsers(); } catch (_) {}

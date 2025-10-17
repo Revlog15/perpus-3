@@ -5,7 +5,7 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 11
+    "stok": 0
   },
   {
     "idBuku": "B002",
@@ -29,7 +29,7 @@
     "penerbit": "Republika",
     "tahunTerbit": 2004,
     "penulis": "Habiburrahman El Shirazy",
-    "stok": 7
+    "stok": 8
   },
   {
     "idBuku": "B005",
@@ -181,6 +181,6 @@
     "penerbit": "Random House",
     "tahunTerbit": 2024,
     "penulis": "Ashley Elston",
-    "stok": 11
+    "stok": 10
   }
 ]

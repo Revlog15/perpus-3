@@ -20,7 +20,9 @@ router.post('/', (req, res) => {
   const today = new Date();
   const returnDate = new Date(activeLoan.tanggalKembali);
   const daysLate = Math.max(0, Math.ceil((today - returnDate) / (1000 * 60 * 60 * 24)));
-  const denda = daysLate * 1000;
+  const settings = store.settings || {};
+  const finePerDay = settings.finePerDay || 1000;
+  const denda = daysLate * finePerDay;
   const newReturn = {
     id: `R${String(store.returns.length + 1).padStart(3, '0')}`,
     idBuku,

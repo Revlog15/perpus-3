@@ -14,11 +14,13 @@ function getImageCandidates(book) {
   const baseDir = 'images';
   const title = book?.namaBuku || '';
   const rawJpg = `${baseDir}/${title}.jpg`;
+  const rawJpeg = `${baseDir}/${title}.jpeg`;
   const rawPng = `${baseDir}/${title}.png`;
   const sanitized = sanitizeForFilename(title);
   const sanJpg = `${baseDir}/${sanitized}.jpg`;
+  const sanJpeg = `${baseDir}/${sanitized}.jpeg`;
   const sanPng = `${baseDir}/${sanitized}.png`;
-  return [rawJpg, rawPng, sanJpg, sanPng];
+  return [rawJpg, rawJpeg, rawPng, sanJpg, sanJpeg, sanPng];
 }
 
 function setBookImage(imgEl, book) {

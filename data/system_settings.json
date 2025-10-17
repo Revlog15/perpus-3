@@ -1,0 +1,8 @@
+{
+  "libraryName": "PERPUS ISLAM1",
+  "maxLoanDays": 7,
+  "finePerDay": 1000,
+  "maxBooksPerUser": 3,
+  "autoRenewal": "enabled",
+  "notificationDays": 2
+}

@@ -26,8 +26,157 @@
     "nama": "KIKI",
     "tanggalPinjam": "2025-10-12",
     "tanggalKembali": "2025-10-19",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L004",
+    "idBuku": "B008",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L005",
+    "idBuku": "B011",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L006",
+    "idBuku": "B013",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L007",
+    "idBuku": "B011",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L008",
+    "idBuku": "B005",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L009",
+    "idBuku": "B013",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L010",
+    "idBuku": "B011",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L011",
+    "idBuku": "B011",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L012",
+    "idBuku": "B012",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L013",
+    "idBuku": "B013",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L014",
+    "idBuku": "B010",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L015",
+    "idBuku": "B010",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L016",
+    "idBuku": "B011",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L017",
+    "idBuku": "B012",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L018",
+    "idBuku": "B023",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
     "status": "aktif",
     "terlambat": false
   }
-
 ]

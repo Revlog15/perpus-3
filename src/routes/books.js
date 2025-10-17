@@ -1,7 +1,42 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const store = require('../store');
 
 const router = express.Router();
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join(__dirname, '../../images');
+    // Create images directory if it doesn't exist
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    // Use the filename from the request body
+    const filename = req.body.filename || file.originalname;
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
 
 router.get('/', (req, res) => {
   res.json(store.books);
@@ -42,27 +77,66 @@ router.get('/popular', (req, res) => {
 });
 
 // Admin book management
-router.post('/', (req, res) => {
-  const { idBuku, namaBuku, penulis, penerbit, tahunTerbit, stok } = req.body;
-  if (!idBuku || !namaBuku || !penulis || !penerbit || !tahunTerbit || stok === undefined) {
-    return res.status(400).json({ message: 'Semua field harus diisi' });
+// Create book (supports multipart with optional photo upload)
+router.post('/', upload.single('photo'), (req, res) => {
+  try {
+    const { idBuku, namaBuku, penulis, penerbit } = req.body || {};
+    const tahunTerbit = req.body?.tahunTerbit;
+    const stok = req.body?.stok;
+
+    if (!idBuku || !namaBuku || !penulis || !penerbit || tahunTerbit === undefined || stok === undefined) {
+      return res.status(400).json({ message: 'Semua field harus diisi' });
+    }
+
+    const exists = store.books.find(b => b.idBuku === idBuku);
+    if (exists) return res.status(400).json({ message: 'ID buku sudah ada' });
+
+    // Prepare new book object
+    const newBook = {
+      idBuku,
+      namaBuku,
+      penulis,
+      penerbit,
+      tahunTerbit: parseInt(tahunTerbit),
+      stok: parseInt(stok),
+    };
+
+    // If photo uploaded, ensure file name matches sanitized title and keep extension
+    if (req.file) {
+      const sanitize = (str) => String(str || '')
+        .normalize('NFKD')
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/[\s_]+/g, '-')
+        .toLowerCase();
+
+      const imagesDir = path.join(__dirname, '../../images');
+      const ext = path.extname(req.file.originalname) || '.jpg';
+      const desiredName = sanitize(namaBuku) + ext;
+      const currentPath = req.file.path;
+      const desiredPath = path.join(imagesDir, desiredName);
+
+      try {
+        if (path.basename(currentPath) !== desiredName) {
+          // Rename/move to desired file name
+          fs.renameSync(currentPath, desiredPath);
+        }
+        newBook.photo = desiredName; // store filename for admin view if needed
+      } catch (err) {
+        console.error('Failed to finalize uploaded photo name:', err.message);
+      }
+    }
+
+    store.books.push(newBook);
+    try { store.saveBooks(); } catch (_) {}
+    return res.status(201).json({ message: 'Buku berhasil ditambahkan', book: newBook });
+  } catch (err) {
+    console.error('Failed to add book:', err);
+    return res.status(500).json({ message: 'Gagal menambahkan buku' });
   }
-  const exists = store.books.find(b => b.idBuku === idBuku);
-  if (exists) return res.status(400).json({ message: 'ID buku sudah ada' });
-  const newBook = {
-    idBuku,
-    namaBuku,
-    penulis,
-    penerbit,
-    tahunTerbit: parseInt(tahunTerbit),
-    stok: parseInt(stok),
-  };
-  store.books.push(newBook);
-  try { store.saveBooks(); } catch (_) {}
-  res.status(201).json({ message: 'Buku berhasil ditambahkan', book: newBook });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', upload.single('photo'), (req, res) => {
   const { id } = req.params;
   const { namaBuku, penulis, penerbit, tahunTerbit, stok } = req.body;
   const idx = store.books.findIndex(b => b.idBuku === id);
@@ -74,6 +148,30 @@ router.put('/:id', (req, res) => {
   if (penerbit !== undefined) updated.penerbit = penerbit;
   if (tahunTerbit !== undefined) updated.tahunTerbit = parseInt(tahunTerbit);
   if (stok !== undefined) updated.stok = parseInt(stok);
+
+  // If new photo is uploaded, rename and store filename
+  if (req.file) {
+    const sanitize = (str) => String(str || '')
+      .normalize('NFKD')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/[\s_]+/g, '-')
+      .toLowerCase();
+    const imagesDir = path.join(__dirname, '../../images');
+    const ext = path.extname(req.file.originalname) || '.jpg';
+    const desiredName = sanitize(namaBuku || updated.namaBuku) + ext;
+    const currentPath = req.file.path;
+    const desiredPath = path.join(imagesDir, desiredName);
+    try {
+      if (path.basename(currentPath) !== desiredName) {
+        fs.renameSync(currentPath, desiredPath);
+      }
+      updated.photo = desiredName;
+    } catch (err) {
+      console.error('Failed to finalize uploaded photo name (update):', err.message);
+    }
+  }
+
   store.books[idx] = updated;
   try { store.saveBooks(); } catch (_) {}
   res.json({ message: 'Buku berhasil diupdate', book: store.books[idx] });
@@ -88,6 +186,24 @@ router.delete('/:id', (req, res) => {
   store.books.splice(idx, 1);
   try { store.saveBooks(); } catch (_) {}
   res.json({ message: 'Buku berhasil dihapus' });
+});
+
+// Photo upload endpoint
+router.post('/upload-photo', upload.single('photo'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No photo uploaded' });
+    }
+    
+    res.json({ 
+      message: 'Photo uploaded successfully',
+      filename: req.file.filename,
+      path: `/images/${req.file.filename}`
+    });
+  } catch (error) {
+    console.error('Photo upload error:', error);
+    res.status(500).json({ message: 'Photo upload failed', error: error.message });
+  }
 });
 
 module.exports = router;

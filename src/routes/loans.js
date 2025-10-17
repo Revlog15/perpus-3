@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { idBuku, idUser } = req.body;
+  const { idBuku, idUser, maxLoanDays } = req.body;
   if (!idBuku || !idUser) return res.status(400).json({ message: 'ID Buku dan ID User harus diisi' });
   const user = store.users.find(u => u.id === idUser);
   if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
@@ -24,9 +24,19 @@ router.post('/', (req, res) => {
   if (book.stok <= 0) return res.status(400).json({ message: 'Buku tidak tersedia (stok habis)' });
   const existingLoan = store.loans.find(l => l.idBuku === idBuku && l.idUser === idUser && l.status === 'aktif');
   if (existingLoan) return res.status(400).json({ message: 'Anda sudah meminjam buku ini' });
+  
+  // Check max books per user using system settings
+  const settings = store.settings || {};
+  const maxBooksPerUser = settings.maxBooksPerUser || 5;
+  const userActiveLoans = store.loans.filter(l => l.idUser === idUser && l.status === 'aktif');
+  if (userActiveLoans.length >= maxBooksPerUser) {
+    return res.status(400).json({ message: `Maksimal ${maxBooksPerUser} buku per user. Anda sudah meminjam ${userActiveLoans.length} buku.` });
+  }
+  
   const today = new Date().toISOString().split('T')[0];
   const returnDate = new Date();
-  returnDate.setDate(returnDate.getDate() + 7);
+  const loanDays = maxLoanDays || settings.maxLoanDays || 7;
+  returnDate.setDate(returnDate.getDate() + loanDays);
   const newLoan = {
     id: `L${String(store.loans.length + 1).padStart(3, '0')}`,
     idBuku,

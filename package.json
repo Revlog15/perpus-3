@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "perpustakaan-digital",
   "version": "1.0.0",
   "description": "Digital Library Management System",
@@ -8,8 +8,10 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.15.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

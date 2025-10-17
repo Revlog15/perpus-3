@@ -31,7 +31,39 @@ export function renderLoanForm(target) {
       msg.textContent = 'Silakan login terlebih dahulu';
       return;
     }
+    
+    // Load system settings for validation
+    let systemSettings = {
+      maxBooksPerUser: 5,
+      maxLoanDays: 7
+    };
+    try {
+      const settingsRes = await fetch(`${API_BASE}/admin/settings`);
+      if (settingsRes.ok) {
+        const settings = await settingsRes.json();
+        systemSettings = { ...systemSettings, ...settings };
+      }
+    } catch (err) {
+      console.warn('Failed to load system settings for validation:', err);
+    }
+    
+    // Check current active loans count
+    try {
+      const loansRes = await fetch(`${API_BASE}/loans?userId=${encodeURIComponent(idUser)}&status=aktif`);
+      if (loansRes.ok) {
+        const activeLoans = await loansRes.json();
+        if (Array.isArray(activeLoans) && activeLoans.length >= systemSettings.maxBooksPerUser) {
+          msg.className = 'alert alert-warning';
+          msg.textContent = `Maksimal ${systemSettings.maxBooksPerUser} buku per user. Anda sudah meminjam ${activeLoans.length} buku.`;
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to check active loans:', err);
+    }
+    
     data.idUser = idUser;
+    data.maxLoanDays = systemSettings.maxLoanDays;
     try {
       const res = await fetch(`${API_BASE}/loans`, {
         method: 'POST',

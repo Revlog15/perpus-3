@@ -1,11 +1,11 @@
 [
   {
     "id": "U003",
-    "username": "admin",
+    "username": "admin1",
     "gender": "N/A",
     "phone": "12346",
     "email": "admin@gmail.com",
-    "password": "123",
+    "password": "123456",
     "role": "admin",
     "status": "active",
     "createdAt": "2025-10-13"
@@ -23,13 +23,22 @@
   },
   {
     "id": "U002",
-    "username": "KIKI",
+    "username": "rifky",
     "gender": "Pria",
     "phone": "1234",
-    "email": "aaa@gmail.com",
-    "password": "123",
+    "password": "12345",
     "role": "user",
     "status": "active",
     "createdAt": "2025-10-13"
+  },
+  {
+    "id": "U004",
+    "username": "revand",
+    "email": "rev@gmail.com",
+    "telepon": "1234",
+    "password": "123",
+    "role": "user",
+    "status": "active",
+    "createdAt": "2025-10-17"
   }
 ]

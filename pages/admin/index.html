@@ -481,14 +481,6 @@
           <h4><i class="fas fa-book-reader me-2"></i>Kelola Peminjaman</h4>
           <p class="text-muted mb-0">Kelola peminjaman aktif, konfirmasi pengembalian, dan pantau keterlambatan</p>
         </div>
-        <div class="btn-group">
-          <button class="btn btn-outline-primary" onclick="showActiveLoans()">
-            <i class="fas fa-list me-2"></i>Peminjaman Aktif
-          </button>
-          <button class="btn btn-outline-warning" onclick="showOverdueLoans()">
-            <i class="fas fa-exclamation-triangle me-2"></i>Keterlambatan
-          </button>
-        </div>
       </div>
 
       <!-- Loan Management Tabs -->
@@ -583,13 +575,13 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="returnLoanId" class="form-label">ID Peminjaman</label>
-                      <input type="text" class="form-control" id="returnLoanId" placeholder="Masukkan ID peminjaman">
+                      <input type="text" class="form-control" id="returnLoanId" name="returnLoanId" placeholder="Masukkan ID peminjaman">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="returnBookId" class="form-label">ID Buku</label>
-                      <input type="text" class="form-control" id="returnBookId" placeholder="Masukkan ID buku">
+                      <input type="text" class="form-control" id="returnBookId" name="returnBookId" placeholder="Masukkan ID buku">
                     </div>
                   </div>
                 </div>
@@ -597,13 +589,13 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="returnBorrowerName" class="form-label">Nama Peminjam</label>
-                      <input type="text" class="form-control" id="returnBorrowerName" placeholder="Masukkan nama peminjam">
+                      <input type="text" class="form-control" id="returnBorrowerName" name="returnBorrowerName" placeholder="Masukkan nama peminjam">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="returnCondition" class="form-label">Kondisi Buku</label>
-                      <select class="form-select" id="returnCondition">
+                      <select class="form-select" id="returnCondition" name="returnCondition">
                         <option value="baik">Baik</option>
                         <option value="rusak_ringan">Rusak Ringan</option>
                         <option value="rusak_berat">Rusak Berat</option>
@@ -614,7 +606,7 @@
                 </div>
                 <div class="mb-3">
                   <label for="returnNotes" class="form-label">Catatan (opsional)</label>
-                  <textarea class="form-control" id="returnNotes" rows="3" placeholder="Catatan tambahan..."></textarea>
+                  <textarea class="form-control" id="returnNotes" name="returnNotes" rows="3" placeholder="Catatan tambahan..."></textarea>
                 </div>
                 <button type="submit" class="btn btn-success">
                   <i class="fas fa-check me-2"></i>Konfirmasi Pengembalian
@@ -720,7 +712,7 @@
       <div class="row mb-4">
         <div class="col-md-3">
           <label class="form-label">Periode</label>
-          <select class="form-select" id="reportPeriod">
+          <select class="form-select" id="reportPeriod" onchange="generateReport()">
             <option value="today">Hari Ini</option>
             <option value="week">Minggu Ini</option>
             <option value="month">Bulan Ini</option>
@@ -729,7 +721,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Status</label>
-          <select class="form-select" id="reportStatus">
+          <select class="form-select" id="reportStatus" onchange="generateReport()">
             <option value="all">Semua Status</option>
             <option value="active">Aktif</option>
             <option value="overdue">Terlambat</option>
@@ -738,7 +730,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">User</label>
-          <select class="form-select" id="reportUser">
+          <select class="form-select" id="reportUser" onchange="generateReport()">
             <option value="all">Semua User</option>
           </select>
         </div>
@@ -754,15 +746,15 @@
       <div class="row mb-4">
         <div class="col-md-3">
           <label class="form-label">Dari Tanggal</label>
-          <input type="date" class="form-control" id="reportFrom">
+          <input type="date" class="form-control" id="reportFrom" onchange="generateReport()">
         </div>
         <div class="col-md-3">
           <label class="form-label">Sampai Tanggal</label>
-          <input type="date" class="form-control" id="reportTo">
+          <input type="date" class="form-control" id="reportTo" onchange="generateReport()">
         </div>
         <div class="col-md-4">
           <label class="form-label">Kata Kunci</label>
-          <input type="text" class="form-control" id="reportKeyword" placeholder="Cari judul, ID buku, nama peminjam...">
+          <input type="text" class="form-control" id="reportKeyword" placeholder="Cari judul, ID buku, nama peminjam..." oninput="generateReport()" onkeydown="if(event.key==='Enter'){event.preventDefault();generateReport();}">
         </div>
         <div class="col-md-2">
           <label class="form-label">&nbsp;</label>
@@ -837,6 +829,18 @@
                 </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="bookPhoto" class="form-label">Foto Buku</label>
+                  <input type="file" class="form-control" id="bookPhoto" name="photo" accept="image/*">
+                  <div class="form-text">Format: JPG, PNG. Nama file akan otomatis disesuaikan dengan judul buku.</div>
+                  <div id="photoPreview" class="mt-2" style="display: none;">
+                    <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                  </div>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
@@ -884,6 +888,18 @@
                 </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="editBookPhoto" class="form-label">Foto Buku</label>
+                  <input type="file" class="form-control" id="editBookPhoto" name="photo" accept="image/*">
+                  <div class="form-text">Format: JPG, PNG. Kosongkan jika tidak ingin mengubah foto.</div>
+                  <div id="editPhotoPreview" class="mt-2" style="display: none;">
+                    <img id="editPreviewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                  </div>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
@@ -905,20 +921,20 @@
         <div class="modal-body">
           <form id="addUserForm">
             <div class="mb-3">
-              <label for="userName" class="form-label">Nama Lengkap</label>
-              <input type="text" class="form-control" id="userName" required>
+              <label for="userName" class="form-label">Username</label>
+              <input type="text" class="form-control" id="userName" name="username" required>
             </div>
             <div class="mb-3">
               <label for="userEmail" class="form-label">Email</label>
-              <input type="email" class="form-control" id="userEmail" required>
+              <input type="email" class="form-control" id="userEmail" name="email" required>
             </div>
             <div class="mb-3">
               <label for="userPhone" class="form-label">Telepon</label>
-              <input type="text" class="form-control" id="userPhone" required>
+              <input type="text" class="form-control" id="userPhone" name="telepon" required>
             </div>
             <div class="mb-3">
               <label for="userPassword" class="form-label">Password</label>
-              <input type="password" class="form-control" id="userPassword" required>
+              <input type="password" class="form-control" id="userPassword" name="password" required>
             </div>
           </form>
         </div>
@@ -942,8 +958,8 @@
           <form id="editUserForm">
             <input type="hidden" id="editUserId">
             <div class="mb-3">
-              <label for="editUserName" class="form-label">Nama Lengkap</label>
-              <input type="text" class="form-control" id="editUserName" required>
+              <label for="editUserName" class="form-label">Username</label>
+              <input type="text" class="form-control" id="editUserName" name="username" required>
             </div>
             <div class="mb-3">
               <label for="editUserEmail" class="form-label">Email</label>
@@ -1017,6 +1033,7 @@
     let allUsers = [];
     let allLoans = [];
     let allReturns = [];
+    let reportsInitialized = false; // prevent filters from resetting after user interaction
 
     // Show specific section
     function showSection(sectionName) {
@@ -1030,11 +1047,17 @@
         item.classList.remove('active');
       });
       
-      // Show selected section
-      document.getElementById(sectionName + '-section').classList.add('active');
+      // Show selected section (guard if element not found)
+      const targetSection = document.getElementById(sectionName + '-section');
+      if (targetSection) {
+        targetSection.classList.add('active');
+      }
       
-      // Add active class to selected menu item
-      document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+      // Add active class to selected menu item (guard if element not found)
+      const targetMenuItem = document.querySelector(`[data-section="${sectionName}"]`);
+      if (targetMenuItem) {
+        targetMenuItem.classList.add('active');
+      }
       
       // Load section-specific data
       switch(sectionName) {
@@ -1080,7 +1103,8 @@
 
         // Update statistics
         document.getElementById('totalBooks').textContent = allBooks.length;
-        document.getElementById('totalUsers').textContent = allUsers.length;
+        const nonAdminUsersDash = allUsers.filter(u => String(u.role || '').toLowerCase() !== 'admin');
+        document.getElementById('totalUsers').textContent = nonAdminUsersDash.length;
         const activeLoansCount = allLoans.filter(loan => loan.status === 'aktif').length;
         document.getElementById('activeLoans').textContent = activeLoansCount;
         
@@ -1434,7 +1458,10 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       }
 
       let usersHTML = '';
-      users.forEach(user => {
+      const showAdmins = false; // hide admin rows from user management list
+      users
+        .filter(u => showAdmins ? true : (String(u.role || '').toLowerCase() !== 'admin'))
+        .forEach(user => {
         const activeLoans = allLoans.filter(loan => loan.idUser === user.id && loan.status === 'aktif').length;
         const statusClass = user.status === 'active' ? 'success' : 'danger';
         const statusText = user.status === 'active' ? 'Aktif' : 'Tidak Aktif';
@@ -1541,7 +1568,7 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       if (!user) return;
 
       document.getElementById('editUserId').value = user.id;
-      document.getElementById('editUserName').value = user.nama;
+      document.getElementById('editUserName').value = user.username || user.nama;
       document.getElementById('editUserEmail').value = user.email;
       document.getElementById('editUserPhone').value = user.telepon;
       document.getElementById('editUserStatus').value = user.status || 'active';
@@ -1686,7 +1713,8 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       try {
         const response = await fetch(`${API_BASE}/books`);
         allBooks = await response.json();
-        displayBooks(allBooks);
+        // Apply current filter instead of showing all books
+        searchBooks();
       } catch (error) {
         console.error('Error loading books:', error);
         document.getElementById('booksGrid').innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat data buku</div>';
@@ -1702,15 +1730,53 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         return;
       }
 
+      // Helpers to resolve book image filenames (match user page logic)
+      function sanitizeForFilename(str) {
+        return (str || '')
+          .toString()
+          .normalize('NFKD')
+          .replace(/[^\w\s-]/g, '')
+          .trim()
+          .replace(/[\s_]+/g, '-')
+          .toLowerCase();
+      }
+      window._tryBookImage = function(imgEl) {
+        const title = imgEl.getAttribute('data-title') || '';
+        const sanitized = sanitizeForFilename(title);
+        const candidates = [
+          `/images/${sanitized}.jpg`,
+          `/images/${sanitized}.jpeg`,
+          `/images/${sanitized}.png`,
+          `/images/${title}.jpg`,
+          `/images/${title}.jpeg`,
+          `/images/${title}.png`,
+        ];
+        let idx = parseInt(imgEl.getAttribute('data-idx') || '0', 10);
+        if (idx >= candidates.length) {
+          imgEl.onerror = null;
+          imgEl.src = 'https://via.placeholder.com/300x200?text=No+Image';
+          return;
+        }
+        const src = candidates[idx++];
+        imgEl.setAttribute('data-idx', String(idx));
+        // encode only the filename portion for spaces/non-ascii
+        const parts = src.split('/');
+        parts[parts.length - 1] = encodeURIComponent(parts[parts.length - 1]);
+        imgEl.src = parts.join('/');
+      };
+
       let booksHTML = '';
       books.forEach(book => {
         booksHTML += `
           <div class="col-md-3 mb-3">
             <div class="card book-card">
-              <img src="/images/${book.namaBuku.toLowerCase().replace(/\s+/g, '')}.jpg" 
+              <img 
                    class="card-img-top book-img" 
                    alt="${book.namaBuku}"
-                   onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                   data-title="${book.namaBuku}"
+                   data-idx="0"
+                   onerror="window._tryBookImage(this)"
+                   src="/images/${sanitizeForFilename(book.namaBuku)}.jpg">
               <div class="card-body">
                 <h6 class="card-title">${book.namaBuku}</h6>
                 <p class="card-text">
@@ -1762,40 +1828,94 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     function showAddBookModal() {
       const modal = new bootstrap.Modal(document.getElementById('addBookModal'));
       modal.show();
+      
+      // Reset photo preview
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('bookPhoto').value = '';
     }
+    
+    // Photo preview functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add book photo preview
+      const photoInput = document.getElementById('bookPhoto');
+      const photoPreview = document.getElementById('photoPreview');
+      const previewImg = document.getElementById('previewImg');
+      
+      if (photoInput) {
+        photoInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              previewImg.src = e.target.result;
+              photoPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          } else {
+            photoPreview.style.display = 'none';
+          }
+        });
+      }
+      
+      // Edit book photo preview
+      const editPhotoInput = document.getElementById('editBookPhoto');
+      const editPhotoPreview = document.getElementById('editPhotoPreview');
+      const editPreviewImg = document.getElementById('editPreviewImg');
+      
+      if (editPhotoInput) {
+        editPhotoInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              editPreviewImg.src = e.target.result;
+              editPhotoPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          } else {
+            editPhotoPreview.style.display = 'none';
+          }
+        });
+      }
+    });
 
     // Add new book
     async function addBook() {
       const form = document.getElementById('addBookForm');
       const formData = new FormData(form);
-      const bookData = Object.fromEntries(formData.entries());
+      // also append sanitized filename so backend can rename properly
+      const title = (formData.get('namaBuku') || '').toString();
+      const sanitized = title
+        .normalize('NFKD')
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/[\s_]+/g, '-')
+        .toLowerCase();
+      if (sanitized) {
+        const file = formData.get('photo');
+        if (file && typeof file === 'object') {
+          const ext = (file.name && file.name.split('.').pop()) ? ('.' + file.name.split('.').pop()) : '.jpg';
+          formData.append('filename', `${sanitized}${ext}`);
+        }
+      }
 
       try {
-        const response = await fetch(`${API_BASE}/books`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bookData)
-        });
+        const response = await fetch(`${API_BASE}/books`, { method: 'POST', body: formData });
 
-        if (response.ok) {
-          alert('Buku berhasil ditambahkan');
-          bootstrap.Modal.getInstance(document.getElementById('addBookModal')).hide();
-          form.reset();
-          loadAllBooks();
-          // refresh stats without page reload
-          if (typeof loadDashboardData === 'function') loadDashboardData();
-          if (typeof loadSettings === 'function') loadSettings();
-          try { localStorage.setItem('books:updated', String(Date.now())); } catch (e) {}
-        } else {
-          const error = await response.json();
-          alert('Error: ' + error.message);
-        }
-      } catch (error) {
-        alert('Terjadi kesalahan: ' + error.message);
-      }
+    if (response.ok) {
+      alert('Buku berhasil ditambahkan');
+      bootstrap.Modal.getInstance(document.getElementById('addBookModal')).hide();
+      form.reset();
+      loadAllBooks();
+    } else {
+      const error = await response.json();
+      alert('Error: ' + error.message);
     }
+  } catch (error) {
+    alert('Terjadi kesalahan: ' + error.message);
+  }
+}
+
 
     // Edit book
     function editBook(bookId) {
@@ -1808,6 +1928,10 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       document.getElementById('editBookPublisher').value = book.penerbit;
       document.getElementById('editBookYear').value = book.tahunTerbit;
       document.getElementById('editBookStock').value = book.stok;
+      
+      // Reset photo preview and file input
+      document.getElementById('editPhotoPreview').style.display = 'none';
+      document.getElementById('editBookPhoto').value = '';
 
       const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
       modal.show();
@@ -1819,8 +1943,17 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       const form = document.getElementById('editBookForm');
       const formData = new FormData(form);
       const bookData = Object.fromEntries(formData.entries());
+      
+      // Handle photo upload
+      const photoFile = document.getElementById('editBookPhoto').files[0];
+      if (photoFile) {
+        // Generate filename based on book title
+        const filename = bookData.namaBuku.toLowerCase().replace(/\s+/g, '') + '.jpg';
+        bookData.photoFilename = filename;
+      }
 
       try {
+        // First, update the book data
         const response = await fetch(`${API_BASE}/books/${bookId}`, {
           method: 'PUT',
           headers: {
@@ -1828,6 +1961,26 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           },
           body: JSON.stringify(bookData)
         });
+        
+        if (response.ok && photoFile) {
+          // Then upload the photo
+          const photoFormData = new FormData();
+          photoFormData.append('photo', photoFile);
+          photoFormData.append('filename', bookData.photoFilename);
+          
+          try {
+            const photoResponse = await fetch(`${API_BASE}/books/upload-photo`, {
+              method: 'POST',
+              body: photoFormData
+            });
+            
+            if (!photoResponse.ok) {
+              console.warn('Photo upload failed, but book was updated');
+            }
+          } catch (photoError) {
+            console.warn('Photo upload error:', photoError);
+          }
+        }
 
         if (response.ok) {
           alert('Buku berhasil diupdate');
@@ -1835,7 +1988,14 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           loadAllBooks();
           if (typeof loadDashboardData === 'function') loadDashboardData();
           if (typeof loadSettings === 'function') loadSettings();
-          try { localStorage.setItem('books:updated', String(Date.now())); } catch (e) {}
+          try { 
+            const timestamp = String(Date.now());
+            localStorage.setItem('books:updated', timestamp); 
+            localStorage.setItem('loans:updated', timestamp);
+            console.log('Admin triggered book/loan updates:', timestamp);
+          } catch (e) {
+            console.error('Failed to trigger updates:', e);
+          }
         } else {
           const error = await response.json();
           alert('Error: ' + error.message);
@@ -1869,6 +2029,16 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     // Load reports
     async function loadReports() {
       try {
+        // Preserve current selections if already initialized
+        const prev = reportsInitialized ? {
+          period: document.getElementById('reportPeriod')?.value,
+          status: document.getElementById('reportStatus')?.value,
+          user: document.getElementById('reportUser')?.value,
+          from: document.getElementById('reportFrom')?.value,
+          to: document.getElementById('reportTo')?.value,
+          keyword: document.getElementById('reportKeyword')?.value,
+        } : null;
+
         const [loansRes, returnsRes, booksRes, usersRes] = await Promise.all([
           fetch(`${API_BASE}/loans`),
           fetch(`${API_BASE}/returns`),
@@ -1881,19 +2051,34 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         allBooks = await booksRes.json();
         allUsers = await usersRes.json();
 
-        // Populate user filter
+        // Populate user filter (rebuild options but keep current selection if any)
         const userSelect = document.getElementById('reportUser');
-        userSelect.innerHTML = '<option value="all">Semua User</option>';
-        allUsers.forEach(user => {
-          userSelect.innerHTML += `<option value="${user.id}">${user.nama}</option>`;
-        });
+        if (userSelect) {
+          const wanted = prev?.user || 'all';
+          userSelect.innerHTML = '<option value="all">Semua User</option>';
+          allUsers
+            .filter(u => String(u.role || '').toLowerCase() !== 'admin')
+            .forEach(user => {
+              userSelect.innerHTML += `<option value="${user.id}">${user.nama}</option>`;
+            });
+          userSelect.value = wanted;
+        }
 
-        // Set default filters to show ALL data on first load
+        // On first load, set defaults; otherwise restore previous selections
         const periodSel = document.getElementById('reportPeriod');
         const statusSel = document.getElementById('reportStatus');
-        if (periodSel) periodSel.value = 'all';
-        if (statusSel) statusSel.value = 'all';
-        if (userSelect) userSelect.value = 'all';
+        if (!reportsInitialized) {
+          if (periodSel) periodSel.value = 'all';
+          if (statusSel) statusSel.value = 'all';
+          if (userSelect) userSelect.value = 'all';
+          reportsInitialized = true;
+        } else if (prev) {
+          if (periodSel && prev.period) periodSel.value = prev.period;
+          if (statusSel && prev.status) statusSel.value = prev.status;
+          if (document.getElementById('reportFrom')) document.getElementById('reportFrom').value = prev.from || '';
+          if (document.getElementById('reportTo')) document.getElementById('reportTo').value = prev.to || '';
+          if (document.getElementById('reportKeyword')) document.getElementById('reportKeyword').value = prev.keyword || '';
+        }
 
         generateReport();
       } catch (error) {
@@ -2178,9 +2363,10 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         const users = await usersRes.json();
         const loans = await loansRes.json();
 
-        // Update statistics
+        // Update statistics (exclude admin accounts from user count)
         document.getElementById('settingsTotalBooks').textContent = books.length;
-        document.getElementById('settingsTotalUsers').textContent = users.length;
+        const nonAdminUsers = users.filter(u => String(u.role || '').toLowerCase() !== 'admin');
+        document.getElementById('settingsTotalUsers').textContent = nonAdminUsers.length;
         const activeCount = loans.filter(l => (l.status || '').toLowerCase() === 'aktif').length;
         document.getElementById('settingsActiveLoans').textContent = activeCount;
         
@@ -2192,7 +2378,15 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         }).length;
         document.getElementById('settingsOverdueLoans').textContent = overdueCount;
 
-        // Load settings from localStorage or use defaults
+        // Load settings from server and populate form
+        try {
+          const settingsRes = await fetch(`${API_BASE}/admin/settings`);
+          if (settingsRes.ok) {
+            const settings = await settingsRes.json();
+            localStorage.setItem('systemSettings', JSON.stringify(settings));
+          }
+        } catch (e) { /* ignore, fallback to localStorage */ }
+
         loadSystemSettings();
       } catch (error) {
         console.error('Error loading settings:', error);
@@ -2203,12 +2397,18 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     function loadSystemSettings() {
       const settings = JSON.parse(localStorage.getItem('systemSettings') || '{}');
       
-      document.getElementById('libraryName').value = settings.libraryName || 'PERPUS ISLAM';
-      document.getElementById('maxLoanDays').value = settings.maxLoanDays || 7;
-      document.getElementById('finePerDay').value = settings.finePerDay || 1000;
-      document.getElementById('maxBooksPerUser').value = settings.maxBooksPerUser || 5;
-      document.getElementById('autoRenewal').value = settings.autoRenewal || 'disabled';
-      document.getElementById('notificationDays').value = settings.notificationDays || 2;
+      document.getElementById('libraryName').value = settings.libraryName ?? 'PERPUS ISLAM';
+      document.getElementById('maxLoanDays').value = settings.maxLoanDays ?? 7;
+      document.getElementById('finePerDay').value = settings.finePerDay ?? 1000;
+      document.getElementById('maxBooksPerUser').value = settings.maxBooksPerUser ?? 5;
+      document.getElementById('autoRenewal').value = settings.autoRenewal ?? 'disabled';
+      document.getElementById('notificationDays').value = settings.notificationDays ?? 2;
+
+      // Reflect library name in sidebar on load
+      const sidebarTitle = document.querySelector('.sidebar h4');
+      if (sidebarTitle && (settings.libraryName ?? '').trim()) {
+        sidebarTitle.textContent = `📚 ${settings.libraryName}`;
+      }
     }
 
     // Save system settings
@@ -2249,9 +2449,10 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         const loans = await loansRes.json();
         const returns = await returnsRes.json();
 
-        // Update admin statistics
+        // Update admin statistics (exclude admin accounts)
         document.getElementById('adminTotalBooks').textContent = books.length;
-        document.getElementById('adminTotalUsers').textContent = users.length;
+        const nonAdmin = users.filter(u => String(u.role || '').toLowerCase() !== 'admin');
+        document.getElementById('adminTotalUsers').textContent = nonAdmin.length;
         
         const activeLoans = loans.filter(loan => loan.status === 'aktif');
         document.getElementById('adminActiveLoans').textContent = activeLoans.length;
@@ -2264,19 +2465,18 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
         });
         document.getElementById('adminOverdueLoans').textContent = overdueLoans.length;
 
-        // Ambil data admin dari data_login.js
-        fetch('/data/data_login.js')
-          .then(response => response.json())
-          .then(users => {
-            // Cari user dengan role admin dan username 'admin'
-            const admin = users.find(u => u.role === 'admin' && u.username === 'admin');
-            if (admin) {
-              document.getElementById('profileEmail').textContent = admin.email || '-';
-              document.getElementById('detailEmail').textContent = admin.email || '-';
-              document.getElementById('profileUsername').textContent = admin.username;
-              document.getElementById('detailUsername').textContent = admin.username;
-            }
-          });
+        // Prefill profile for current logged-in user (fallback: first admin)
+        const meId = localStorage.getItem('userid');
+        const me = users.find(u => u.id === meId) || users.find(u => (u.role || '').toLowerCase() === 'admin');
+        if (me) {
+          document.getElementById('profileEmail').textContent = me.email || '-';
+          document.getElementById('detailEmail').textContent = me.email || '-';
+          document.getElementById('profileUsername').textContent = me.username || me.nama || 'admin';
+          document.getElementById('detailUsername').textContent = me.username || me.nama || 'admin';
+          if (document.getElementById('editEmail')) document.getElementById('editEmail').value = me.email || '';
+          if (document.getElementById('editUsername')) document.getElementById('editUsername').value = me.username || me.nama || '';
+          if (document.getElementById('editName')) document.getElementById('editName').value = me.username || me.nama || '';
+        }
       } catch (error) {
         console.error('Error loading profile data:', error);
       }
@@ -2301,17 +2501,17 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     }
 
     // Update admin name in dropdown
-    function updateAdminDropdown(adminName = null) {
-      if (!adminName) {
-        adminName = document.getElementById('editName')?.value || 'Admin';
+    function updateAdminDropdown(displayName = null) {
+      if (!displayName) {
+        displayName = document.getElementById('editUsername')?.value || document.getElementById('editName')?.value || 'Admin';
       }
-      document.getElementById('adminDropdownName').textContent = adminName;
-      document.getElementById('adminName').textContent = `Halo, ${adminName} 👋`;
+      document.getElementById('adminDropdownName').textContent = displayName;
+      document.getElementById('adminName').textContent = `Halo, ${displayName} 👋`;
     }
 
 
     // Profile form submission
-    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+    document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const password = document.getElementById('editPassword').value;
@@ -2333,6 +2533,28 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       const newEmail = document.getElementById('editEmail').value;
       const newBio = document.getElementById('editBio').value;
       
+      // Persist to server
+      try {
+        const userId = localStorage.getItem('userid');
+        if (userId) {
+          const payload = { username: newUsername, email: newEmail };
+          if (password) payload.password = password;
+          const res = await fetch(`${API_BASE}/users/${encodeURIComponent(userId)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            document.getElementById('profileMessage').innerHTML = `<div class="alert alert-danger">Gagal menyimpan profil: ${err.message || res.status}</div>`;
+            return;
+          }
+        }
+      } catch (err) {
+        document.getElementById('profileMessage').innerHTML = `<div class="alert alert-danger">Gagal terhubung ke server</div>`;
+        return;
+      }
+
       // Update view profile
       document.getElementById('profileName').textContent = newName;
       document.getElementById('profileUsername').textContent = newUsername;
@@ -2341,8 +2563,8 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
       document.getElementById('detailUsername').textContent = newUsername;
       document.getElementById('detailEmail').textContent = newEmail;
       
-      // Update dropdown and header
-      updateAdminDropdown(newName);
+      // Update dropdown and header using username
+      updateAdminDropdown(newUsername || newName);
       
       document.getElementById('profileMessage').innerHTML = '<div class="alert alert-success">Profil berhasil diupdate</div>';
       
@@ -2358,18 +2580,46 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     });
 
     // Settings form submission
-    document.getElementById('systemSettingsForm').addEventListener('submit', function(e) {
+    document.getElementById('systemSettingsForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const settings = saveSystemSettings();
       
-      document.getElementById('settingsMessage').innerHTML = `
-        <div class="alert alert-success">
-          <i class="fas fa-check-circle me-2"></i>Pengaturan berhasil disimpan
-        </div>
-      `;
-      
-      // Show success message for 3 seconds
+      // Persist to server
+      try {
+        const res = await fetch(`${API_BASE}/admin/settings`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings)
+        });
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          throw new Error(text || `Gagal menyimpan pengaturan (status ${res.status})`);
+        }
+        const data = await res.json().catch(() => ({ settings }));
+        // Sync local cache with server-confirmed values
+        if (data && data.settings) {
+          localStorage.setItem('systemSettings', JSON.stringify(data.settings));
+        } else {
+          localStorage.setItem('systemSettings', JSON.stringify(settings));
+        }
+        // Reflect UI from latest values
+        loadSystemSettings();
+        document.getElementById('settingsMessage').innerHTML = `
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>Pengaturan berhasil disimpan
+          </div>
+        `;
+      } catch (err) {
+        // Keep local changes but warn user the server save failed
+        document.getElementById('settingsMessage').innerHTML = `
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>Pengaturan tersimpan lokal, namun gagal menyimpan ke server. ${err.message || ''}
+          </div>
+        `;
+      }
+
+      // Hide message after 3 seconds
       setTimeout(() => {
         document.getElementById('settingsMessage').innerHTML = '';
       }, 3000);
@@ -2382,7 +2632,10 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     document.getElementById('userFilter').addEventListener('change', searchUsers);
     
     // Profile form real-time updates
-    document.getElementById('editName').addEventListener('input', updateAdminDropdown);
+    document.getElementById('editName').addEventListener('input', () => updateAdminDropdown());
+    if (document.getElementById('editUsername')) {
+      document.getElementById('editUsername').addEventListener('input', () => updateAdminDropdown());
+    }
     
     
     // Delete confirmation checkbox
@@ -2418,6 +2671,26 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           this.reset();
           // Refresh loan data
           loadLoanManagement();
+          // Trigger live updates for user pages
+          try { 
+            const timestamp = String(Date.now());
+            localStorage.setItem('loans:updated', timestamp);
+            localStorage.setItem('returns:updated', timestamp);
+            console.log('Admin triggered live updates:', timestamp);
+            
+            // Also try to trigger update directly if user page is open
+            setTimeout(() => {
+              try {
+                if (typeof window.triggerLiveUpdate === 'function') {
+                  window.triggerLiveUpdate();
+                }
+              } catch (e) {
+                console.log('Direct trigger not available (different tab)');
+              }
+            }, 100);
+          } catch (e) {
+            console.error('Failed to trigger live updates:', e);
+          }
         } else {
           document.getElementById('returnConfirmMessage').innerHTML = `
             <div class="alert alert-danger">
@@ -2435,7 +2708,20 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
     });
 
     // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Preload saved settings from server and reflect globally (e.g., sidebar title)
+      try {
+        const res = await fetch(`${API_BASE}/admin/settings`);
+        if (res.ok) {
+          const settings = await res.json();
+          try { localStorage.setItem('systemSettings', JSON.stringify(settings)); } catch (_) {}
+          const sidebarTitle = document.querySelector('.sidebar h4');
+          if (sidebarTitle && settings && settings.libraryName) {
+            sidebarTitle.textContent = `📚 ${settings.libraryName}`;
+          }
+        }
+      } catch (_) {}
+
       // Show home section by default
       showSection('home');
     });
@@ -2481,7 +2767,16 @@ ${isOverdue ? `Terlambat: ${daysOverdue} hari\nDenda: Rp ${fine.toLocaleString()
           } else if (active.id === 'loans-section') {
             if (typeof loadLoanManagement === 'function') loadLoanManagement();
           } else if (active.id === 'reports-section') {
-            if (typeof loadReports === 'function') loadReports();
+            // Avoid resetting user selections too frequently; refresh less often
+            if (typeof loadReports === 'function') {
+              // Throttle: only refresh data every 10s for this section
+              const now = Date.now();
+              window.__lastReportsRefresh = window.__lastReportsRefresh || 0;
+              if (now - window.__lastReportsRefresh > 10000) {
+                window.__lastReportsRefresh = now;
+                loadReports();
+              }
+            }
           }
         } catch (_) {}
       }, 2000);
