@@ -33,9 +33,7 @@
   },
   {
     "id": "U004",
-    "username": "revand",
-    "email": "rev@gmail.com",
-    "telepon": "1234",
+    "username": "revan",
     "password": "123",
     "role": "user",
     "status": "active",
