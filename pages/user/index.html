@@ -89,20 +89,41 @@
 
   <!-- Sidebar -->
   <div class="sidebar">
-  <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
-  <a href="#" id="homeLink">🏠 Home</a>
-    <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">📖 Daftar Buku</a>
+    <h4 class="text-center mb-4">📚 PERPUS ISLAM</h4>
+    <h6 class="text-center mb-3 text-warning">User Panel</h6>
+
+    <a href="#" id="homeLink">
+      <i class="fas fa-home me-2"></i>Home
+    </a>
+    <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">
+      <i class="fas fa-book-open me-2"></i>Daftar Buku
+    </a>
     <div id="submenuDaftar" class="collapse ms-3">
-  <a href="#searchSemuaBuku" data-bs-toggle="collapse" aria-expanded="false">📚 Semua Buku</a>
+      <a href="#" onclick="showAllBooks()">
+        <i class="fas fa-book me-2"></i>Semua Buku
+      </a>
     </div>
-    <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">📥 Pinjam Buku</a>
+    <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">
+      <i class="fas fa-book-reader me-2"></i>Pinjam Buku
+    </a>
     <div id="submenuPinjam" class="collapse ms-3">
-      <a href="#" data-bs-toggle="modal" data-bs-target="#pinjamModal">➕ Form Pinjam</a>
-      <a href="#" onclick="loadLoanStatus()">📊 Status Peminjaman</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#pinjamModal">
+        <i class="fas fa-plus me-2"></i>Form Pinjam
+      </a>
+      <a href="#" onclick="loadLoanStatus()">
+        <i class="fas fa-chart-bar me-2"></i>Status Peminjaman
+      </a>
     </div>
-    <a href="#" data-bs-toggle="modal" data-bs-target="#pengembalianModal">↩️ Pengembalian Buku</a>
-    <a href="#" onclick="loadLoanHistory()">🕓 Riwayat Peminjaman</a>
-    <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal">🚪 Logout</a>
+    <a href="#" data-bs-toggle="modal" data-bs-target="#pengembalianModal">
+      <i class="fas fa-undo-alt me-2"></i>Pengembalian Buku
+    </a>
+    <a href="#" onclick="loadLoanHistory()">
+      <i class="fas fa-history me-2"></i>Riwayat Peminjaman
+    </a>
+    <hr class="my-3">
+    <a href="#" class="text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      <i class="fas fa-sign-out-alt me-2"></i>Logout
+    </a>
   </div>
 
   <!-- Content -->
@@ -119,21 +140,6 @@
         </ul>
       </div>
     </div>
-    <div id="searchSemuaBuku" class="collapse mb-3">
-      <div class="input-group mb-2">
-        <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku" id="searchBukuInput">
-        <button class="btn btn-primary" type="button" id="btnCariBuku">Cari</button>
-      </div>
-      <div class="mb-2">
-        <label for="sortBuku" class="form-label mb-1">Urutkan:</label>
-        <select class="form-select form-select-sm w-auto d-inline-block" id="sortBuku">
-          <option value="title-asc">Judul (A-Z)</option>
-          <option value="year-desc">Tahun Terbaru</option>
-          <option value="year-asc">Tahun Terlama</option>
-        </select>
-      </div>
-      <div id="semuaBukuList"></div>
-    </div>
 
     <div class="hero mb-4">
       <div>
@@ -141,6 +147,7 @@
         <p>Temukan inspirasi dari ribuan koleksi buku digital kami.</p>
       </div>
     </div>
+
 
     <!-- Tentang Perpustakaan -->
     <div class="card mb-4">
@@ -180,7 +187,6 @@
   
 
     <!-- Buku Section -->
-    <h5 id="sectionTitle">Buku Populer Minggu Ini</h5>
     <div class="row popular-books">
       <div class="col-md-2">
         <div class="card">
@@ -411,12 +417,16 @@
             <div id="editProfileMsg"></div>
             <form id="editProfileForm">
               <div class="mb-3">
-                <label for="editName" class="form-label">Nama</label>
-                <input type="text" id="editName" class="form-control">
+                <label for="editUsername" class="form-label">Username</label>
+                <input type="text" id="editUsername" class="form-control" autocomplete="username">
               </div>
               <div class="mb-3">
                 <label for="editPassword" class="form-label">Password (kosongkan jika tidak diubah)</label>
                 <input type="password" id="editPassword" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="editPasswordConfirm" class="form-label">Konfirmasi Password Baru</label>
+                <input type="password" id="editPasswordConfirm" class="form-control" autocomplete="new-password">
               </div>
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-primary" id="saveProfileBtn">Simpan</button>
@@ -446,7 +456,7 @@
         document.getElementById('viewRole').textContent = '-';
         document.getElementById('viewEmail').textContent = '-';
         document.getElementById('viewLoanCount').textContent = '0';
-        document.getElementById('editName').value = '';
+        if (document.getElementById('editUsername')) document.getElementById('editUsername').value = '';
 
         try {
           // Try to read from data_login.js for user profile (fallback if API not available)
@@ -485,7 +495,7 @@
             document.getElementById('viewUsername').textContent = user.username || '-';
             document.getElementById('viewRole').textContent = (user.role || (user.isAdmin ? 'admin' : 'user') || '-').toString();
             document.getElementById('viewEmail').textContent = user.email || '-';
-            document.getElementById('editName').value = user.nama || user.name || '';
+            if (document.getElementById('editUsername')) document.getElementById('editUsername').value = user.username || user.nama || '';
 
             // Avatar: initials and color
             try {
@@ -522,8 +532,9 @@
       }
 
       document.getElementById('saveProfileBtn')?.addEventListener('click', async function() {
-        const name = document.getElementById('editName')?.value?.trim();
-        const pwd = document.getElementById('editPassword')?.value || '';
+      const name = document.getElementById('editUsername')?.value?.trim();
+      const pwd = document.getElementById('editPassword')?.value || '';
+      const pwd2 = document.getElementById('editPasswordConfirm')?.value || '';
         const userId = localStorage.getItem('userid');
         const username = localStorage.getItem('username');
         const msgEl = document.getElementById('editProfileMsg');
@@ -532,12 +543,16 @@
           msgEl.innerHTML = '<div class="alert alert-danger">Tidak terdeteksi user login</div>';
           return;
         }
+        if (pwd && pwd !== pwd2) {
+          msgEl.innerHTML = '<div class="alert alert-danger">Konfirmasi password tidak sesuai</div>';
+          return;
+        }
         // Try to send update to API if available
         let updated = false;
         if (userId) {
           try {
             const body = {};
-            if (name) body.nama = name;
+            if (name) body.username = name;
             if (pwd) body.password = pwd;
             const r = await fetch(`/api/users/${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             if (r.ok) {
@@ -563,7 +578,9 @@
   <script>
     // Live update when account switches in another tab/window
     window.addEventListener('storage', (e) => {
-      if (e.key === 'username' || e.key === 'userid' || e.key === 'books:updated') {
+      console.log('Storage event detected:', e.key);
+      if (e.key === 'username' || e.key === 'userid' || e.key === 'books:updated' || e.key === 'loans:updated' || e.key === 'returns:updated') {
+        console.log('Triggering live update for:', e.key);
         try {
           loadUserData();
           // reload current section data best-effort
@@ -576,13 +593,65 @@
             loadAvailableBooks();
           } else if (sectionTitle.includes('Buku Terbaru')) {
             loadLatestBooks();
+          } else if (sectionTitle.includes('Status Peminjaman')) {
+            // Refresh loan status if currently viewing it
+            if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+          } else if (sectionTitle.includes('Riwayat Peminjaman')) {
+            // Refresh loan history if currently viewing it
+            if (typeof window.loadHistory === 'function') window.loadHistory();
           }
           // keep top cards updated
           refreshDashboardCardsLive();
-          if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
-        } catch (_) {}
+        } catch (err) {
+          console.error('Error in live update:', err);
+        }
       }
     });
+
+    // Same-tab live updates (polling mechanism)
+    let lastLoansUpdate = localStorage.getItem('loans:updated') || '0';
+    let lastReturnsUpdate = localStorage.getItem('returns:updated') || '0';
+    
+    setInterval(() => {
+      const currentLoansUpdate = localStorage.getItem('loans:updated') || '0';
+      const currentReturnsUpdate = localStorage.getItem('returns:updated') || '0';
+      
+      if (currentLoansUpdate !== lastLoansUpdate || currentReturnsUpdate !== lastReturnsUpdate) {
+        console.log('Polling detected update - loans:', currentLoansUpdate, 'returns:', currentReturnsUpdate);
+        lastLoansUpdate = currentLoansUpdate;
+        lastReturnsUpdate = currentReturnsUpdate;
+        
+        try {
+          // Always refresh user data first
+          loadUserData();
+          
+          // Check what section is currently active and refresh accordingly
+          const sectionTitle = document.getElementById('sectionTitle')?.textContent || '';
+          console.log('Current section title:', sectionTitle);
+          
+          if (sectionTitle.includes('Status Peminjaman')) {
+            console.log('Refreshing loan status...');
+            if (typeof window.loadLoanStatus === 'function') {
+              window.loadLoanStatus();
+            } else {
+              console.error('loadLoanStatus function not found');
+            }
+          } else if (sectionTitle.includes('Riwayat Peminjaman')) {
+            console.log('Refreshing loan history...');
+            if (typeof window.loadHistory === 'function') {
+              window.loadHistory();
+            } else {
+              console.error('loadHistory function not found');
+            }
+          }
+          
+          // Always refresh dashboard cards
+          refreshDashboardCardsLive();
+        } catch (err) {
+          console.error('Error in polling update:', err);
+        }
+      }
+    }, 500); // Check every 500ms for faster response
   </script>
   <script>
     // Same-tab live session detection (no manual refresh)
@@ -618,6 +687,162 @@
     
     // Global books array
     let books = [];
+    
+    // Global cache for all books
+    let allBooksCache = [];
+    
+    // Global system settings
+    let systemSettings = {
+      libraryName: 'PERPUS ISLAM',
+      maxLoanDays: 7,
+      finePerDay: 1000,
+      maxBooksPerUser: 5,
+      autoRenewal: 'disabled',
+      notificationDays: 2
+    };
+    
+    // Global function to render books with sort and search
+    function renderBooksWithSortAndSearch() {
+      const semuaBukuList = document.getElementById('semuaBukuList');
+      const searchBukuInput = document.getElementById('searchBukuInput');
+      const sortBuku = document.getElementById('sortBuku');
+      
+      if (!semuaBukuList) return;
+      
+      // Ensure allBooksCache is defined
+      if (typeof allBooksCache === 'undefined') {
+        allBooksCache = [];
+      }
+      
+      // If cache is empty, load all books first
+      if (!Array.isArray(allBooksCache) || allBooksCache.length === 0) {
+        loadAllBooksAndRender();
+        return;
+      }
+      
+      let books = [...allBooksCache];
+      
+      // Filter by search - this is the key connection between search and display
+      const keyword = searchBukuInput ? searchBukuInput.value.trim().toLowerCase() : '';
+      if (keyword) {
+        books = books.filter(b =>
+          (b.namaBuku || '').toLowerCase().includes(keyword) ||
+          (b.penulis || '').toLowerCase().includes(keyword) ||
+          (b.penerbit || '').toLowerCase().includes(keyword) ||
+          (b.idBuku || '').toLowerCase().includes(keyword)
+        );
+        console.log(`Searching for: "${keyword}" - Found ${books.length} results`);
+      }
+      
+      // Sort
+      const sortVal = sortBuku ? sortBuku.value : 'title-asc';
+      if (sortVal === 'title-asc') {
+        books.sort((a, b) => (a.namaBuku || '').toString().localeCompare((b.namaBuku || '').toString(), 'id', { sensitivity: 'base' }));
+      } else if (sortVal === 'year-desc') {
+        books.sort((a, b) => (parseInt(b.tahunTerbit, 10) || 0) - (parseInt(a.tahunTerbit, 10) || 0));
+      } else if (sortVal === 'year-asc') {
+        books.sort((a, b) => (parseInt(a.tahunTerbit, 10) || 0) - (parseInt(b.tahunTerbit, 10) || 0));
+      }
+      
+      // Clear container
+      semuaBukuList.innerHTML = '';
+      
+      if (books.length === 0) {
+        semuaBukuList.innerHTML = '<div class="text-muted text-center py-5"><i class="fas fa-search me-2"></i>Tidak ada buku ditemukan</div>';
+        return;
+      }
+      
+      // Update section title to show search results count
+      const sectionTitle = document.getElementById('sectionTitle');
+      if (sectionTitle) {
+        if (keyword) {
+          sectionTitle.textContent = `Hasil Pencarian "${keyword}" (${books.length} buku)`;
+        } else {
+          sectionTitle.textContent = `Semua Buku (${books.length} buku)`;
+        }
+      }
+      
+      // Render books with proper styling and click handlers
+      const row = document.createElement('div');
+      row.className = 'row';
+      
+      books.forEach(book => {
+        const col = document.createElement('div');
+        col.className = 'col-md-2 mb-3';
+        col.innerHTML = `
+          <div class="card h-100">
+            <img class="card-img-top" alt="${book.namaBuku}" style="height:180px;object-fit:cover">
+            <div class="card-body p-3">
+              <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
+              <p class="card-text">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-user me-1"></i>${book.penulis}
+                </small>
+                <small class="text-info d-block mb-1">
+                  <i class="fas fa-building me-1"></i>${book.penerbit}
+                </small>
+                <small class="text-secondary d-block mb-2">
+                  <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
+                </small>
+                <span class="badge ${book.stok > 0 ? 'bg-success' : 'bg-danger'}">
+                  <i class="fas fa-box me-1"></i>Stok: ${book.stok}
+                </span>
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-2">
+              <small class="text-muted">
+                <i class="fas fa-barcode me-1"></i>ID: ${book.idBuku}
+              </small>
+            </div>
+          </div>
+        `;
+        
+        // Add click handler to open book modal
+        col.querySelector('.card').addEventListener('click', () => openBookModal(book));
+        
+        // Set book image
+        setBookImage(col.querySelector('.card-img-top'), book);
+        
+        row.appendChild(col);
+      });
+      
+      semuaBukuList.appendChild(row);
+    }
+    
+    // Global function to load all books and render
+    async function loadAllBooksAndRender() {
+      const semuaBukuList = document.getElementById('semuaBukuList');
+      if (!semuaBukuList) return;
+      
+      // Ensure allBooksCache is defined
+      if (typeof allBooksCache === 'undefined') {
+        allBooksCache = [];
+      }
+      
+      // Show loading state briefly
+      semuaBukuList.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      
+      try {
+        const res = await fetch('/api/books');
+        let books = await res.json();
+        
+        // Store original books in a separate variable to preserve full dataset
+        window.allBooksOriginal = books;
+        allBooksCache = books;
+        
+        console.log('Loaded books:', books.length);
+        
+        // Clear search input when loading all books
+        const searchInput = document.getElementById('searchBukuInput');
+        if (searchInput) searchInput.value = '';
+        
+        // Render immediately with current sort
+        renderBooksWithSortAndSearch();
+      } catch (e) {
+        console.error('Error loading books:', e);
+        semuaBukuList.innerHTML = '<div class="text-danger text-center">Gagal memuat semua buku</div>';
+      }
+    }
     
     // Synopsis map (sinopsis singkat)
     const BOOK_SYNOPSIS = {
@@ -719,6 +944,24 @@
       tryNext();
     }
     
+    // Load system settings from server
+    async function loadSystemSettings() {
+      try {
+        const response = await fetch(`${API_BASE}/admin/settings`);
+        if (response.ok) {
+          const settings = await response.json();
+          systemSettings = { ...systemSettings, ...settings };
+          // Update library name in UI if available
+          const libraryTitle = document.querySelector('.navbar-brand, .sidebar h4, h1');
+          if (libraryTitle && settings.libraryName) {
+            libraryTitle.textContent = `📚 ${settings.libraryName}`;
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load system settings:', error);
+      }
+    }
+
     // Load user data and dashboard metrics based on current login
     async function loadUserData() {
       const name = localStorage.getItem('username') || 'User';
@@ -751,7 +994,7 @@
 
         // Denda saat ini: hitung denda untuk pinjaman yang sudah lewat jatuh tempo
         const today = new Date();
-        const finePerDay = 1000; // harus sinkron dengan server
+        const finePerDay = systemSettings.finePerDay;
         let totalFine = 0;
         activeLoans.forEach(l => {
           const due = new Date(l.tanggalKembali);
@@ -891,26 +1134,40 @@
       }
     }
     
-    // Display all books
+    // Display all books with sorting
     function displayAllBooks(books) {
       const resultsContainer = document.querySelector('.popular-books');
       const sectionTitle = document.getElementById('sectionTitle');
+      const sortSelect = document.getElementById('sortBuku');
       
       if (!resultsContainer) return;
       
+      // Apply sorting if sort dropdown exists
+      let sortedBooks = [...books];
+      if (sortSelect) {
+        const sortValue = sortSelect.value;
+        if (sortValue === 'title-asc') {
+          sortedBooks.sort((a, b) => (a.namaBuku || '').toString().localeCompare((b.namaBuku || '').toString(), 'id', { sensitivity: 'base' }));
+        } else if (sortValue === 'year-desc') {
+          sortedBooks.sort((a, b) => (parseInt(b.tahunTerbit, 10) || 0) - (parseInt(a.tahunTerbit, 10) || 0));
+        } else if (sortValue === 'year-asc') {
+          sortedBooks.sort((a, b) => (parseInt(a.tahunTerbit, 10) || 0) - (parseInt(b.tahunTerbit, 10) || 0));
+        }
+      }
+      
       // Update section title
       if (sectionTitle) {
-        sectionTitle.textContent = `Semua Buku (${books.length} buku)`;
+        sectionTitle.textContent = `Semua Buku (${sortedBooks.length} buku)`;
       }
       
       resultsContainer.innerHTML = '';
       
-      if (books.length === 0) {
+      if (sortedBooks.length === 0) {
         resultsContainer.innerHTML = '<div class="col-12 text-center text-muted"><i class="fas fa-book-open me-2"></i>Tidak ada buku tersedia</div>';
         return;
       }
       
-      books.forEach(book => {
+      sortedBooks.forEach(book => {
         const bookCard = document.createElement('div');
         bookCard.className = 'col-md-2 mb-3';
         bookCard.innerHTML = `
@@ -948,32 +1205,145 @@
     
     // Search functionality
     function setupSearch() {
-      const searchInput = document.querySelector('#searchSemuaBuku input');
-      const searchButton = document.querySelector('#searchSemuaBuku button');
-      
-      if (searchInput && searchButton) {
-        searchButton.addEventListener('click', async () => {
-          const query = searchInput.value.trim();
-          if (query) {
-            try {
-              const response = await fetch(`${API_BASE}/books/search?q=${encodeURIComponent(query)}`);
-              const books = await response.json();
-              displayAllBooks(books);
-            } catch (error) {
-              console.error('Error searching books:', error);
-            }
-          } else {
-            // If search is empty, show all books
-            loadAllBooks();
-          }
-        });
+      // Setup search after elements are created
+      setTimeout(() => {
+        const searchInput = document.getElementById('searchBukuInput');
+        const searchButton = document.getElementById('btnCariBuku');
         
-        searchInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            searchButton.click();
-          }
-        });
+        console.log('Setting up search...', { searchInput, searchButton });
+        
+        if (searchInput && searchButton) {
+          // Remove any existing listeners
+          searchButton.onclick = null;
+          searchInput.onkeypress = null;
+          
+          // Add new listeners
+          searchButton.onclick = function(e) {
+            e.preventDefault();
+            console.log('Search button clicked');
+            handleSearch();
+          };
+          
+          searchInput.onkeypress = function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              console.log('Enter pressed in search input');
+              handleSearch();
+            }
+          };
+          
+          console.log('Search setup completed successfully');
+        } else {
+          console.log('Search elements not found:', { searchInput, searchButton });
+          // Try again after a longer delay
+          setTimeout(() => {
+            const retrySearchInput = document.getElementById('searchBukuInput');
+            const retrySearchButton = document.getElementById('btnCariBuku');
+            if (retrySearchInput && retrySearchButton) {
+              retrySearchButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('Retry search button clicked');
+                handleSearch();
+              };
+              retrySearchInput.onkeypress = function(e) {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  console.log('Retry enter pressed in search input');
+                  handleSearch();
+                }
+              };
+              console.log('Search setup completed on retry');
+            }
+          }, 500);
+        }
+      }, 200);
+    }
+    
+    async function handleSearch() {
+      console.log('=== SEARCH FUNCTION CALLED ===');
+      const searchInput = document.getElementById('searchBukuInput');
+      const query = searchInput ? searchInput.value.trim() : '';
+      
+      // Ensure allBooksCache is defined
+      if (typeof allBooksCache === 'undefined') {
+        allBooksCache = [];
       }
+      
+      console.log('Search query:', query);
+      console.log('Current allBooksCache length:', allBooksCache.length);
+      console.log('Current allBooksOriginal length:', window.allBooksOriginal ? window.allBooksOriginal.length : 'undefined');
+      
+      if (query) {
+        try {
+          // Use original books dataset for search
+          let booksToSearch = window.allBooksOriginal || allBooksCache;
+          
+          // If no original dataset, fetch from server
+          if (!Array.isArray(booksToSearch) || booksToSearch.length === 0) {
+            console.log('Fetching books from server...');
+            const allBooksRes = await fetch('/api/books');
+            booksToSearch = await allBooksRes.json();
+            window.allBooksOriginal = booksToSearch;
+            console.log('Fetched books from server:', booksToSearch.length);
+          }
+          
+          console.log('Searching in dataset with', booksToSearch.length, 'books');
+          
+          // Filter books locally
+          const filtered = booksToSearch.filter(b => {
+            const namaMatch = (b.namaBuku || '').toLowerCase().includes(query.toLowerCase());
+            const penulisMatch = (b.penulis || '').toLowerCase().includes(query.toLowerCase());
+            const penerbitMatch = (b.penerbit || '').toLowerCase().includes(query.toLowerCase());
+            const idMatch = (b.idBuku || '').toLowerCase().includes(query.toLowerCase());
+            
+            if (namaMatch || penulisMatch || penerbitMatch || idMatch) {
+              console.log('Found match:', b.namaBuku);
+            }
+            
+            return namaMatch || penulisMatch || penerbitMatch || idMatch;
+          });
+          
+          console.log('Filtered results:', filtered.length);
+          
+          // Store filtered results and render
+          allBooksCache = filtered;
+          // Force re-render with search results
+          renderBooksWithSortAndSearch();
+        } catch (error) {
+          console.error('Error searching books:', error);
+        }
+      } else {
+        console.log('Empty search - restoring all books');
+        // If search is empty, restore original dataset
+        if (window.allBooksOriginal) {
+          allBooksCache = window.allBooksOriginal;
+          // Clear search input
+          if (searchInput) searchInput.value = '';
+          renderBooksWithSortAndSearch();
+        } else {
+          loadAllBooksAndRender();
+        }
+      }
+    }
+
+    // Sort functionality
+    function setupSortHandlers() {
+      // Use event delegation to survive DOM re-rendering
+      document.addEventListener('change', (e) => {
+        if (e.target && e.target.id === 'sortBuku') {
+          // Check if we're in "Semua Buku" view
+          const sectionTitle = document.getElementById('sectionTitle');
+          if (sectionTitle && sectionTitle.textContent.includes('Semua Buku')) {
+            // Re-render with current books and new sort
+            if (typeof renderBooksWithSortAndSearch === 'function') {
+              renderBooksWithSortAndSearch();
+            } else {
+              // Fallback: reload all books with sorting
+              loadAllBooks();
+            }
+          }
+        }
+      });
     }
     
     
@@ -1124,22 +1494,82 @@
       }
     }
     
+    // Show all books page with search and sort
+    function showAllBooks() {
+      // Hide all other content (but not the search section we're about to create)
+      document.querySelectorAll('.card').forEach(card => {
+        if (!card.closest('.modal') && !card.closest('#searchSemuaBuku')) {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Create or show search and books section
+      let searchSection = document.getElementById('searchSemuaBuku');
+      if (!searchSection) {
+        searchSection = document.createElement('div');
+        searchSection.id = 'searchSemuaBuku';
+        searchSection.className = 'mb-3';
+        searchSection.innerHTML = `
+          <div class="card mb-3">
+            <div class="card-body">
+      <div class="row align-items-end">
+        <div class="col-12">
+          <h5 id="sectionTitle" class="mb-3">Buku Populer Minggu Ini</h5>
+        </div>
+        <div class="col-md-8">
+                  <label for="searchBukuInput" class="form-label">Cari Buku</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Cari buku (judul, penulis, ISBN)..." aria-label="Cari buku" id="searchBukuInput">
+                    <button class="btn btn-primary" type="button" id="btnCariBuku">Cari</button>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="sortBuku" class="form-label">Urutkan</label>
+                  <select class="form-select" id="sortBuku">
+                    <option value="title-asc">Judul (A-Z)</option>
+                    <option value="year-desc">Tahun Terbaru</option>
+                    <option value="year-asc">Tahun Terlama</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="semuaBukuList"></div>
+        `;
+        
+        // Insert search section after the dashboard info cards (row with 3 cards)
+        const dashboardRow = document.querySelector('.row.mb-4');
+        if (dashboardRow) {
+          dashboardRow.insertAdjacentElement('afterend', searchSection);
+        } else {
+          document.querySelector('.content').appendChild(searchSection);
+        }
+        
+        // Setup search functionality after creating the elements
+        setTimeout(() => {
+          console.log('Setting up search and sort handlers...');
+          setupSearch();
+          setupSortHandlers();
+        }, 100);
+      }
+      
+      searchSection.style.display = 'block';
+      // Hide default popular-books grid to avoid duplicate lists
+      const popularGrid = document.querySelector('.popular-books');
+      if (popularGrid) popularGrid.innerHTML = '';
+      
+      // Update section title
+      const titleEl = document.getElementById('sectionTitle');
+      if (titleEl) {
+        titleEl.textContent = 'Semua Buku';
+      }
+      
+      // Load books immediately
+      loadAllBooksAndRender();
+    }
+
     // Setup submenu click handlers
     function setupSubmenuHandlers() {
-      // Semua Buku submenu
-      const semuaBukuLink = document.querySelector('a[href="#searchSemuaBuku"]');
-      if (semuaBukuLink) {
-        semuaBukuLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          // Show search bar
-          const searchBar = document.getElementById('searchSemuaBuku');
-          if (searchBar) {
-            const bsCollapse = new bootstrap.Collapse(searchBar, { show: true });
-          }
-          // Load all books
-          loadAllBooks();
-        });
-      }
       
       // Buku Tersedia submenu
       const allLinks = document.querySelectorAll('a[href="#"]');
@@ -1147,11 +1577,17 @@
         if (link.textContent.includes('Buku Tersedia')) {
           link.addEventListener('click', (e) => {
             e.preventDefault();
-            // Hide search bar
-            const searchBar = document.getElementById('searchSemuaBuku');
-            if (searchBar) {
-              const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+            // Hide search section
+            const searchSection = document.getElementById('searchSemuaBuku');
+            if (searchSection) {
+              searchSection.style.display = 'none';
             }
+            // Show all cards
+            document.querySelectorAll('.card').forEach(card => {
+              if (!card.closest('.modal')) {
+                card.style.display = 'block';
+              }
+            });
             // Load available books
             loadAvailableBooks();
           });
@@ -1160,11 +1596,17 @@
         if (link.textContent.includes('Buku Terbaru')) {
           link.addEventListener('click', (e) => {
             e.preventDefault();
-            // Hide search bar
-            const searchBar = document.getElementById('searchSemuaBuku');
-            if (searchBar) {
-              const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+            // Hide search section
+            const searchSection = document.getElementById('searchSemuaBuku');
+            if (searchSection) {
+              searchSection.style.display = 'none';
             }
+            // Show all cards
+            document.querySelectorAll('.card').forEach(card => {
+              if (!card.closest('.modal')) {
+                card.style.display = 'block';
+              }
+            });
             // Load latest books from server
             loadLatestBooks();
           });
@@ -1176,11 +1618,17 @@
       if (homeLink) {
         homeLink.addEventListener('click', (e) => {
           e.preventDefault();
-          // Collapse search bar if open
-          const searchBar = document.getElementById('searchSemuaBuku');
-          if (searchBar) {
-            const bsCollapse = new bootstrap.Collapse(searchBar, { hide: true });
+          // Hide search section if exists
+          const searchSection = document.getElementById('searchSemuaBuku');
+          if (searchSection) {
+            searchSection.style.display = 'none';
           }
+          // Show all cards again
+          document.querySelectorAll('.card').forEach(card => {
+            if (!card.closest('.modal')) {
+              card.style.display = 'block';
+            }
+          });
           // Restore home title and popular books
           const titleEl = document.getElementById('sectionTitle');
           const container = document.querySelector('.popular-books');
@@ -1192,13 +1640,87 @@
     
     // Loan functions moved to external file: data_pinjam.js
 
+    // Global function for easy testing
+    window.testSearch = function(query) {
+      const searchInput = document.getElementById('searchBukuInput');
+      if (searchInput) {
+        searchInput.value = query;
+        handleSearch();
+      } else {
+        console.log('Search input not found!');
+      }
+    };
+    
+    window.clearSearch = function() {
+      const searchInput = document.getElementById('searchBukuInput');
+      if (searchInput) {
+        searchInput.value = '';
+        handleSearch();
+      } else {
+        console.log('Search input not found!');
+      }
+    };
+    
+    // Debug function to check search elements
+    window.debugSearch = function() {
+      console.log('=== DEBUG SEARCH ELEMENTS ===');
+      const searchInput = document.getElementById('searchBukuInput');
+      const searchButton = document.getElementById('btnCariBuku');
+      const semuaBukuList = document.getElementById('semuaBukuList');
+      
+      console.log('Search Input:', searchInput);
+      console.log('Search Button:', searchButton);
+      console.log('Semua Buku List:', semuaBukuList);
+      console.log('All Books Cache:', allBooksCache.length);
+      console.log('All Books Original:', window.allBooksOriginal ? window.allBooksOriginal.length : 'undefined');
+      
+      if (searchInput && searchButton) {
+        console.log('Search elements found - testing click...');
+        searchButton.click();
+      } else {
+        console.log('Search elements NOT found!');
+      }
+    };
+    
+    // Test different search queries
+    window.testSearchQueries = function() {
+      console.log('Testing search functionality...');
+      
+      // Test searches
+      const testQueries = [
+        'atomic',      // Should find Atomic Habits
+        'laskar',      // Should find Laskar Pelangi
+        'habits',      // Should find books with habits
+        'B001',        // Should find book with ID B001
+        'gramedia',    // Should find books from Gramedia
+        'pramoedya',   // Should find books by Pramoedya
+        'nonexistent'  // Should find nothing
+      ];
+      
+      testQueries.forEach((query, index) => {
+        setTimeout(() => {
+          console.log(`Testing query ${index + 1}: "${query}"`);
+          testSearch(query);
+        }, index * 2000);
+      });
+      
+      // Clear search after all tests
+      setTimeout(() => {
+        console.log('Clearing search...');
+        clearSearch();
+      }, testQueries.length * 2000 + 1000);
+    };
+
     // Initialize page
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load system settings first
+      await loadSystemSettings();
       loadUserData();
       // live refresh every 2s to keep cards updated
       setInterval(refreshDashboardCardsLive, 2000);
       loadPopularBooks();
       setupSearch();
+      setupSortHandlers();
       setupSubmenuHandlers();
     });
   </script>
@@ -1209,16 +1731,50 @@
 
     // Bridge existing buttons to module functions used in UI text/links
     window.loadLoanStatus = () => {
+      // Hide search section if exists
+      const searchSection = document.getElementById('searchSemuaBuku');
+      if (searchSection) {
+        searchSection.style.display = 'none';
+      }
+      
       const container = document.querySelector('.popular-books');
       const title = document.getElementById('sectionTitle');
       if (title) title.textContent = 'Status Peminjaman';
       if (container) renderLoanStatus(container);
     };
     window.loadLoanHistory = () => {
+      // Hide search section if exists
+      const searchSection = document.getElementById('searchSemuaBuku');
+      if (searchSection) {
+        searchSection.style.display = 'none';
+      }
+      
       const container = document.querySelector('.popular-books');
       const title = document.getElementById('sectionTitle');
       if (title) title.textContent = 'Riwayat Peminjaman';
       if (container) renderHistory(container);
+    };
+    
+    // Alias for storage event listener
+    window.loadHistory = window.loadLoanHistory;
+    
+    // Manual trigger function for immediate updates
+    window.triggerLiveUpdate = function() {
+      console.log('Manual live update triggered');
+      try {
+        loadUserData();
+        const sectionTitle = document.getElementById('sectionTitle')?.textContent || '';
+        console.log('Manual update - Current section:', sectionTitle);
+        
+        if (sectionTitle.includes('Status Peminjaman')) {
+          if (typeof window.loadLoanStatus === 'function') window.loadLoanStatus();
+        } else if (sectionTitle.includes('Riwayat Peminjaman')) {
+          if (typeof window.loadHistory === 'function') window.loadHistory();
+        }
+        refreshDashboardCardsLive();
+      } catch (err) {
+        console.error('Error in manual update:', err);
+      }
     };
 
     // Implement handlers locally for modal actions using logged-in user
@@ -1305,67 +1861,15 @@
   </script>
   <script type="module">
     import { renderAllBooks } from '../../public/js/books.js';
-    let allBooksCache = [];
-    const semuaBukuList = document.getElementById('semuaBukuList');
-    const sortBuku = document.getElementById('sortBuku');
-    const searchBukuInput = document.getElementById('searchBukuInput');
-    const btnCariBuku = document.getElementById('btnCariBuku');
-
-    async function loadAllBooksAndRender() {
-      semuaBukuList.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-      try {
-        const res = await fetch('/api/books');
-        let books = await res.json();
-        allBooksCache = books;
-        renderBooksWithSortAndSearch();
-      } catch (e) {
-        semuaBukuList.innerHTML = '<div class="text-danger text-center">Gagal memuat semua buku</div>';
-      }
+    
+    // Initialize allBooksCache if not already defined
+    if (typeof allBooksCache === 'undefined') {
+      window.allBooksCache = [];
     }
 
-    function renderBooksWithSortAndSearch() {
-      let books = [...allBooksCache];
-      // Filter by search
-      const keyword = searchBukuInput.value.trim().toLowerCase();
-      if (keyword) {
-        books = books.filter(b =>
-          (b.namaBuku || '').toLowerCase().includes(keyword) ||
-          (b.penulis || '').toLowerCase().includes(keyword) ||
-          (b.isbn || '').toLowerCase().includes(keyword)
-        );
-      }
-      // Sort
-      const sortVal = sortBuku.value;
-      if (sortVal === 'title-asc') {
-        books.sort((a, b) => (a.namaBuku || '').localeCompare(b.namaBuku || ''));
-      } else if (sortVal === 'year-desc') {
-        books.sort((a, b) => (b.tahunTerbit || 0) - (a.tahunTerbit || 0));
-      } else if (sortVal === 'year-asc') {
-        books.sort((a, b) => (a.tahunTerbit || 0) - (b.tahunTerbit || 0));
-      }
-      semuaBukuList.innerHTML = '';
-      if (books.length === 0) {
-        semuaBukuList.innerHTML = '<div class="text-muted text-center py-5">Tidak ada buku ditemukan</div>';
-        return;
-      }
-      import('./public/js/books.js').then(mod => {
-        mod.renderGrid(semuaBukuList, books);
-      });
-    }
+    // Functions moved to global scope above
 
-    // Event listeners
-    sortBuku?.addEventListener('change', renderBooksWithSortAndSearch);
-    btnCariBuku?.addEventListener('click', renderBooksWithSortAndSearch);
-    searchBukuInput?.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') renderBooksWithSortAndSearch();
-    });
-
-    // Tampilkan daftar buku saat menu dibuka
-    document.querySelectorAll('a[href="#searchSemuaBuku"]').forEach(a => {
-      a.addEventListener('click', () => {
-        setTimeout(loadAllBooksAndRender, 300);
-      });
-    });
+    // Event listeners for dynamically created search elements will be handled in setupSearch() and setupSortHandlers()
   </script>
 </body>
 </html>

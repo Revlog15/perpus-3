@@ -18,7 +18,6 @@
     "email": "dika@gmail.com",
     "password": "dika123",
     "role": "user",
-<<<<<<< Updated upstream
     "status": "active",
     "createdAt": "2025-10-13"
   },
@@ -41,18 +40,5 @@
     "role": "user",
     "status": "active",
     "createdAt": "2025-10-17"
-=======
-    "status": "active"
-  },
-  {
-    "id": "U001",
-    "username": "andika",
-    "gender": "Pria",
-    "phone": "081234567",
-    "email": "dika@gmail.com",
-    "password": "dika123",
-    "role": "user",
-    "status": "active"
->>>>>>> Stashed changes
   }
 ]

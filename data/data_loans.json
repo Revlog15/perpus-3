@@ -161,7 +161,6 @@
   },
   {
     "id": "L017",
-<<<<<<< Updated upstream
     "idBuku": "B012",
     "idUser": "U002",
     "nama": "KIKI",
@@ -177,13 +176,6 @@
     "nama": "KIKI",
     "tanggalPinjam": "2025-10-17",
     "tanggalKembali": "2025-10-24",
-=======
-    "idBuku": "B004",
-    "idUser": "U001",
-    "nama": "andika",
-    "tanggalPinjam": "2025-10-13",
-    "tanggalKembali": "2025-10-20",
->>>>>>> Stashed changes
     "status": "aktif",
     "terlambat": false
   }
