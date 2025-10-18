@@ -5,7 +5,7 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 0
+    "stok": 59
   },
   {
     "idBuku": "B002",
@@ -77,7 +77,7 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2016,
     "penulis": "Tere Liye",
-    "stok": 12
+    "stok": 11
   },
   {
     "idBuku": "B011",
