@@ -1,5 +1,5 @@
 {
-  "libraryName": "PERPUS ISLAM1",
+  "libraryName": "E-Library",
   "maxLoanDays": 7,
   "finePerDay": 1000,
   "maxBooksPerUser": 3,

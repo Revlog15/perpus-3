@@ -178,5 +178,15 @@
     "tanggalKembali": "2025-10-24",
     "status": "aktif",
     "terlambat": false
+  },
+  {
+    "id": "L019",
+    "idBuku": "B010",
+    "idUser": "U004",
+    "nama": "revand",
+    "tanggalPinjam": "2025-10-18",
+    "tanggalKembali": "2025-10-25",
+    "status": "aktif",
+    "terlambat": false
   }
 ]
