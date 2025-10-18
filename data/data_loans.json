@@ -185,6 +185,16 @@
     "idUser": "U004",
     "nama": "revand",
     "tanggalPinjam": "2025-10-18",
+    "tanggalKembali": "2025-10-19",
+    "status": "aktif",
+    "terlambat": false
+  },
+  {
+    "id": "L020",
+    "idBuku": "B001",
+    "idUser": "U004",
+    "nama": "revand",
+    "tanggalPinjam": "2025-10-18",
     "tanggalKembali": "2025-10-25",
     "status": "aktif",
     "terlambat": false
