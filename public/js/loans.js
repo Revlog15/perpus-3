@@ -100,11 +100,9 @@ export async function renderLoanStatus(target) {
       return;
     }
 
-    // Fetch both loans and books data
+    // Get all loans and books data
     const [loansRes, booksRes] = await Promise.all([
-      fetch(
-        `${API_BASE}/loans?userId=${encodeURIComponent(idUser)}&status=aktif`
-      ),
+      fetch(`${API_BASE}/loans`),
       fetch(`${API_BASE}/books`),
     ]);
 
@@ -113,7 +111,12 @@ export async function renderLoanStatus(target) {
       booksRes.json(),
     ]);
 
-    if (!Array.isArray(loans) || loans.length === 0) {
+    // Filter active loans for current user
+    const activeLoans = loans.filter(
+      (loan) => loan.idUser === idUser && loan.status === "aktif"
+    );
+
+    if (!activeLoans || activeLoans.length === 0) {
       target.innerHTML =
         '<div class="alert alert-info">Belum ada peminjaman aktif</div>';
       return;
@@ -137,10 +140,10 @@ export async function renderLoanStatus(target) {
     const tbody = table.querySelector("tbody");
     const today = new Date();
 
-    loans.forEach((loan) => {
+    activeLoans.forEach((loan) => {
       const book = books.find((b) => b.idBuku === loan.idBuku);
       const returnDate = new Date(loan.tanggalKembali);
-      const isOverdue = returnDate < today;
+      const isOverdue = today > returnDate;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `

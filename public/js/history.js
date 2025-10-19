@@ -12,17 +12,21 @@ export async function renderHistory(target) {
       return;
     }
 
-    const [historyRes, booksRes] = await Promise.all([
-      fetch(`${API_BASE}/loans/history/${encodeURIComponent(idUser)}`),
+    // Get all loans and books data
+    const [loansRes, booksRes] = await Promise.all([
+      fetch(`${API_BASE}/loans`),
       fetch(`${API_BASE}/books`),
     ]);
 
-    const [history, books] = await Promise.all([
-      historyRes.json(),
+    const [loans, books] = await Promise.all([
+      loansRes.json(),
       booksRes.json(),
     ]);
 
-    if (!history.activeLoans?.length && !history.returnHistory?.length) {
+    // Filter loans for current user
+    const userLoans = loans.filter((loan) => loan.idUser === idUser);
+
+    if (!userLoans || userLoans.length === 0) {
       target.innerHTML =
         '<div class="alert alert-info">Belum ada riwayat peminjaman</div>';
       return;
@@ -33,8 +37,9 @@ export async function renderHistory(target) {
     table.innerHTML = `
       <thead>
         <tr>
-          <th>Tanggal</th>
+          <th>ID Peminjaman</th>
           <th>Buku</th>
+          <th>Tanggal Pinjam</th>
           <th>Status</th>
           <th>Keterangan</th>
         </tr>
@@ -43,51 +48,40 @@ export async function renderHistory(target) {
     `;
 
     const tbody = table.querySelector("tbody");
-    const allRecords = [];
+    const today = new Date();
 
-    // Process active loans
-    if (history.activeLoans?.length) {
-      history.activeLoans.forEach((loan) => {
-        const book = books.find((b) => b.idBuku === loan.idBuku);
-        allRecords.push({
-          date: loan.tanggalPinjam,
-          book: book?.namaBuku || loan.idBuku,
-          status: "Dipinjam",
-          info: `Jatuh tempo: ${loan.tanggalKembali}`,
-          type: "loan",
-        });
-      });
-    }
+    // Sort by loan date (newest first)
+    userLoans.sort(
+      (a, b) => new Date(b.tanggalPinjam) - new Date(a.tanggalPinjam)
+    );
 
-    // Process return history
-    if (history.returnHistory?.length) {
-      history.returnHistory.forEach((ret) => {
-        const book = books.find((b) => b.idBuku === ret.idBuku);
-        allRecords.push({
-          date: ret.tanggalPengembalian,
-          book: book?.namaBuku || ret.idBuku,
-          status: "Dikembalikan",
-          info:
-            ret.denda > 0
-              ? `Denda: Rp ${ret.denda.toLocaleString()}`
-              : "Tepat waktu",
-          type: "return",
-        });
-      });
-    }
+    userLoans.forEach((loan) => {
+      const book = books.find((b) => b.idBuku === loan.idBuku);
+      const returnDate = new Date(loan.tanggalKembali);
+      const isOverdue = today > returnDate && loan.status === "aktif";
 
-    // Sort by date (newest first)
-    allRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+      let status, statusClass;
+      if (loan.status === "aktif") {
+        status = isOverdue ? "Terlambat" : "Dipinjam";
+        statusClass = isOverdue ? "danger" : "primary";
+      } else {
+        status = "Dikembalikan";
+        statusClass = "success";
+      }
 
-    allRecords.forEach((record) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${record.date}</td>
-        <td>${record.book}</td>
-        <td><span class="badge bg-${
-          record.type === "loan" ? "primary" : "success"
-        }">${record.status}</span></td>
-        <td>${record.info}</td>
+        <td>${loan.id}</td>
+        <td>${book ? book.namaBuku : loan.idBuku}</td>
+        <td>${loan.tanggalPinjam}</td>
+        <td><span class="badge bg-${statusClass}">${status}</span></td>
+        <td>${
+          loan.status === "aktif"
+            ? `Jatuh tempo: ${loan.tanggalKembali}`
+            : loan.finePaid
+            ? "Denda telah dibayar"
+            : "Tepat waktu"
+        }</td>
       `;
       tbody.appendChild(tr);
     });
