@@ -1665,6 +1665,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   type="email"
                   class="form-control"
                   id="editUserEmail"
+                  name="email"
                   required
                 />
               </div>
@@ -1674,6 +1675,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   type="text"
                   class="form-control"
                   id="editUserPhone"
+                  name="telepon"
                   required
                 />
               </div>
@@ -1685,12 +1687,13 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   type="password"
                   class="form-control"
                   id="editUserPassword"
+                  name="password"
                   placeholder="Masukkan password baru"
                 />
               </div>
               <div class="mb-3">
                 <label for="editUserStatus" class="form-label">Status</label>
-                <select class="form-select" id="editUserStatus">
+                <select class="form-select" id="editUserStatus" name="status">
                   <option value="active">Aktif</option>
                   <option value="inactive">Tidak Aktif</option>
                 </select>
