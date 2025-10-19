@@ -83,27 +83,70 @@ export function renderLoanForm(target) {
 
 export async function renderLoanStatus(target) {
   target.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+  
   try {
     const idUser = localStorage.getItem('userid');
-    const qs = idUser ? `?userId=${encodeURIComponent(idUser)}&status=aktif` : '';
-    const res = await fetch(`${API_BASE}/loans${qs}`);
-    const loans = await res.json();
-    target.innerHTML = '';
-    if (!loans || loans.length === 0) {
-      target.innerHTML = '<div class="text-muted">Belum ada peminjaman aktif</div>';
+    if (!idUser) {
+      target.innerHTML = '<div class="alert alert-warning">Silakan login terlebih dahulu</div>';
       return;
     }
-    const list = document.createElement('div');
-    list.className = 'list-group';
-    loans.forEach(l => {
-      const item = document.createElement('div');
-      item.className = 'list-group-item d-flex justify-content-between align-items-center';
-      item.innerHTML = `<span><strong>${l.idBuku}</strong> · ${l.nama} · Jatuh tempo: ${l.tanggalKembali}</span><span class="badge bg-${l.terlambat ? 'danger' : 'success'}">${l.terlambat ? 'Terlambat' : 'On-time'}</span>`;
-      list.appendChild(item);
+
+    // Fetch both loans and books data
+    const [loansRes, booksRes] = await Promise.all([
+      fetch(`${API_BASE}/loans?userId=${encodeURIComponent(idUser)}&status=aktif`),
+      fetch(`${API_BASE}/books`)
+    ]);
+
+    const [loans, books] = await Promise.all([
+      loansRes.json(),
+      booksRes.json()
+    ]);
+
+    if (!Array.isArray(loans) || loans.length === 0) {
+      target.innerHTML = '<div class="alert alert-info">Belum ada peminjaman aktif</div>';
+      return;
+    }
+
+    const table = document.createElement('table');
+    table.className = 'table table-striped';
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>ID Peminjaman</th>
+          <th>Buku</th>
+          <th>Tanggal Pinjam</th>
+          <th>Jatuh Tempo</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector('tbody');
+    const today = new Date();
+
+    loans.forEach(loan => {
+      const book = books.find(b => b.idBuku === loan.idBuku);
+      const returnDate = new Date(loan.tanggalKembali);
+      const isOverdue = returnDate < today;
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${loan.id}</td>
+        <td>${book ? book.namaBuku : loan.idBuku}</td>
+        <td>${loan.tanggalPinjam}</td>
+        <td>${loan.tanggalKembali}</td>
+        <td><span class="badge bg-${isOverdue ? 'danger' : 'success'}">${isOverdue ? 'Terlambat' : 'Aktif'}</span></td>
+      `;
+      tbody.appendChild(tr);
     });
-    target.appendChild(list);
-  } catch (e) {
-    target.innerHTML = '<div class="text-danger text-center">Gagal memuat status peminjaman</div>';
+
+    target.innerHTML = '';
+    target.appendChild(table);
+
+  } catch (err) {
+    console.error('Error in renderLoanStatus:', err);
+    target.innerHTML = '<div class="alert alert-danger">Gagal memuat status peminjaman</div>';
   }
 }
 
