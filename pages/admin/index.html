@@ -2604,6 +2604,17 @@ ${
         }
       }
 
+      // Ensure functions are available globally for inline onclick handlers
+      window.showSection = showSection;
+      window.loadAllUsers = loadAllUsers;
+      window.addUser = addUser;
+      window.editUser = editUser;
+      window.updateUser = updateUser;
+      window.resetPassword = resetPassword;
+      window.toggleUserStatus = toggleUserStatus;
+      window.deleteUser = deleteUser;
+      window.confirmDeleteUser = confirmDeleteUser;
+
       // Load all books
       async function loadAllBooks() {
         try {
