@@ -1,4 +1,4 @@
-import { API_BASE } from './api.js';
+import { API_BASE } from "./api.js";
 
 export function renderLoanForm(target) {
   target.innerHTML = `
@@ -19,23 +19,23 @@ export function renderLoanForm(target) {
     <div id="loanMessage" class="mt-3"></div>
   `;
 
-  const form = target.querySelector('#loanForm');
-  const msg = target.querySelector('#loanMessage');
-  form.addEventListener('submit', async (e) => {
+  const form = target.querySelector("#loanForm");
+  const msg = target.querySelector("#loanMessage");
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    msg.textContent = '';
+    msg.textContent = "";
     const data = Object.fromEntries(new FormData(form).entries());
-    const idUser = localStorage.getItem('userid');
+    const idUser = localStorage.getItem("userid");
     if (!idUser) {
-      msg.className = 'alert alert-danger';
-      msg.textContent = 'Silakan login terlebih dahulu';
+      msg.className = "alert alert-danger";
+      msg.textContent = "Silakan login terlebih dahulu";
       return;
     }
-    
+
     // Load system settings for validation
     let systemSettings = {
       maxBooksPerUser: 5,
-      maxLoanDays: 7
+      maxLoanDays: 7,
     };
     try {
       const settingsRes = await fetch(`${API_BASE}/admin/settings`);
@@ -44,67 +44,125 @@ export function renderLoanForm(target) {
         systemSettings = { ...systemSettings, ...settings };
       }
     } catch (err) {
-      console.warn('Failed to load system settings for validation:', err);
+      console.warn("Failed to load system settings for validation:", err);
     }
-    
+
     // Check current active loans count
     try {
-      const loansRes = await fetch(`${API_BASE}/loans?userId=${encodeURIComponent(idUser)}&status=aktif`);
+      const loansRes = await fetch(
+        `${API_BASE}/loans?userId=${encodeURIComponent(idUser)}&status=aktif`
+      );
       if (loansRes.ok) {
         const activeLoans = await loansRes.json();
-        if (Array.isArray(activeLoans) && activeLoans.length >= systemSettings.maxBooksPerUser) {
-          msg.className = 'alert alert-warning';
+        if (
+          Array.isArray(activeLoans) &&
+          activeLoans.length >= systemSettings.maxBooksPerUser
+        ) {
+          msg.className = "alert alert-warning";
           msg.textContent = `Maksimal ${systemSettings.maxBooksPerUser} buku per user. Anda sudah meminjam ${activeLoans.length} buku.`;
           return;
         }
       }
     } catch (err) {
-      console.warn('Failed to check active loans:', err);
+      console.warn("Failed to check active loans:", err);
     }
-    
+
     data.idUser = idUser;
     data.maxLoanDays = systemSettings.maxLoanDays;
     try {
       const res = await fetch(`${API_BASE}/loans`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
       const out = await res.json();
-      msg.className = res.ok ? 'alert alert-success' : 'alert alert-danger';
-      msg.textContent = out.message || (res.ok ? 'Berhasil meminjam buku' : 'Gagal meminjam buku');
+      msg.className = res.ok ? "alert alert-success" : "alert alert-danger";
+      msg.textContent =
+        out.message ||
+        (res.ok ? "Berhasil meminjam buku" : "Gagal meminjam buku");
       if (res.ok) form.reset();
     } catch (err) {
-      msg.className = 'alert alert-danger';
-      msg.textContent = 'Terjadi kesalahan jaringan';
+      msg.className = "alert alert-danger";
+      msg.textContent = "Terjadi kesalahan jaringan";
     }
   });
 }
 
 export async function renderLoanStatus(target) {
-  target.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+  target.innerHTML =
+    '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
   try {
-    const idUser = localStorage.getItem('userid');
-    const qs = idUser ? `?userId=${encodeURIComponent(idUser)}&status=aktif` : '';
-    const res = await fetch(`${API_BASE}/loans${qs}`);
-    const loans = await res.json();
-    target.innerHTML = '';
-    if (!loans || loans.length === 0) {
-      target.innerHTML = '<div class="text-muted">Belum ada peminjaman aktif</div>';
+    const idUser = localStorage.getItem("userid");
+    if (!idUser) {
+      target.innerHTML =
+        '<div class="alert alert-warning">Silakan login terlebih dahulu</div>';
       return;
     }
-    const list = document.createElement('div');
-    list.className = 'list-group';
-    loans.forEach(l => {
-      const item = document.createElement('div');
-      item.className = 'list-group-item d-flex justify-content-between align-items-center';
-      item.innerHTML = `<span><strong>${l.idBuku}</strong> · ${l.nama} · Jatuh tempo: ${l.tanggalKembali}</span><span class="badge bg-${l.terlambat ? 'danger' : 'success'}">${l.terlambat ? 'Terlambat' : 'On-time'}</span>`;
-      list.appendChild(item);
+
+    // Get all loans and books data
+    const [loansRes, booksRes] = await Promise.all([
+      fetch(`${API_BASE}/loans`),
+      fetch(`${API_BASE}/books`),
+    ]);
+
+    const [loans, books] = await Promise.all([
+      loansRes.json(),
+      booksRes.json(),
+    ]);
+
+    // Filter active loans for current user
+    const activeLoans = loans.filter(
+      (loan) => loan.idUser === idUser && loan.status === "aktif"
+    );
+
+    if (!activeLoans || activeLoans.length === 0) {
+      target.innerHTML =
+        '<div class="alert alert-info">Belum ada peminjaman aktif</div>';
+      return;
+    }
+
+    const table = document.createElement("table");
+    table.className = "table table-striped";
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>ID Peminjaman</th>
+          <th>Buku</th>
+          <th>Tanggal Pinjam</th>
+          <th>Jatuh Tempo</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector("tbody");
+    const today = new Date();
+
+    activeLoans.forEach((loan) => {
+      const book = books.find((b) => b.idBuku === loan.idBuku);
+      const returnDate = new Date(loan.tanggalKembali);
+      const isOverdue = today > returnDate;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${loan.id}</td>
+        <td>${book ? book.namaBuku : loan.idBuku}</td>
+        <td>${loan.tanggalPinjam}</td>
+        <td>${loan.tanggalKembali}</td>
+        <td><span class="badge bg-${isOverdue ? "danger" : "success"}">${
+        isOverdue ? "Terlambat" : "Aktif"
+      }</span></td>
+      `;
+      tbody.appendChild(tr);
     });
-    target.appendChild(list);
-  } catch (e) {
-    target.innerHTML = '<div class="text-danger text-center">Gagal memuat status peminjaman</div>';
+
+    target.innerHTML = "";
+    target.appendChild(table);
+  } catch (err) {
+    console.error("Error in renderLoanStatus:", err);
+    target.innerHTML =
+      '<div class="alert alert-danger">Gagal memuat status peminjaman</div>';
   }
 }
-
-
