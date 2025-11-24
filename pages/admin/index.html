@@ -166,6 +166,14 @@
       >
         <i class="fas fa-chart-bar me-2"></i>Laporan Peminjaman
       </a>
+      <a
+        href="#"
+        onclick="showSection('payments')"
+        class="admin-menu-item"
+        data-section="payments"
+      >
+        <i class="fas fa-credit-card me-2"></i>Kelola Pembayaran
+      </a>
 
       <hr class="my-3" />
       <a
@@ -1094,6 +1102,131 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           <!-- Report data will be loaded here -->
         </div>
       </div>
+
+      <!-- Payments Section -->
+      <div id="payments-section" class="admin-section">
+        <h4 class="mb-4">
+          <i class="fas fa-credit-card me-2"></i>Kelola Pembayaran
+        </h4>
+
+        <!-- Payment Filters -->
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <label class="form-label">Status Pembayaran</label>
+            <select
+              class="form-select"
+              id="paymentStatus"
+              onchange="loadPayments()"
+            >
+              <option value="all">Semua Status</option>
+              <option value="completed">Selesai</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Gagal</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Metode Pembayaran</label>
+            <select
+              class="form-select"
+              id="paymentMethod"
+              onchange="loadPayments()"
+            >
+              <option value="all">Semua Metode</option>
+              <option value="cash">Tunai</option>
+              <option value="transfer">Transfer Bank</option>
+              <option value="qris">QRIS</option>
+              <option value="e-wallet">E-Wallet</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Dari Tanggal</label>
+            <input
+              type="date"
+              class="form-control"
+              id="paymentFrom"
+              onchange="loadPayments()"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Sampai Tanggal</label>
+            <input
+              type="date"
+              class="form-control"
+              id="paymentTo"
+              onchange="loadPayments()"
+            />
+          </div>
+        </div>
+
+        <!-- Payment Summary Cards -->
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <div class="card bg-primary text-white">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h6 class="card-title">Total Pembayaran</h6>
+                    <h4 id="totalPayments">Rp 0</h4>
+                  </div>
+                  <div class="align-self-center">
+                    <i class="fas fa-credit-card fa-2x"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-success text-white">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h6 class="card-title">Pembayaran Hari Ini</h6>
+                    <h4 id="todayPayments">Rp 0</h4>
+                  </div>
+                  <div class="align-self-center">
+                    <i class="fas fa-calendar-day fa-2x"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-warning text-white">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h6 class="card-title">Denda Belum Dibayar</h6>
+                    <h4 id="unpaidFines">Rp 0</h4>
+                  </div>
+                  <div class="align-self-center">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-info text-white">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h6 class="card-title">Jumlah Transaksi</h6>
+                    <h4 id="totalTransactions">0</h4>
+                  </div>
+                  <div class="align-self-center">
+                    <i class="fas fa-chart-line fa-2x"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Results -->
+        <div id="paymentResults">
+          <!-- Payment data will be loaded here -->
+        </div>
+      </div>
     </div>
 
     <!-- Modals -->
@@ -1532,6 +1665,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   type="email"
                   class="form-control"
                   id="editUserEmail"
+                  name="email"
                   required
                 />
               </div>
@@ -1541,6 +1675,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   type="text"
                   class="form-control"
                   id="editUserPhone"
+                  name="telepon"
                   required
                 />
               </div>
@@ -1552,12 +1687,13 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   type="password"
                   class="form-control"
                   id="editUserPassword"
+                  name="password"
                   placeholder="Masukkan password baru"
                 />
               </div>
               <div class="mb-3">
                 <label for="editUserStatus" class="form-label">Status</label>
-                <select class="form-select" id="editUserStatus">
+                <select class="form-select" id="editUserStatus" name="status">
                   <option value="active">Aktif</option>
                   <option value="inactive">Tidak Aktif</option>
                 </select>
@@ -1652,7 +1788,17 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       // API Base URL
-      const API_BASE = "http://localhost:3001/api";
+      const API_BASE = (function () {
+        try {
+          if (
+            typeof window !== "undefined" &&
+            /^https?:/.test(window.location.origin)
+          ) {
+            return window.location.origin.replace(/\/$/, "") + "/api";
+          }
+        } catch (_) {}
+        return "http://localhost:3001/api";
+      })();
 
       // Global variables
       let allBooks = [];
@@ -2460,6 +2606,17 @@ ${
           alert("Terjadi kesalahan: " + error.message);
         }
       }
+
+      // Ensure functions are available globally for inline onclick handlers
+      window.showSection = showSection;
+      window.loadAllUsers = loadAllUsers;
+      window.addUser = addUser;
+      window.editUser = editUser;
+      window.updateUser = updateUser;
+      window.resetPassword = resetPassword;
+      window.toggleUserStatus = toggleUserStatus;
+      window.deleteUser = deleteUser;
+      window.confirmDeleteUser = confirmDeleteUser;
 
       // Load all books
       async function loadAllBooks() {
@@ -3728,6 +3885,10 @@ ${
                   loadReports();
                 }
               }
+            } else if (active.id === "payments-section") {
+              if (typeof loadPayments === "function") {
+                loadPayments();
+              }
             }
           } catch (_) {}
         }, 2000);
@@ -3757,6 +3918,197 @@ ${
           }
         }, 1000);
       })();
+
+      // Load payments for admin
+      async function loadPayments() {
+        try {
+          const response = await fetch(`${API_BASE}/payments`);
+          const payments = await response.json();
+
+          // Calculate summary statistics
+          const today = new Date().toISOString().split("T")[0];
+          const totalPayments = payments.reduce(
+            (sum, p) => sum + (p.amount || 0),
+            0
+          );
+          const todayPayments = payments
+            .filter((p) => p.tanggalBayar === today)
+            .reduce((sum, p) => sum + (p.amount || 0), 0);
+          const totalTransactions = payments.length;
+
+          // Get unpaid fines
+          const unpaidResponse = await fetch(`${API_BASE}/payments/unpaid`);
+          const unpaidData = await unpaidResponse.json();
+          const unpaidFines =
+            (unpaidData.totalUnpaid || 0) + (unpaidData.totalCurrent || 0);
+
+          // Update summary cards
+          document.getElementById(
+            "totalPayments"
+          ).textContent = `Rp ${totalPayments.toLocaleString()}`;
+          document.getElementById(
+            "todayPayments"
+          ).textContent = `Rp ${todayPayments.toLocaleString()}`;
+          document.getElementById(
+            "unpaidFines"
+          ).textContent = `Rp ${unpaidFines.toLocaleString()}`;
+          document.getElementById("totalTransactions").textContent =
+            totalTransactions.toString();
+
+          // Filter payments based on current selections
+          const statusFilter =
+            document.getElementById("paymentStatus")?.value || "all";
+          const methodFilter =
+            document.getElementById("paymentMethod")?.value || "all";
+          const fromDate = document.getElementById("paymentFrom")?.value;
+          const toDate = document.getElementById("paymentTo")?.value;
+
+          let filteredPayments = payments;
+
+          if (statusFilter !== "all") {
+            filteredPayments = filteredPayments.filter(
+              (p) => p.status === statusFilter
+            );
+          }
+
+          if (methodFilter !== "all") {
+            filteredPayments = filteredPayments.filter(
+              (p) => p.paymentMethod === methodFilter
+            );
+          }
+
+          if (fromDate) {
+            filteredPayments = filteredPayments.filter(
+              (p) => p.tanggalBayar >= fromDate
+            );
+          }
+
+          if (toDate) {
+            filteredPayments = filteredPayments.filter(
+              (p) => p.tanggalBayar <= toDate
+            );
+          }
+
+          // Sort by payment date (newest first)
+          filteredPayments.sort(
+            (a, b) => new Date(b.tanggalBayar) - new Date(a.tanggalBayar)
+          );
+
+          // Render payments table
+          const resultsContainer = document.getElementById("paymentResults");
+          if (!resultsContainer) return;
+
+          if (filteredPayments.length === 0) {
+            resultsContainer.innerHTML = `
+              <div class="text-center text-muted py-5">
+                <i class="fas fa-credit-card fa-3x mb-3"></i>
+                <h5>Tidak ada data pembayaran</h5>
+                <p>Belum ada pembayaran yang sesuai dengan filter yang dipilih.</p>
+              </div>
+            `;
+            return;
+          }
+
+          let html = `
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>ID Pembayaran</th>
+                    <th>User</th>
+                    <th>Jenis</th>
+                    <th>Jumlah</th>
+                    <th>Metode</th>
+                    <th>Tanggal Bayar</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+          `;
+
+          filteredPayments.forEach((payment) => {
+            const statusClass =
+              payment.status === "completed"
+                ? "success"
+                : payment.status === "pending"
+                ? "warning"
+                : "danger";
+            const statusText =
+              payment.status === "completed"
+                ? "Selesai"
+                : payment.status === "pending"
+                ? "Pending"
+                : "Gagal";
+
+            const typeText =
+              payment.type === "active_loan"
+                ? "Denda Peminjaman"
+                : "Denda Pengembalian";
+
+            html += `
+              <tr>
+                <td>${payment.id}</td>
+                <td>${payment.nama || "Unknown"}</td>
+                <td>${typeText}</td>
+                <td class="fw-bold">Rp ${payment.amount.toLocaleString()}</td>
+                <td>
+                  <span class="badge bg-info">
+                    ${
+                      payment.paymentMethod === "cash"
+                        ? "Tunai"
+                        : payment.paymentMethod === "transfer"
+                        ? "Transfer"
+                        : payment.paymentMethod === "qris"
+                        ? "QRIS"
+                        : "E-Wallet"
+                    }
+                  </span>
+                </td>
+                <td>${payment.tanggalBayar}</td>
+                <td>
+                  <span class="badge bg-${statusClass}">${statusText}</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary" onclick="viewPaymentDetails('${
+                    payment.id
+                  }')">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+
+          html += `
+                </tbody>
+              </table>
+            </div>
+          `;
+
+          resultsContainer.innerHTML = html;
+        } catch (error) {
+          console.error("Error loading payments:", error);
+          const resultsContainer = document.getElementById("paymentResults");
+          if (resultsContainer) {
+            resultsContainer.innerHTML = `
+              <div class="text-center text-danger py-5">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                <h5>Gagal memuat data pembayaran</h5>
+                <p>Terjadi kesalahan saat memuat data. Silakan coba lagi.</p>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // View payment details
+      function viewPaymentDetails(paymentId) {
+        // This could open a modal with detailed payment information
+        alert(
+          `Detail pembayaran ${paymentId}. Silakan cek riwayat dan data terkait.`
+        );
+      }
     </script>
   </body>
 </html>

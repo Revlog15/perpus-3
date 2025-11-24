@@ -1,81 +1,144 @@
-const express = require('express');
-const store = require('../store');
+const express = require("express");
+const store = require("../store");
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const normalized = (store.users || []).map(u => ({
+router.get("/", (req, res) => {
+  const normalized = (store.users || []).map((u) => ({
     ...u,
-    nama: u.nama || u.username || '',
-    telepon: u.telepon || u.phone || '',
-    role: u.role || 'user',
-    status: u.status || 'active',
-    createdAt: u.createdAt || '',
+    nama: u.nama || u.username || "",
+    telepon: u.telepon || u.phone || "",
+    role: u.role || "user",
+    status: u.status || "active",
+    createdAt: u.createdAt || "",
   }));
   res.json(normalized);
 });
 
-router.post('/', (req, res) => {
-  const { username, email, telepon, password } = req.body;
-  if (!username || !email || !telepon || !password) return res.status(400).json({ message: 'Semua field harus diisi' });
-  const existingUser = store.users.find(u => (u.email || '').toLowerCase() === String(email).toLowerCase() || (u.username || '').toLowerCase() === String(username).toLowerCase());
-  if (existingUser) return res.status(400).json({ message: 'Email atau Username sudah digunakan' });
-  const newUserId = `U${String(store.users.length + 1).padStart(3, '0')}`;
-  const newUser = { id: newUserId, username, email, telepon, password, role: 'user', status: 'active', createdAt: new Date().toISOString().split('T')[0] };
-  store.users.push(newUser);
-  try { store.saveUsers(); } catch (_) {}
-  res.status(201).json({ message: 'User berhasil ditambahkan', user: newUser });
+// Get single user by id
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  const u = (store.users || []).find((user) => user.id === id);
+  if (!u) return res.status(404).json({ message: "User tidak ditemukan" });
+  const normalized = {
+    ...u,
+    nama: u.nama || u.username || "",
+    telepon: u.telepon || u.phone || "",
+    role: u.role || "user",
+    status: u.status || "active",
+    createdAt: u.createdAt || "",
+  };
+  res.json(normalized);
 });
 
-router.put('/:id', (req, res) => {
+router.post("/", (req, res) => {
+  const { username, email, telepon, password } = req.body;
+  if (!username || !email || !telepon || !password)
+    return res.status(400).json({ message: "Semua field harus diisi" });
+  const existingUser = store.users.find(
+    (u) =>
+      (u.email || "").toLowerCase() === String(email).toLowerCase() ||
+      (u.username || "").toLowerCase() === String(username).toLowerCase()
+  );
+  if (existingUser)
+    return res
+      .status(400)
+      .json({ message: "Email atau Username sudah digunakan" });
+  const newUserId = `U${String(store.users.length + 1).padStart(3, "0")}`;
+  const newUser = {
+    id: newUserId,
+    username,
+    email,
+    telepon,
+    password,
+    role: "user",
+    status: "active",
+    createdAt: new Date().toISOString().split("T")[0],
+  };
+  store.users.push(newUser);
+  try {
+    store.saveUsers();
+  } catch (_) {}
+  res.status(201).json({ message: "User berhasil ditambahkan", user: newUser });
+});
+
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { username, email, telepon, password, status } = req.body;
-  const idx = store.users.findIndex(u => u.id === id);
-  if (idx === -1) return res.status(404).json({ message: 'User tidak ditemukan' });
-  const exists = store.users.find(u => ((u.email || '').toLowerCase() === String(email).toLowerCase() || (u.username || '').toLowerCase() === String(username).toLowerCase()) && u.id !== id);
-  if (exists) return res.status(400).json({ message: 'Email sudah digunakan' });
-  const updateData = { username, email, telepon, status: status || 'active' };
+  const idx = store.users.findIndex((u) => u.id === id);
+  if (idx === -1)
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  const exists = store.users.find(
+    (u) =>
+      ((u.email || "").toLowerCase() === String(email).toLowerCase() ||
+        (u.username || "").toLowerCase() === String(username).toLowerCase()) &&
+      u.id !== id
+  );
+  if (exists) return res.status(400).json({ message: "Email sudah digunakan" });
+  const updateData = { username, email, telepon, status: status || "active" };
   if (password) updateData.password = password;
   store.users[idx] = { ...store.users[idx], ...updateData };
-  try { store.saveUsers(); } catch (_) {}
-  res.json({ message: 'User berhasil diupdate', user: store.users[idx] });
+  try {
+    store.saveUsers();
+  } catch (_) {}
+  res.json({ message: "User berhasil diupdate", user: store.users[idx] });
 });
 
-router.post('/:id/reset-password', (req, res) => {
+router.post("/:id/reset-password", (req, res) => {
   const { id } = req.params;
   const { password } = req.body;
-  const idx = store.users.findIndex(u => u.id === id);
-  if (idx === -1) return res.status(404).json({ message: 'User tidak ditemukan' });
-  if (!password) return res.status(400).json({ message: 'Password harus diisi' });
+  const idx = store.users.findIndex((u) => u.id === id);
+  if (idx === -1)
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  if (!password)
+    return res.status(400).json({ message: "Password harus diisi" });
   store.users[idx].password = password;
-  try { store.saveUsers(); } catch (_) {}
-  res.json({ message: 'Password berhasil direset' });
+  try {
+    store.saveUsers();
+  } catch (_) {}
+  res.json({ message: "Password berhasil direset" });
 });
 
-router.put('/:id/status', (req, res) => {
+router.put("/:id/status", (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  const idx = store.users.findIndex(u => u.id === id);
-  if (idx === -1) return res.status(404).json({ message: 'User tidak ditemukan' });
-  if (!['active', 'inactive'].includes(status)) return res.status(400).json({ message: 'Status tidak valid' });
+  const idx = store.users.findIndex((u) => u.id === id);
+  if (idx === -1)
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  if (!["active", "inactive"].includes(status))
+    return res.status(400).json({ message: "Status tidak valid" });
   store.users[idx].status = status;
-  try { store.saveUsers(); } catch (_) {}
-  res.json({ message: `User berhasil ${status === 'active' ? 'diaktifkan' : 'dinonaktifkan'}`, user: store.users[idx] });
+  try {
+    store.saveUsers();
+  } catch (_) {}
+  res.json({
+    message: `User berhasil ${
+      status === "active" ? "diaktifkan" : "dinonaktifkan"
+    }`,
+    user: store.users[idx],
+  });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  const idx = store.users.findIndex(u => u.id === id);
-  if (idx === -1) return res.status(404).json({ message: 'User tidak ditemukan' });
-  const activeLoans = store.loans.filter(loan => loan.idUser === id && loan.status === 'aktif');
+  const idx = store.users.findIndex((u) => u.id === id);
+  if (idx === -1)
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  const activeLoans = store.loans.filter(
+    (loan) => loan.idUser === id && loan.status === "aktif"
+  );
   if (activeLoans.length > 0) {
-    return res.status(400).json({ message: `Tidak dapat menghapus user karena masih memiliki ${activeLoans.length} peminjaman aktif` });
+    return res
+      .status(400)
+      .json({
+        message: `Tidak dapat menghapus user karena masih memiliki ${activeLoans.length} peminjaman aktif`,
+      });
   }
   const deletedUser = store.users.splice(idx, 1)[0];
-  try { store.saveUsers(); } catch (_) {}
-  res.json({ message: 'User berhasil dihapus', user: deletedUser });
+  try {
+    store.saveUsers();
+  } catch (_) {}
+  res.json({ message: "User berhasil dihapus", user: deletedUser });
 });
 
 module.exports = router;
-
-
