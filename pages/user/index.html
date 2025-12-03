@@ -830,19 +830,36 @@
               <div class="profile-avatar-large" id="profileAvatar">A</div>
               <div class="profile-info">
                 <h2 id="viewName">-</h2>
-                <small id="viewRole" style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">User</small>
+                <small
+                  id="viewRole"
+                  style="
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    opacity: 0.8;
+                  "
+                  >User</small
+                >
               </div>
               <div class="profile-info">
-                <small style="font-size: 12px;">NIS:</small>
+                <small style="font-size: 12px">NIS:</small>
                 <code id="viewNIS">-</code>
               </div>
               <div class="profile-info">
-                <small style="font-size: 12px;">Username:</small>
-                <small style="font-size: 15px; font-weight: 600;" id="viewUsername">-</small>
+                <small style="font-size: 12px">Username:</small>
+                <small
+                  style="font-size: 15px; font-weight: 600"
+                  id="viewUsername"
+                  >-</small
+                >
               </div>
               <div class="profile-info">
-                <small style="font-size: 12px;">Email:</small>
-                <small style="font-size: 15px;" id="viewEmail">-</small>
+                <small style="font-size: 12px">Email:</small>
+                <small style="font-size: 15px" id="viewEmail">-</small>
+                <small style="font-size: 12px; display: block; margin-top: 6px"
+                  >Telepon:</small
+                >
+                <small style="font-size: 15px" id="viewPhone">-</small>
               </div>
               <div class="profile-stats">
                 <div class="stat-item">
@@ -853,23 +870,25 @@
                   <h5 id="viewGender">-</h5>
                   <p>Gender</p>
                 </div>
-                <div class="stat-item">
-                  <h5 id="viewPhone">-</h5>
-                  <p>Telepon</p>
-                </div>
               </div>
             </div>
           </div>
           <div class="tab-pane fade" id="editProfileTab" role="tabpanel">
             <div id="editProfileMsg"></div>
-            
+
             <div class="text-center mb-4">
               <div class="upload-button">
-                <div class="profile-avatar-large" id="editProfileAvatar" style="cursor: pointer; margin-bottom: 15px;">A</div>
+                <div
+                  class="profile-avatar-large"
+                  id="editProfileAvatar"
+                  style="cursor: pointer; margin-bottom: 15px"
+                >
+                  A
+                </div>
                 <label for="profilePictureInput">
                   <i class="fas fa-camera me-2"></i>Ubah Foto Profil
                 </label>
-                <input type="file" id="profilePictureInput" accept="image/*">
+                <input type="file" id="profilePictureInput" accept="image/*" />
               </div>
             </div>
 
@@ -877,7 +896,11 @@
               <form id="editProfileForm">
                 <div class="form-group-custom">
                   <label for="editFullName">Nama Lengkap</label>
-                  <input type="text" id="editFullName" placeholder="Masukkan nama lengkap Anda" />
+                  <input
+                    type="text"
+                    id="editFullName"
+                    placeholder="Masukkan nama lengkap Anda"
+                  />
                 </div>
 
                 <div class="form-group-custom">
@@ -887,22 +910,43 @@
 
                 <div class="form-group-custom">
                   <label for="editUsername">Username</label>
-                  <input type="text" id="editUsername" placeholder="Masukkan username baru" />
+                  <input
+                    type="text"
+                    id="editUsername"
+                    placeholder="Masukkan username baru"
+                  />
                 </div>
 
                 <div class="form-group-custom">
                   <label for="editEmail">Email</label>
-                  <input type="email" id="editEmail" placeholder="Masukkan email baru" />
+                  <input
+                    type="email"
+                    id="editEmail"
+                    placeholder="Masukkan email baru"
+                  />
                 </div>
 
                 <div class="form-group-custom">
                   <label for="editPhone">Nomor Telepon</label>
-                  <input type="text" id="editPhone" placeholder="Masukkan nomor telepon" />
+                  <input
+                    type="text"
+                    id="editPhone"
+                    placeholder="Masukkan nomor telepon"
+                  />
                 </div>
 
                 <div class="form-group-custom">
                   <label for="editGender">Gender</label>
-                  <select id="editGender" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                  <select
+                    id="editGender"
+                    style="
+                      width: 100%;
+                      padding: 12px 15px;
+                      border: 2px solid #e0e0e0;
+                      border-radius: 8px;
+                      font-size: 14px;
+                    "
+                  >
                     <option value="">Pilih Gender</option>
                     <option value="Pria">Pria</option>
                     <option value="Wanita">Wanita</option>
@@ -910,23 +954,44 @@
                   </select>
                 </div>
 
-                <hr style="margin: 25px 0; border: none; border-top: 2px solid #e0e0e0;">
+                <hr
+                  style="
+                    margin: 25px 0;
+                    border: none;
+                    border-top: 2px solid #e0e0e0;
+                  "
+                />
 
                 <div class="form-group-custom">
-                  <label for="editPassword">Password Baru (kosongkan jika tidak diubah)</label>
-                  <input type="password" id="editPassword" placeholder="Masukkan password baru" />
+                  <label for="editPassword"
+                    >Password Baru (kosongkan jika tidak diubah)</label
+                  >
+                  <input
+                    type="password"
+                    id="editPassword"
+                    placeholder="Masukkan password baru"
+                  />
                 </div>
 
                 <div class="form-group-custom">
                   <label for="editPasswordConfirm">Konfirmasi Password</label>
-                  <input type="password" id="editPasswordConfirm" placeholder="Konfirmasi password baru" />
+                  <input
+                    type="password"
+                    id="editPasswordConfirm"
+                    placeholder="Konfirmasi password baru"
+                  />
                 </div>
 
                 <div class="btn-group-custom">
                   <button type="button" class="btn-save" id="saveProfileBtn">
                     <i class="fas fa-save me-2"></i>Simpan Perubahan
                   </button>
-                  <button type="button" class="btn-cancel" data-bs-toggle="tab" data-bs-target="#viewProfileTab">
+                  <button
+                    type="button"
+                    class="btn-cancel"
+                    data-bs-toggle="tab"
+                    data-bs-target="#viewProfileTab"
+                  >
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                   </button>
                 </div>
@@ -951,9 +1016,9 @@
       async function loadUserProfile() {
         const userId = localStorage.getItem("userid");
         const username = localStorage.getItem("username") || null;
-        
+
         console.log("loadUserProfile - userId:", userId, "username:", username);
-        
+
         // Set default placeholders
         document.getElementById("viewName").textContent = "-";
         document.getElementById("viewNIS").textContent = "-";
@@ -963,7 +1028,7 @@
         document.getElementById("viewGender").textContent = "-";
         document.getElementById("viewPhone").textContent = "-";
         document.getElementById("viewLoanCount").textContent = "0";
-        
+
         if (document.getElementById("editFullName"))
           document.getElementById("editFullName").value = "";
         if (document.getElementById("editUsername"))
@@ -979,7 +1044,7 @@
 
         try {
           let user = null;
-          
+
           // Try API endpoint first
           if (userId) {
             try {
@@ -994,9 +1059,10 @@
               console.log("Failed to load from /profile/:userId", e);
             }
           }
-          
+
           if (user) {
-            const displayName = user.fullName || user.nama || user.name || user.username || "-";
+            const displayName =
+              user.fullName || user.nama || user.name || user.username || "-";
             document.getElementById("viewName").textContent = displayName;
             document.getElementById("viewNIS").textContent = user.nis || "-";
             document.getElementById("viewUsername").textContent =
@@ -1008,8 +1074,10 @@
             ).toString();
             document.getElementById("viewEmail").textContent =
               user.email || "-";
-                        document.getElementById("viewGender").textContent = user.gender || "-";
-                        document.getElementById("viewPhone").textContent = user.phone || "-";
+            document.getElementById("viewGender").textContent =
+              user.gender || "-";
+            document.getElementById("viewPhone").textContent =
+              user.phone || "-";
             if (document.getElementById("editFullName"))
               document.getElementById("editFullName").value =
                 user.fullName || "";
@@ -1025,24 +1093,29 @@
             if (document.getElementById("editGender"))
               document.getElementById("editGender").value = user.gender || "";
 
-            // Avatar: initials and color or profile picture
+            // Avatar: initials and color or profile picture (prefer local storage copy)
             try {
               const avatarEl = document.getElementById("profileAvatar");
               const editAvatarEl = document.getElementById("editProfileAvatar");
-              
-              if (user.profilePicture) {
-                // If user has profile picture, display it as image
+              const localPicKey = userId ? `profile_pic_${userId}` : null;
+              const localPic = localPicKey
+                ? localStorage.getItem(localPicKey) || null
+                : null;
+              const picToUse = localPic || user.profilePicture || null;
+
+              if (picToUse) {
+                // If we have a picture (local or from server), display it as image
                 if (avatarEl) {
-                  avatarEl.textContent = '';
-                  avatarEl.style.backgroundImage = `url(${user.profilePicture})`;
-                  avatarEl.style.backgroundSize = 'cover';
-                  avatarEl.style.backgroundPosition = 'center';
+                  avatarEl.textContent = "";
+                  avatarEl.style.backgroundImage = `url(${picToUse})`;
+                  avatarEl.style.backgroundSize = "cover";
+                  avatarEl.style.backgroundPosition = "center";
                 }
                 if (editAvatarEl) {
-                  editAvatarEl.textContent = '';
-                  editAvatarEl.style.backgroundImage = `url(${user.profilePicture})`;
-                  editAvatarEl.style.backgroundSize = 'cover';
-                  editAvatarEl.style.backgroundPosition = 'center';
+                  editAvatarEl.textContent = "";
+                  editAvatarEl.style.backgroundImage = `url(${picToUse})`;
+                  editAvatarEl.style.backgroundSize = "cover";
+                  editAvatarEl.style.backgroundPosition = "center";
                 }
               } else {
                 // Display initials
@@ -1053,8 +1126,10 @@
                   .map((s) => s[0].toUpperCase())
                   .join("");
                 if (!initials)
-                  initials = (user.username || "U").substring(0, 2).toUpperCase();
-                
+                  initials = (user.username || "U")
+                    .substring(0, 2)
+                    .toUpperCase();
+
                 const palette = [
                   "linear-gradient(135deg,#4e73df,#1cc88a)",
                   "linear-gradient(135deg,#f6c23e,#e74a3b)",
@@ -1066,7 +1141,7 @@
                 for (let i = 0; i < displayName.length; i++)
                   sum += displayName.charCodeAt(i);
                 const bgColor = palette[sum % palette.length];
-                
+
                 if (avatarEl) {
                   avatarEl.textContent = initials;
                   avatarEl.style.background = bgColor;
@@ -1107,8 +1182,12 @@
       document
         .getElementById("saveProfileBtn")
         ?.addEventListener("click", async function () {
-          const fullName = document.getElementById("editFullName")?.value?.trim();
-          const username = document.getElementById("editUsername")?.value?.trim();
+          const fullName = document
+            .getElementById("editFullName")
+            ?.value?.trim();
+          const username = document
+            .getElementById("editUsername")
+            ?.value?.trim();
           const email = document.getElementById("editEmail")?.value?.trim();
           const phone = document.getElementById("editPhone")?.value?.trim();
           const gender = document.getElementById("editGender")?.value?.trim();
@@ -1176,75 +1255,85 @@
         });
 
       // Handle profile picture upload
-      document.getElementById("profilePictureInput")?.addEventListener("change", async function(e) {
-        const file = e.target.files?.[0];
-        if (!file) return;
+      document
+        .getElementById("profilePictureInput")
+        ?.addEventListener("change", async function (e) {
+          const file = e.target.files?.[0];
+          if (!file) return;
 
-        // Validate file is image
-        if (!file.type.startsWith("image/")) {
-          alert("Silakan pilih file gambar");
-          return;
-        }
-
-        // Validate file size (max 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-          alert("Ukuran file maksimal 2MB");
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-          const base64Image = event.target.result;
-          const userId = localStorage.getItem("userid");
-          const username = localStorage.getItem("username");
-
-          // Save to localStorage (local fallback)
-          if (userId) {
-            try {
-              localStorage.setItem(`profile_pic_${userId}`, base64Image);
-            } catch (e) {
-              console.warn("Could not save to localStorage:", e);
-            }
+          // Validate file is image
+          if (!file.type.startsWith("image/")) {
+            alert("Silakan pilih file gambar");
+            return;
           }
 
-          // Try to send to API
-          if (userId) {
-            try {
-              const r = await fetch(`/profile/${userId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ profilePicture: base64Image }),
-              });
-              if (!r.ok) {
-                console.warn("Failed to upload profile picture to server");
+          // Validate file size (max 2MB)
+          if (file.size > 2 * 1024 * 1024) {
+            alert("Ukuran file maksimal 2MB");
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = async function (event) {
+            const base64Image = event.target.result;
+            const userId = localStorage.getItem("userid");
+            const username = localStorage.getItem("username");
+
+            // Save to localStorage (local fallback)
+            if (userId) {
+              try {
+                localStorage.setItem(`profile_pic_${userId}`, base64Image);
+              } catch (e) {
+                console.warn("Could not save to localStorage:", e);
               }
-            } catch (e) {
-              console.warn("Could not upload to server:", e);
             }
-          }
 
-          // Update avatar immediately (in both view and edit tabs)
-          const profileAvatarEl = document.getElementById("profileAvatar");
-          if (profileAvatarEl) {
-            profileAvatarEl.textContent = '';
-            profileAvatarEl.style.backgroundImage = `url(${base64Image})`;
-            profileAvatarEl.style.backgroundSize = 'cover';
-            profileAvatarEl.style.backgroundPosition = 'center';
-          }
+            // Try to send to API
+            if (userId) {
+              try {
+                const r = await fetch(`/profile/${userId}`, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ profilePicture: base64Image }),
+                });
+                if (!r.ok) {
+                  console.warn("Failed to upload profile picture to server");
+                }
+              } catch (e) {
+                console.warn("Could not upload to server:", e);
+              }
+            }
 
-          const editAvatarEl = document.getElementById("editProfileAvatar");
-          if (editAvatarEl) {
-            editAvatarEl.textContent = '';
-            editAvatarEl.style.backgroundImage = `url(${base64Image})`;
-            editAvatarEl.style.backgroundSize = 'cover';
-            editAvatarEl.style.backgroundPosition = 'center';
-          }
+            // Update avatar immediately (in both view and edit tabs)
+            const profileAvatarEl = document.getElementById("profileAvatar");
+            if (profileAvatarEl) {
+              profileAvatarEl.textContent = "";
+              profileAvatarEl.style.backgroundImage = `url(${base64Image})`;
+              profileAvatarEl.style.backgroundSize = "cover";
+              profileAvatarEl.style.backgroundPosition = "center";
+            }
 
-          // Reset input
-          e.target.value = '';
-        };
-        reader.readAsDataURL(file);
-      });
+            const editAvatarEl = document.getElementById("editProfileAvatar");
+            if (editAvatarEl) {
+              editAvatarEl.textContent = "";
+              editAvatarEl.style.backgroundImage = `url(${base64Image})`;
+              editAvatarEl.style.backgroundSize = "cover";
+              editAvatarEl.style.backgroundPosition = "center";
+            }
+
+            // Reset input and blur to ensure the same file can be selected again
+            e.target.value = "";
+            try {
+              e.target.blur();
+            } catch (err) {}
+            setTimeout(() => {
+              try {
+                e.target.value = "";
+              } catch (_) {}
+            }, 50);
+          };
+          reader.readAsDataURL(file);
+        });
     </script>
     <script>
       // Live update when account switches in another tab/window
@@ -1396,7 +1485,7 @@
       let allBooksCache = [];
 
       // Current category filter
-      let currentCategory = 'semua';
+      let currentCategory = "semua";
 
       // Global system settings
       let systemSettings = {
@@ -1430,8 +1519,11 @@
         let books = [...allBooksCache];
 
         // Filter by category
-        if (currentCategory && currentCategory !== 'semua') {
-          books = books.filter(b => (b.kategori || '').toLowerCase() === currentCategory.toLowerCase());
+        if (currentCategory && currentCategory !== "semua") {
+          books = books.filter(
+            (b) =>
+              (b.kategori || "").toLowerCase() === currentCategory.toLowerCase()
+          );
         }
 
         // Filter by search - this is the key connection between search and display
@@ -1489,7 +1581,7 @@
         if (sectionTitle) {
           if (keyword) {
             sectionTitle.textContent = `Hasil Pencarian "${keyword}" (${books.length} buku)`;
-          } else if (currentCategory && currentCategory !== 'semua') {
+          } else if (currentCategory && currentCategory !== "semua") {
             sectionTitle.textContent = `Kategori ${currentCategory} (${books.length} buku)`;
           } else {
             sectionTitle.textContent = `Semua Buku (${books.length} buku)`;
@@ -1522,7 +1614,9 @@
                 <small class="text-secondary d-block mb-2">
                   <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                 </small>
-                <span class="badge bg-primary d-block mb-2">${book.kategori || 'Umum'}</span>
+                <span class="badge bg-primary d-block mb-2">${
+                  book.kategori || "Umum"
+                }</span>
                 <span class="badge ${
                   book.stok > 0 ? "bg-success" : "bg-danger"
                 }">
@@ -1557,7 +1651,7 @@
         currentCategory = category;
         // Clear search when filtering by category
         const searchInput = document.getElementById("searchBukuInput");
-        if (searchInput) searchInput.value = '';
+        if (searchInput) searchInput.value = "";
         renderBooksWithSortAndSearch();
       }
 
@@ -1669,9 +1763,15 @@
         // tampilkan cover di modal
         const coverCol = document.querySelector("#bookModal .col-md-4 > div");
         if (coverCol) {
-          const imgSrcJpg = getBookImageSrc(book);
-          const imgSrcPng = imgSrcJpg.replace(/\.jpg$/i, ".png");
-          coverCol.innerHTML = `<img src="${imgSrcJpg}" alt="${book.namaBuku}" class="img-fluid rounded" onerror="this.onerror=null;this.src='${imgSrcPng}';">`;
+          // Use the same fallback logic as the grid cards so short filenames (e.g. 'sapiens.jpg') are tried.
+          const imgEl = document.createElement("img");
+          imgEl.alt = book.namaBuku;
+          imgEl.className = "img-fluid rounded";
+          // Clear existing content and append image element
+          coverCol.innerHTML = "";
+          coverCol.appendChild(imgEl);
+          // Use setBookImage which will try multiple candidate filenames and fall back to a placeholder
+          setBookImage(imgEl, book);
         }
 
         const modal = new bootstrap.Modal(document.getElementById("bookModal"));
@@ -1696,7 +1796,12 @@
         const sanitized = sanitizeForFilename(title);
         const sanJpg = `${baseDir}/${sanitized}.jpg`;
         const sanPng = `${baseDir}/${sanitized}.png`;
-        return [rawJpg, rawPng, sanJpg, sanPng];
+        // Also try a short form using the first word of the title (e.g. 'Sapiens')
+        const firstWord = (title || "").split(" ")[0] || "";
+        const firstSan = sanitizeForFilename(firstWord);
+        const firstSanJpg = `${baseDir}/${firstSan}.jpg`;
+        const firstSanPng = `${baseDir}/${firstSan}.png`;
+        return [rawJpg, rawPng, sanJpg, sanPng, firstSanJpg, firstSanPng];
       }
       // For modal cover: pick a reasonable default; inline onerror will try PNG
       function getBookImageSrc(book) {
