@@ -115,14 +115,9 @@
       <h6 class="text-center mb-3 text-warning">User Panel</h6>
 
       <a href="#" id="homeLink"> <i class="fas fa-home me-2"></i>Home </a>
-      <a href="#submenuDaftar" data-bs-toggle="collapse" aria-expanded="false">
-        <i class="fas fa-book-open me-2"></i>Daftar Buku
+      <a href="#" onclick="showAllBooks()">
+        <i class="fas fa-book me-2"></i>Semua Buku
       </a>
-      <div id="submenuDaftar" class="collapse ms-3">
-        <a href="#" onclick="showAllBooks()">
-          <i class="fas fa-book me-2"></i>Semua Buku
-        </a>
-      </div>
       <a href="#submenuPinjam" data-bs-toggle="collapse" aria-expanded="false">
         <i class="fas fa-book-reader me-2"></i>Pinjam Buku
       </a>
@@ -635,26 +630,171 @@
       </div>
       <div class="offcanvas-body">
         <style>
-          .profile-avatar {
-            width: 84px;
-            height: 84px;
+          .profile-container {
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+          }
+          .profile-avatar-large {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4e73df, #1cc88a);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 56px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            object-fit: cover;
+            margin: 0 auto 20px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+          .profile-avatar-large:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+          }
+          #profilePictureInput {
+            display: none;
+          }
+          .profile-info {
+            margin-bottom: 15px;
+          }
+          .profile-info h2 {
+            margin: 10px 0;
             font-size: 28px;
             font-weight: 700;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            letter-spacing: 0.5px;
           }
-          .profile-header {
+          .profile-info small {
+            font-size: 14px;
+            opacity: 0.9;
+            display: block;
+            margin: 5px 0;
+          }
+          .profile-info code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-top: 5px;
+          }
+          /* Make NIS digits white and bold for visibility */
+          #viewNIS {
+            color: #ffffff;
+            font-weight: 700;
+          }
+          .profile-stats {
             display: flex;
-            gap: 12px;
-            align-items: center;
+            justify-content: space-around;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
           }
-          .profile-meta small {
-            color: #6c757d;
+          .stat-item {
+            text-align: center;
+          }
+          .stat-item h5 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 700;
+          }
+          .stat-item p {
+            font-size: 12px;
+            margin: 5px 0 0 0;
+            opacity: 0.85;
+          }
+          .edit-profile-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+          }
+          .form-group-custom {
+            margin-bottom: 18px;
+          }
+          .form-group-custom label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e3d59;
+            font-size: 14px;
+          }
+          .form-group-custom input,
+          .form-group-custom textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+          }
+          .form-group-custom input:focus,
+          .form-group-custom textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          }
+          .form-group-custom input:disabled {
+            background: #f0f0f0;
+            color: #666;
+          }
+          .upload-button {
+            position: relative;
+            display: inline-block;
+            margin-top: 15px;
+          }
+          .upload-button label {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background 0.3s ease;
+            margin: 0;
+            font-weight: 600;
+          }
+          .upload-button label:hover {
+            background: #5568d3;
+          }
+          .btn-group-custom {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+          }
+          .btn-group-custom button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+          }
+          .btn-save {
+            background: #667eea;
+            color: white;
+          }
+          .btn-save:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+          }
+          .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+          }
+          .btn-cancel:hover {
+            background: #d0d0d0;
           }
         </style>
         <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
@@ -689,91 +829,112 @@
             id="viewProfileTab"
             role="tabpanel"
           >
-            <div class="card mb-3">
-              <div class="card-body">
-                <div class="profile-header mb-3">
-                  <div class="profile-avatar" id="profileAvatar">A</div>
-                  <div>
-                    <h5 id="viewName" class="mb-0">-</h5>
-                    <div class="profile-meta">
-                      <small id="viewRole">-</small>
-                    </div>
-                  </div>
+            <div class="profile-container">
+              <div class="profile-avatar-large" id="profileAvatar">A</div>
+              <div class="profile-info">
+                <h2 id="viewName">-</h2>
+                <small id="viewRole" style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">User</small>
+              </div>
+              <div class="profile-info">
+                <small style="font-size: 12px;">NIS:</small>
+                <code id="viewNIS">-</code>
+              </div>
+              <div class="profile-info">
+                <small style="font-size: 12px;">Username:</small>
+                <small style="font-size: 15px; font-weight: 600;" id="viewUsername">-</small>
+              </div>
+              <div class="profile-info">
+                <small style="font-size: 12px;">Email:</small>
+                <small style="font-size: 15px;" id="viewEmail">-</small>
+              </div>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <h5 id="viewLoanCount">0</h5>
+                  <p>Buku Dipinjam</p>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-4 text-muted">Username</div>
-                  <div class="col-8 fw-semibold" id="viewUsername">-</div>
+                <div class="stat-item">
+                  <h5 id="viewGender">-</h5>
+                  <p>Gender</p>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-4 text-muted">Email</div>
-                  <div class="col-8" id="viewEmail">-</div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-4 text-muted">Dipinjam</div>
-                  <div class="col-8">
-                    <span class="badge bg-primary" id="viewLoanCount">0</span>
-                  </div>
+                <div class="stat-item">
+                  <h5 id="viewPhone">-</h5>
+                  <p>Telepon</p>
                 </div>
               </div>
-            </div>
-            <div class="d-grid gap-2">
-              <button
-                class="btn btn-outline-primary"
-                onclick="document.querySelector('#profileTab button[data-bs-target=\'#editProfileTab\']').click();"
-              >
-                Edit Profil
-              </button>
-              <button class="btn btn-secondary" data-bs-dismiss="offcanvas">
-                Tutup
-              </button>
             </div>
           </div>
           <div class="tab-pane fade" id="editProfileTab" role="tabpanel">
             <div id="editProfileMsg"></div>
-            <form id="editProfileForm">
-              <div class="mb-3">
-                <label for="editUsername" class="form-label">Username</label>
-                <input
-                  type="text"
-                  id="editUsername"
-                  class="form-control"
-                  autocomplete="username"
-                />
+            
+            <div class="text-center mb-4">
+              <div class="upload-button">
+                <div class="profile-avatar-large" id="editProfileAvatar" style="cursor: pointer; margin-bottom: 15px;">A</div>
+                <label for="profilePictureInput">
+                  <i class="fas fa-camera me-2"></i>Ubah Foto Profil
+                </label>
+                <input type="file" id="profilePictureInput" accept="image/*">
               </div>
-              <div class="mb-3">
-                <label for="editPassword" class="form-label"
-                  >Password (kosongkan jika tidak diubah)</label
-                >
-                <input type="password" id="editPassword" class="form-control" />
-              </div>
-              <div class="mb-3">
-                <label for="editPasswordConfirm" class="form-label"
-                  >Konfirmasi Password Baru</label
-                >
-                <input
-                  type="password"
-                  id="editPasswordConfirm"
-                  class="form-control"
-                  autocomplete="new-password"
-                />
-              </div>
-              <div class="d-flex gap-2">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="saveProfileBtn"
-                >
-                  Simpan
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="offcanvas"
-                >
-                  Batal
-                </button>
-              </div>
-            </form>
+            </div>
+
+            <div class="edit-profile-form">
+              <form id="editProfileForm">
+                <div class="form-group-custom">
+                  <label for="editFullName">Nama Lengkap</label>
+                  <input type="text" id="editFullName" placeholder="Masukkan nama lengkap Anda" />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="viewNISEdit">NIS (Tidak dapat diubah)</label>
+                  <input type="text" id="viewNISEdit" readonly disabled />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="editUsername">Username</label>
+                  <input type="text" id="editUsername" placeholder="Masukkan username baru" />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="editEmail">Email</label>
+                  <input type="email" id="editEmail" placeholder="Masukkan email baru" />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="editPhone">Nomor Telepon</label>
+                  <input type="text" id="editPhone" placeholder="Masukkan nomor telepon" />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="editGender">Gender</label>
+                  <select id="editGender" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                    <option value="">Pilih Gender</option>
+                    <option value="Pria">Pria</option>
+                    <option value="Wanita">Wanita</option>
+                    <option value="Lainnya">Lainnya</option>
+                  </select>
+                </div>
+
+                <hr style="margin: 25px 0; border: none; border-top: 2px solid #e0e0e0;">
+
+                <div class="form-group-custom">
+                  <label for="editPassword">Password Baru (kosongkan jika tidak diubah)</label>
+                  <input type="password" id="editPassword" placeholder="Masukkan password baru" />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="editPasswordConfirm">Konfirmasi Password</label>
+                  <input type="password" id="editPasswordConfirm" placeholder="Konfirmasi password baru" />
+                </div>
+
+                <div class="btn-group-custom">
+                  <button type="button" class="btn-save" id="saveProfileBtn">
+                    <i class="fas fa-save me-2"></i>Simpan Perubahan
+                  </button>
+                  <button type="button" class="btn-cancel" data-bs-toggle="tab" data-bs-target="#viewProfileTab">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -793,58 +954,54 @@
       async function loadUserProfile() {
         const userId = localStorage.getItem("userid");
         const username = localStorage.getItem("username") || null;
-        // Default placeholders
+        
+        console.log("loadUserProfile - userId:", userId, "username:", username);
+        
+        // Set default placeholders
         document.getElementById("viewName").textContent = "-";
+        document.getElementById("viewNIS").textContent = "-";
         document.getElementById("viewUsername").textContent = username || "-";
         document.getElementById("viewRole").textContent = "-";
         document.getElementById("viewEmail").textContent = "-";
+        document.getElementById("viewGender").textContent = "-";
+        document.getElementById("viewPhone").textContent = "-";
         document.getElementById("viewLoanCount").textContent = "0";
+        
+        if (document.getElementById("editFullName"))
+          document.getElementById("editFullName").value = "";
         if (document.getElementById("editUsername"))
           document.getElementById("editUsername").value = "";
+        if (document.getElementById("viewNISEdit"))
+          document.getElementById("viewNISEdit").value = "";
+        if (document.getElementById("editEmail"))
+          document.getElementById("editEmail").value = "";
+        if (document.getElementById("editPhone"))
+          document.getElementById("editPhone").value = "";
+        if (document.getElementById("editGender"))
+          document.getElementById("editGender").value = "";
 
         try {
-          // Try to read from data_login.js for user profile (fallback if API not available)
           let user = null;
-          try {
-            // Try common static data paths (data folder or root)
-            const dataPaths = [
-              "/data/data_login.js",
-              "/data/data_login.json",
-              "/data_login.js",
-              "/data_login.json",
-            ];
-            let users = null;
-            for (const p of dataPaths) {
-              try {
-                const resp = await fetch(p);
-                if (!resp.ok) continue;
-                users = await resp.json();
-                if (Array.isArray(users)) break;
-              } catch (_) {
-                /* try next */
-              }
-            }
-            if (Array.isArray(users)) {
-              if (userId)
-                user = users.find((u) => String(u.id) === String(userId));
-              if (!user && username)
-                user = users.find((u) => u.username === username);
-            }
-          } catch (e) {
-            // ignore
-          }
-
-          // Try API if available
-          if (!user && userId) {
+          
+          // Try API endpoint first
+          if (userId) {
             try {
-              const r = await fetch(`/api/users/${userId}`);
-              if (r.ok) user = await r.json();
-            } catch (e) {}
+              console.log("Trying to fetch /profile/" + userId);
+              const r = await fetch(`/profile/${userId}`);
+              console.log("Response status:", r.status);
+              if (r.ok) {
+                user = await r.json();
+                console.log("Loaded user from /profile/:userId:", user);
+              }
+            } catch (e) {
+              console.log("Failed to load from /profile/:userId", e);
+            }
           }
-
+          
           if (user) {
-            const displayName = user.nama || user.name || user.username || "-";
+            const displayName = user.fullName || user.nama || user.name || user.username || "-";
             document.getElementById("viewName").textContent = displayName;
+            document.getElementById("viewNIS").textContent = user.nis || "-";
             document.getElementById("viewUsername").textContent =
               user.username || "-";
             document.getElementById("viewRole").textContent = (
@@ -854,33 +1011,74 @@
             ).toString();
             document.getElementById("viewEmail").textContent =
               user.email || "-";
+                        document.getElementById("viewGender").textContent = user.gender || "-";
+                        document.getElementById("viewPhone").textContent = user.phone || "-";
+            if (document.getElementById("editFullName"))
+              document.getElementById("editFullName").value =
+                user.fullName || "";
             if (document.getElementById("editUsername"))
               document.getElementById("editUsername").value =
                 user.username || user.nama || "";
+            if (document.getElementById("viewNISEdit"))
+              document.getElementById("viewNISEdit").value = user.nis || "-";
+            if (document.getElementById("editEmail"))
+              document.getElementById("editEmail").value = user.email || "";
+            if (document.getElementById("editPhone"))
+              document.getElementById("editPhone").value = user.phone || "";
+            if (document.getElementById("editGender"))
+              document.getElementById("editGender").value = user.gender || "";
 
-            // Avatar: initials and color
+            // Avatar: initials and color or profile picture
             try {
               const avatarEl = document.getElementById("profileAvatar");
-              let initials = (displayName || "")
-                .split(" ")
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((s) => s[0].toUpperCase())
-                .join("");
-              if (!initials)
-                initials = (user.username || "U").substring(0, 2).toUpperCase();
-              avatarEl.textContent = initials;
-              const palette = [
-                "linear-gradient(135deg,#4e73df,#1cc88a)",
-                "linear-gradient(135deg,#f6c23e,#e74a3b)",
-                "linear-gradient(135deg,#36b9cc,#4e73df)",
-                "linear-gradient(135deg,#6f42c1,#e83e8c)",
-              ];
-              // pick stable color
-              let sum = 0;
-              for (let i = 0; i < displayName.length; i++)
-                sum += displayName.charCodeAt(i);
-              avatarEl.style.background = palette[sum % palette.length];
+              const editAvatarEl = document.getElementById("editProfileAvatar");
+              
+              if (user.profilePicture) {
+                // If user has profile picture, display it as image
+                if (avatarEl) {
+                  avatarEl.textContent = '';
+                  avatarEl.style.backgroundImage = `url(${user.profilePicture})`;
+                  avatarEl.style.backgroundSize = 'cover';
+                  avatarEl.style.backgroundPosition = 'center';
+                }
+                if (editAvatarEl) {
+                  editAvatarEl.textContent = '';
+                  editAvatarEl.style.backgroundImage = `url(${user.profilePicture})`;
+                  editAvatarEl.style.backgroundSize = 'cover';
+                  editAvatarEl.style.backgroundPosition = 'center';
+                }
+              } else {
+                // Display initials
+                let initials = (displayName || "")
+                  .split(" ")
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((s) => s[0].toUpperCase())
+                  .join("");
+                if (!initials)
+                  initials = (user.username || "U").substring(0, 2).toUpperCase();
+                
+                const palette = [
+                  "linear-gradient(135deg,#4e73df,#1cc88a)",
+                  "linear-gradient(135deg,#f6c23e,#e74a3b)",
+                  "linear-gradient(135deg,#36b9cc,#4e73df)",
+                  "linear-gradient(135deg,#6f42c1,#e83e8c)",
+                ];
+                // pick stable color
+                let sum = 0;
+                for (let i = 0; i < displayName.length; i++)
+                  sum += displayName.charCodeAt(i);
+                const bgColor = palette[sum % palette.length];
+                
+                if (avatarEl) {
+                  avatarEl.textContent = initials;
+                  avatarEl.style.background = bgColor;
+                }
+                if (editAvatarEl) {
+                  editAvatarEl.textContent = initials;
+                  editAvatarEl.style.background = bgColor;
+                }
+              }
             } catch (e) {}
           }
 
@@ -912,15 +1110,19 @@
       document
         .getElementById("saveProfileBtn")
         ?.addEventListener("click", async function () {
-          const name = document.getElementById("editUsername")?.value?.trim();
+          const fullName = document.getElementById("editFullName")?.value?.trim();
+          const username = document.getElementById("editUsername")?.value?.trim();
+          const email = document.getElementById("editEmail")?.value?.trim();
+          const phone = document.getElementById("editPhone")?.value?.trim();
+          const gender = document.getElementById("editGender")?.value?.trim();
           const pwd = document.getElementById("editPassword")?.value || "";
           const pwd2 =
             document.getElementById("editPasswordConfirm")?.value || "";
           const userId = localStorage.getItem("userid");
-          const username = localStorage.getItem("username");
+          const currentUsername = localStorage.getItem("username");
           const msgEl = document.getElementById("editProfileMsg");
           msgEl.innerHTML = "";
-          if (!username && !userId) {
+          if (!currentUsername && !userId) {
             msgEl.innerHTML =
               '<div class="alert alert-danger">Tidak terdeteksi user login</div>';
             return;
@@ -935,9 +1137,13 @@
           if (userId) {
             try {
               const body = {};
-              if (name) body.username = name;
+              if (fullName) body.fullName = fullName;
+              if (username) body.username = username;
+              if (email) body.email = email;
+              if (phone) body.phone = phone;
+              if (gender) body.gender = gender;
               if (pwd) body.password = pwd;
-              const r = await fetch(`/api/users/${userId}`, {
+              const r = await fetch(`/profile/${userId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -951,9 +1157,13 @@
           }
           // Fallback: update localStorage display and inform user
           if (!updated) {
-            if (name)
+            if (fullName)
               try {
-                localStorage.setItem("name", name);
+                localStorage.setItem("fullName", fullName);
+              } catch (e) {}
+            if (username)
+              try {
+                localStorage.setItem("username", username);
               } catch (e) {}
             msgEl.innerHTML =
               '<div class="alert alert-success">Perubahan disimpan (lokal). Jika backend tersedia, perubahan akan disinkronkan.</div>';
@@ -965,7 +1175,79 @@
           loadUserProfile();
           // clear password field
           document.getElementById("editPassword").value = "";
+          document.getElementById("editPasswordConfirm").value = "";
         });
+
+      // Handle profile picture upload
+      document.getElementById("profilePictureInput")?.addEventListener("change", async function(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file is image
+        if (!file.type.startsWith("image/")) {
+          alert("Silakan pilih file gambar");
+          return;
+        }
+
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert("Ukuran file maksimal 2MB");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+          const base64Image = event.target.result;
+          const userId = localStorage.getItem("userid");
+          const username = localStorage.getItem("username");
+
+          // Save to localStorage (local fallback)
+          if (userId) {
+            try {
+              localStorage.setItem(`profile_pic_${userId}`, base64Image);
+            } catch (e) {
+              console.warn("Could not save to localStorage:", e);
+            }
+          }
+
+          // Try to send to API
+          if (userId) {
+            try {
+              const r = await fetch(`/profile/${userId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ profilePicture: base64Image }),
+              });
+              if (!r.ok) {
+                console.warn("Failed to upload profile picture to server");
+              }
+            } catch (e) {
+              console.warn("Could not upload to server:", e);
+            }
+          }
+
+          // Update avatar immediately (in both view and edit tabs)
+          const profileAvatarEl = document.getElementById("profileAvatar");
+          if (profileAvatarEl) {
+            profileAvatarEl.textContent = '';
+            profileAvatarEl.style.backgroundImage = `url(${base64Image})`;
+            profileAvatarEl.style.backgroundSize = 'cover';
+            profileAvatarEl.style.backgroundPosition = 'center';
+          }
+
+          const editAvatarEl = document.getElementById("editProfileAvatar");
+          if (editAvatarEl) {
+            editAvatarEl.textContent = '';
+            editAvatarEl.style.backgroundImage = `url(${base64Image})`;
+            editAvatarEl.style.backgroundSize = 'cover';
+            editAvatarEl.style.backgroundPosition = 'center';
+          }
+
+          // Reset input
+          e.target.value = '';
+        };
+        reader.readAsDataURL(file);
+      });
     </script>
     <script>
       // Live update when account switches in another tab/window
@@ -1116,6 +1398,9 @@
       // Global cache for all books
       let allBooksCache = [];
 
+      // Current category filter
+      let currentCategory = 'semua';
+
       // Global system settings
       let systemSettings = {
         libraryName: "E-Library",
@@ -1146,6 +1431,11 @@
         }
 
         let books = [...allBooksCache];
+
+        // Filter by category
+        if (currentCategory && currentCategory !== 'semua') {
+          books = books.filter(b => (b.kategori || '').toLowerCase() === currentCategory.toLowerCase());
+        }
 
         // Filter by search - this is the key connection between search and display
         const keyword = searchBukuInput
@@ -1202,6 +1492,8 @@
         if (sectionTitle) {
           if (keyword) {
             sectionTitle.textContent = `Hasil Pencarian "${keyword}" (${books.length} buku)`;
+          } else if (currentCategory && currentCategory !== 'semua') {
+            sectionTitle.textContent = `Kategori ${currentCategory} (${books.length} buku)`;
           } else {
             sectionTitle.textContent = `Semua Buku (${books.length} buku)`;
           }
@@ -1233,6 +1525,7 @@
                 <small class="text-secondary d-block mb-2">
                   <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                 </small>
+                <span class="badge bg-primary d-block mb-2">${book.kategori || 'Umum'}</span>
                 <span class="badge ${
                   book.stok > 0 ? "bg-success" : "bg-danger"
                 }">
@@ -1260,6 +1553,15 @@
         });
 
         semuaBukuList.appendChild(row);
+      }
+
+      // Filter by category
+      function filterByCategory(category) {
+        currentCategory = category;
+        // Clear search when filtering by category
+        const searchInput = document.getElementById("searchBukuInput");
+        if (searchInput) searchInput.value = '';
+        renderBooksWithSortAndSearch();
       }
 
       // Global function to load all books and render
@@ -2494,6 +2796,17 @@
                     <option value="year-desc">Tahun Terbaru</option>
                     <option value="year-asc">Tahun Terlama</option>
                   </select>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-12">
+                  <label class="form-label d-block mb-2">Kategori Buku:</label>
+                  <div class="btn-group flex-wrap" role="group">
+                    <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('semua')">Semua</button>
+                    <button type="button" class="btn btn-outline-info" onclick="filterByCategory('Fiksi')">Fiksi</button>
+                    <button type="button" class="btn btn-outline-success" onclick="filterByCategory('Fantasi')">Fantasi</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filterByCategory('Pengetahuan')">Pengetahuan</button>
+                  </div>
                 </div>
               </div>
             </div>
