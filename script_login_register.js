@@ -84,6 +84,8 @@ function handleLogin() {
 
 // handle register
 function handleRegister() {
+  const fullName = document.getElementById("regFullName").value;
+  const nis = document.getElementById("regNIS").value;
   const username = document.getElementById("regUsername").value;
   const gender = document.querySelector("input[name='gender']:checked");
   const phone = document.getElementById("regPhone").value;
@@ -92,8 +94,13 @@ function handleRegister() {
   const confirmPassword = document.getElementById("regConfirmPassword").value;
 
   // validasi dasar
-  if (!username || !gender || !phone || !email || !password || !confirmPassword) {
+  if (!fullName || !nis || !username || !gender || !phone || !email || !password || !confirmPassword) {
     showMessage("Isi semua field!", true);
+    return;
+  }
+
+  if (!/^\d{10}$/.test(nis)) {
+    showMessage("NIS harus 10 digit angka!", true);
     return;
   }
 
@@ -111,13 +118,15 @@ function handleRegister() {
   fetch("/register", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `username=${encodeURIComponent(username)}&gender=${encodeURIComponent(gender.value)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&confirmPassword=${encodeURIComponent(confirmPassword)}`
+    body: `fullName=${encodeURIComponent(fullName)}&nis=${encodeURIComponent(nis)}&username=${encodeURIComponent(username)}&gender=${encodeURIComponent(gender.value)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&confirmPassword=${encodeURIComponent(confirmPassword)}`
   })
     .then(res => res.text())
     .then(data => {
       if (data.includes("Registrasi berhasil")) {
         showMessage("Register berhasil! Silakan login...");
         toggleForm("login");
+      } else if (data.includes("NIS sudah terdaftar")) {
+        showMessage("NIS sudah terdaftar!", true);
       } else if (data.includes("Username atau Email sudah terdaftar")) {
         showMessage("Username atau Email sudah terdaftar!", true);
       } else if (data.includes("Konfirmasi password tidak cocok")) {
@@ -158,8 +167,24 @@ function checkPhoneInput() {
   checkFormValidity();
 }
 
+// cek input NIS (harus 10 digit)
+function checkNISInput() {
+  const nis = document.getElementById("regNIS").value;
+  const error = document.getElementById("nisError");
+
+  if (nis !== "" && !/^\d{10}$/.test(nis)) {
+    error.style.display = "block";
+  } else {
+    error.style.display = "none";
+  }
+
+  checkFormValidity();
+}
+
 // cek semua field agar tombol aktif hanya jika lengkap & valid
 function checkFormValidity() {
+  const fullName = document.getElementById("regFullName").value.trim();
+  const nis = document.getElementById("regNIS").value.trim();
   const name = document.getElementById("regUsername").value.trim();
   const gender = document.querySelector("input[name='gender']:checked");
   const phone = document.getElementById("regPhone").value.trim();
@@ -167,12 +192,13 @@ function checkFormValidity() {
   const password = document.getElementById("regPassword").value.trim();
   const confirmPassword = document.getElementById("regConfirmPassword").value.trim();
 
+  const nisValid = /^\d{10}$/.test(nis);
   const phoneValid = /^[0-9]+$/.test(phone);
   const passwordsMatch = password !== "" && password === confirmPassword;
-  const allFilled = name && gender && phone && email && password && confirmPassword;
+  const allFilled = fullName && nis && name && gender && phone && email && password && confirmPassword;
 
   const registerBtn = document.getElementById("registerBtn");
-  const valid = allFilled && phoneValid && passwordsMatch;
+  const valid = allFilled && nisValid && phoneValid && passwordsMatch;
 
   registerBtn.disabled = !valid;
 
@@ -204,7 +230,7 @@ window.onload = () => {
   document.getElementById("loginEmail").focus();
 
   // cek validitas setiap kali user isi input
-  ["regUsername", "regPhone", "regEmail", "regPassword", "regConfirmPassword"].forEach(id => {
+  ["regFullName", "regNIS", "regUsername", "regPhone", "regEmail", "regPassword", "regConfirmPassword"].forEach(id => {
     document.getElementById(id).addEventListener("input", checkFormValidity);
   });
 
@@ -215,4 +241,5 @@ window.onload = () => {
   document.getElementById("regPassword").addEventListener("input", checkPasswordMatch);
   document.getElementById("regConfirmPassword").addEventListener("input", checkPasswordMatch);
   document.getElementById("regPhone").addEventListener("input", checkPhoneInput);
+  document.getElementById("regNIS").addEventListener("input", checkNISInput);
 };

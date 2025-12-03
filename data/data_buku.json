@@ -5,7 +5,8 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 59
+    "stok": 59,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B002",
@@ -13,7 +14,8 @@
     "penerbit": "Hasta Mitra",
     "tahunTerbit": 1980,
     "penulis": "Pramoedya Ananta Toer",
-    "stok": 8
+    "stok": 8,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B003",
@@ -21,7 +23,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2009,
     "penulis": "Ahmad Fuadi",
-    "stok": 9
+    "stok": 9,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B004",
@@ -29,7 +32,8 @@
     "penerbit": "Republika",
     "tahunTerbit": 2004,
     "penulis": "Habiburrahman El Shirazy",
-    "stok": 8
+    "stok": 8,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B005",
@@ -37,7 +41,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2006,
     "penulis": "Dewi Lestari",
-    "stok": 11
+    "stok": 11,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B006",
@@ -45,7 +50,8 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2009,
     "penulis": "Dewi Lestari",
-    "stok": 9
+    "stok": 9,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B007",
@@ -53,7 +59,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2015,
     "penulis": "Leila S. Chudori",
-    "stok": 6
+    "stok": 6,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B008",
@@ -61,7 +68,8 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2019,
     "penulis": "Andrea Hirata",
-    "stok": 10
+    "stok": 10,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B009",
@@ -69,7 +77,8 @@
     "penerbit": "Republika",
     "tahunTerbit": 2016,
     "penulis": "Tere Liye",
-    "stok": 14
+    "stok": 14,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B010",
@@ -77,7 +86,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2016,
     "penulis": "Tere Liye",
-    "stok": 12
+    "stok": 12,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B011",
@@ -85,7 +95,8 @@
     "penerbit": "Republika",
     "tahunTerbit": 2014,
     "penulis": "Tere Liye",
-    "stok": 14
+    "stok": 14,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B012",
@@ -93,7 +104,8 @@
     "penerbit": "Kepustakaan Populer Gramedia",
     "tahunTerbit": 2002,
     "penulis": "Eka Kurniawan",
-    "stok": 7
+    "stok": 7,
+    "kategori": "Fiksi"
   },
   {
     "idBuku": "B013",
@@ -101,7 +113,8 @@
     "penerbit": "Pustaka Al-Kautsar",
     "tahunTerbit": 2004,
     "penulis": "Jonathan Black",
-    "stok": 9
+    "stok": 9,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B014",
@@ -109,7 +122,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2018,
     "penulis": "James Clear",
-    "stok": 20
+    "stok": 20,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B015",
@@ -117,7 +131,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2017,
     "penulis": "Yuval Noah Harari",
-    "stok": 10
+    "stok": 10,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B016",
@@ -125,7 +140,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2018,
     "penulis": "Yuval Noah Harari",
-    "stok": 8
+    "stok": 8,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B017",
@@ -133,7 +149,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2012,
     "penulis": "Charles Duhigg",
-    "stok": 18
+    "stok": 18,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B018",
@@ -141,7 +158,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2000,
     "penulis": "Robert T. Kiyosaki",
-    "stok": 16
+    "stok": 16,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B019",
@@ -149,7 +167,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2010,
     "penulis": "Napoleon Hill",
-    "stok": 12
+    "stok": 12,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B020",
@@ -157,7 +176,8 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2009,
     "penulis": "Stephen R. Covey",
-    "stok": 11
+    "stok": 11,
+    "kategori": "Pengetahuan"
   },
   {
     "idBuku": "B021",
@@ -165,7 +185,8 @@
     "penerbit": "Bloomsbury",
     "tahunTerbit": 2024,
     "penulis": "Sarah J. Maas",
-    "stok": 8
+    "stok": 8,
+    "kategori": "Fantasi"
   },
   {
     "idBuku": "B022",
@@ -173,7 +194,8 @@
     "penerbit": "Flatiron Books",
     "tahunTerbit": 2024,
     "penulis": "Leigh Bardugo",
-    "stok": 13
+    "stok": 13,
+    "kategori": "Fantasi"
   },
   {
     "idBuku": "B023",
@@ -181,6 +203,7 @@
     "penerbit": "Random House",
     "tahunTerbit": 2024,
     "penulis": "Ashley Elston",
-    "stok": 10
+    "stok": 10,
+    "kategori": "Fiksi"
   }
 ]

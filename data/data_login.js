@@ -1,6 +1,8 @@
 [
   {
     "id": "U003",
+    "fullName": "Admin Perpustakaan",
+    "nis": "1234567890",
     "username": "admin1",
     "gender": "N/A",
     "phone": "12346",
@@ -8,10 +10,13 @@
     "password": "123456",
     "role": "admin",
     "status": "active",
+    "profilePicture": null,
     "createdAt": "2025-10-13"
   },
   {
     "id": "U001",
+    "fullName": "Andika Pratama",
+    "nis": "1111111111",
     "username": "andika",
     "gender": "Pria",
     "phone": "081234567",
@@ -19,28 +24,37 @@
     "password": "dika123",
     "role": "user",
     "status": "active",
+    "profilePicture": null,
     "createdAt": "2025-10-13"
   },
   {
     "id": "U002",
+    "fullName": "Rifky Hermawan",
+    "nis": "2222222222",
     "username": "rifky",
     "gender": "Pria",
     "phone": "1234",
     "password": "12345",
     "role": "user",
     "status": "active",
+    "profilePicture": null,
     "createdAt": "2025-10-13"
   },
   {
     "id": "U004",
+    "fullName": "Revand Saputra",
+    "nis": "3333333333",
     "username": "revand",
     "password": "123",
     "role": "user",
     "status": "active",
+    "profilePicture": null,
     "createdAt": "2025-10-17"
   },
   {
     "id": "U005",
+    "fullName": "Vanessa Margaretha",
+    "nis": "4444444444",
     "username": "Vanessa",
     "gender": "Wanita",
     "phone": "081234567",
@@ -48,6 +62,21 @@
     "password": "nessa123",
     "role": "user",
     "status": "active",
+    "profilePicture": null,
     "createdAt": "2025-10-18"
+  },
+  {
+    "id": "U006",
+    "fullName": "Revand Anrian Peuy",
+    "nis": "7070707070",
+    "username": "Revlog_",
+    "gender": "Pria",
+    "phone": "081",
+    "email": "rev@study.com",
+    "password": "teknologi",
+    "role": "user",
+    "status": "active",
+    "profilePicture": null,
+    "createdAt": "2025-12-03"
   }
 ]
