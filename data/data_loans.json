@@ -204,23 +204,6 @@
     "terlambat": false
   },
   {
-    "id": "L021",
-<<<<<<< Updated upstream
-    "idBuku": "B009",
-    "idUser": "U004",
-    "nama": "revand",
-=======
-    "idBuku": "B008",
-    "idUser": "U005",
-    "nama": "Vanessa",
->>>>>>> Stashed changes
-    "tanggalPinjam": "2025-10-18",
-    "tanggalKembali": "2025-10-25",
-    "status": "dikembalikan",
-    "terlambat": false
-<<<<<<< Updated upstream
-  },
-  {
     "id": "L022",
     "idBuku": "B001",
     "idUser": "U006",
@@ -239,7 +222,5 @@
     "tanggalKembali": "2025-12-05",
     "status": "aktif",
     "terlambat": false
-=======
->>>>>>> Stashed changes
   }
 ]
