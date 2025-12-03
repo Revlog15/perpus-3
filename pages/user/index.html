@@ -1617,6 +1617,7 @@
                 <span class="badge bg-primary d-block mb-2">${
                   book.kategori || "Umum"
                 }</span>
+                ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
                 <span class="badge ${
                   book.stok > 0 ? "bg-success" : "bg-danger"
                 }">
@@ -2514,6 +2515,7 @@
                 <small class="text-secondary d-block mb-2">
                   <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                 </small>
+                ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
                 <span class="badge ${
                   book.stok > 0 ? "bg-success" : "bg-danger"
                 }">
@@ -2774,6 +2776,7 @@
                 <small class="text-secondary d-block mb-2">
                   <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                 </small>
+                ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
                 <span class="badge bg-success">
                   <i class="fas fa-box me-1"></i>Stok: ${book.stok}
                 </span>
@@ -2835,6 +2838,7 @@
                   <small class="text-secondary d-block mb-2">
                     <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                   </small>
+                  ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
                   <span class="badge ${
                     book.stok > 0 ? "bg-success" : "bg-danger"
                   }">
