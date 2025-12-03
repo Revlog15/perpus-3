@@ -212,5 +212,15 @@
     "tanggalKembali": "2025-10-25",
     "status": "dikembalikan",
     "terlambat": false
+  },
+  {
+    "id": "L022",
+    "idBuku": "B002",
+    "idUser": "U001",
+    "nama": "andika",
+    "tanggalPinjam": "2025-11-28",
+    "tanggalKembali": "2025-12-05",
+    "status": "dikembalikan",
+    "terlambat": false
   }
 ]
