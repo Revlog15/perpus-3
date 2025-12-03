@@ -43,11 +43,10 @@
   },
   {
     "id": "U005",
-    "username": "Vanessa",
+    "username": "NESSA",
     "gender": "Wanita",
     "phone": "081234567",
-    "email": "vanessa@gmail.com",
-    "password": "nessa123",
+    "password": "vanessa123",
     "role": "user",
     "status": "active",
     "createdAt": "2025-10-18"

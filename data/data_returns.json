@@ -195,14 +195,21 @@
   },
   {
     "id": "R017",
+<<<<<<< Updated upstream
     "idBuku": "B009",
     "idUser": "U004",
     "nama": "revand",
+=======
+    "idBuku": "B008",
+    "idUser": "U005",
+    "nama": "Vanessa",
+>>>>>>> Stashed changes
     "tanggalPinjam": "2025-10-18",
     "tanggalKembali": "2025-10-25",
     "tanggalPengembalian": "2025-10-18",
     "denda": 0,
     "status": "selesai"
+<<<<<<< Updated upstream
   },
   {
     "id": "R018",
@@ -279,5 +286,7 @@
     "status": "selesai",
     "kondisiBuku": "baik",
     "catatan": ""
+=======
+>>>>>>> Stashed changes
   }
 ]
