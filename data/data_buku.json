@@ -6,7 +6,8 @@
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
     "stok": 58,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-01"
   },
   {
     "idBuku": "B002",
@@ -15,7 +16,8 @@
     "tahunTerbit": 1980,
     "penulis": "Pramoedya Ananta Toer",
     "stok": 9,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-02"
   },
   {
     "idBuku": "B003",
@@ -24,7 +26,8 @@
     "tahunTerbit": 2009,
     "penulis": "Ahmad Fuadi",
     "stok": 9,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-03"
   },
   {
     "idBuku": "B004",
@@ -33,7 +36,8 @@
     "tahunTerbit": 2004,
     "penulis": "Habiburrahman El Shirazy",
     "stok": 8,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-04"
   },
   {
     "idBuku": "B005",
@@ -42,7 +46,8 @@
     "tahunTerbit": 2006,
     "penulis": "Dewi Lestari",
     "stok": 11,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-05"
   },
   {
     "idBuku": "B006",
@@ -51,7 +56,8 @@
     "tahunTerbit": 2009,
     "penulis": "Dewi Lestari",
     "stok": 9,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-06"
   },
   {
     "idBuku": "B007",
@@ -60,7 +66,8 @@
     "tahunTerbit": 2015,
     "penulis": "Leila S. Chudori",
     "stok": 6,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-07"
   },
   {
     "idBuku": "B008",
@@ -69,7 +76,8 @@
     "tahunTerbit": 2019,
     "penulis": "Andrea Hirata",
     "stok": 10,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-08"
   },
   {
     "idBuku": "B009",
@@ -78,7 +86,8 @@
     "tahunTerbit": 2016,
     "penulis": "Tere Liye",
     "stok": 14,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-09"
   },
   {
     "idBuku": "B010",
@@ -87,7 +96,8 @@
     "tahunTerbit": 2016,
     "penulis": "Tere Liye",
     "stok": 12,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-10"
   },
   {
     "idBuku": "B011",
@@ -96,7 +106,8 @@
     "tahunTerbit": 2014,
     "penulis": "Tere Liye",
     "stok": 14,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-11"
   },
   {
     "idBuku": "B012",
@@ -105,7 +116,8 @@
     "tahunTerbit": 2002,
     "penulis": "Eka Kurniawan",
     "stok": 7,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-12"
   },
   {
     "idBuku": "B013",
@@ -114,7 +126,8 @@
     "tahunTerbit": 2004,
     "penulis": "Jonathan Black",
     "stok": 9,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-01"
   },
   {
     "idBuku": "B014",
@@ -123,7 +136,8 @@
     "tahunTerbit": 2018,
     "penulis": "James Clear",
     "stok": 20,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-02"
   },
   {
     "idBuku": "B015",
@@ -132,7 +146,8 @@
     "tahunTerbit": 2017,
     "penulis": "Yuval Noah Harari",
     "stok": 10,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-03"
   },
   {
     "idBuku": "B016",
@@ -141,7 +156,8 @@
     "tahunTerbit": 2018,
     "penulis": "Yuval Noah Harari",
     "stok": 8,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-04"
   },
   {
     "idBuku": "B017",
@@ -150,7 +166,8 @@
     "tahunTerbit": 2012,
     "penulis": "Charles Duhigg",
     "stok": 18,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-05"
   },
   {
     "idBuku": "B018",
@@ -159,7 +176,8 @@
     "tahunTerbit": 2000,
     "penulis": "Robert T. Kiyosaki",
     "stok": 16,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-06"
   },
   {
     "idBuku": "B019",
@@ -168,7 +186,8 @@
     "tahunTerbit": 2010,
     "penulis": "Napoleon Hill",
     "stok": 12,
-    "kategori": "Pengetahuan"
+    "kategori": "Pengetahuan",
+    "rak": "B-07"
   },
   {
     "idBuku": "B020",
@@ -176,8 +195,9 @@
     "penerbit": "Gramedia",
     "tahunTerbit": 2009,
     "penulis": "Stephen R. Covey",
-    "stok": 11,
-    "kategori": "Pengetahuan"
+    "stok": 9,
+    "kategori": "Pengetahuan",
+    "rak": "B-08"
   },
   {
     "idBuku": "B021",
@@ -186,7 +206,8 @@
     "tahunTerbit": 2024,
     "penulis": "Sarah J. Maas",
     "stok": 8,
-    "kategori": "Fantasi"
+    "kategori": "Fantasi",
+    "rak": "C-01"
   },
   {
     "idBuku": "B022",
@@ -195,7 +216,8 @@
     "tahunTerbit": 2024,
     "penulis": "Leigh Bardugo",
     "stok": 13,
-    "kategori": "Fantasi"
+    "kategori": "Fantasi",
+    "rak": "C-02"
   },
   {
     "idBuku": "B023",
@@ -204,6 +226,7 @@
     "tahunTerbit": 2024,
     "penulis": "Ashley Elston",
     "stok": 11,
-    "kategori": "Fiksi"
+    "kategori": "Fiksi",
+    "rak": "A-13"
   }
 ]

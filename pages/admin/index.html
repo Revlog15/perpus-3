@@ -536,26 +536,47 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         </div>
 
         <!-- Search and Filter -->
-        <div class="row mb-4">
-          <div class="col-md-8">
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                id="bookSearch"
-                placeholder="Cari buku..."
-              />
-              <button class="btn btn-outline-secondary" onclick="searchBooks()">
-                <i class="fas fa-search"></i>
-              </button>
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="row align-items-end">
+              <div class="col-12">
+                <h5 id="booksSectionTitle" class="mb-3">Semua Buku</h5>
+              </div>
+              <div class="col-md-8">
+                <label for="bookSearch" class="form-label">Cari Buku</label>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="bookSearch"
+                    placeholder="Cari buku (judul, penulis, ISBN)..."
+                    onkeypress="if(event.key==='Enter'){searchBooks();}"
+                  />
+                  <button class="btn btn-primary" type="button" onclick="searchBooks()">
+                    Cari
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="bookSort" class="form-label">Urutkan</label>
+                <select class="form-select" id="bookSort" onchange="searchBooks()">
+                  <option value="title-asc">Judul (A-Z)</option>
+                  <option value="year-desc">Tahun Terbaru</option>
+                  <option value="year-asc">Tahun Terlama</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <select class="form-select" id="bookFilter">
-              <option value="all">Semua Buku</option>
-              <option value="available">Tersedia</option>
-              <option value="unavailable">Tidak Tersedia</option>
-            </select>
+            <div class="row mt-3">
+              <div class="col-12">
+                <label class="form-label d-block mb-2">Kategori Buku:</label>
+                <div class="btn-group flex-wrap" role="group">
+                  <button type="button" class="btn btn-outline-primary" onclick="filterBooksByCategory('all')">Semua</button>
+                  <button type="button" class="btn btn-outline-info" onclick="filterBooksByCategory('Fiksi')">Fiksi</button>
+                  <button type="button" class="btn btn-outline-success" onclick="filterBooksByCategory('Fantasi')">Fantasi</button>
+                  <button type="button" class="btn btn-outline-warning" onclick="filterBooksByCategory('Pengetahuan')">Pengetahuan</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1212,6 +1233,17 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                       <option value="Sains">Sains</option>
                     </select>
                   </div>
+                  <div class="mb-3">
+                    <label for="bookRak" class="form-label">Rak</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="bookRak"
+                      name="rak"
+                      placeholder="Contoh: A-01, B-05, C-12"
+                    />
+                    <div class="form-text">Lokasi rak tempat buku disimpan</div>
+                  </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
@@ -1360,6 +1392,17 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                       <option value="Biografi">Biografi</option>
                       <option value="Sains">Sains</option>
                     </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editBookRak" class="form-label">Rak</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editBookRak"
+                      name="rak"
+                      placeholder="Contoh: A-01, B-05, C-12"
+                    />
+                    <div class="form-text">Lokasi rak tempat buku disimpan</div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -1556,54 +1599,110 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           <div class="modal-body">
             <form id="editUserForm">
               <input type="hidden" id="editUserId" />
-              <div class="mb-3">
-                <label for="editUserName" class="form-label">Username</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="editUserName"
-                  name="username"
-                  required
-                />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserFullName" class="form-label">Nama Lengkap</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editUserFullName"
+                      name="fullName"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserNIS" class="form-label">NIS</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editUserNIS"
+                      name="nis"
+                      placeholder="10 digit angka"
+                      maxlength="10"
+                      pattern="[0-9]{10}"
+                      required
+                    />
+                    <small class="form-text text-muted">NIS harus 10 digit angka</small>
+                  </div>
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="editUserEmail" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="editUserEmail"
-                  name="email"
-                  required
-                />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserName" class="form-label">Username</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editUserName"
+                      name="username"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserEmail" class="form-label">Email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="editUserEmail"
+                      name="email"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="editUserPhone" class="form-label">Telepon</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="editUserPhone"
-                  name="telepon"
-                  required
-                />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserGender" class="form-label">Gender</label>
+                    <select class="form-select" id="editUserGender" name="gender" required>
+                      <option value="">Pilih Gender</option>
+                      <option value="Pria">Pria</option>
+                      <option value="Wanita">Wanita</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserPhone" class="form-label">Telepon</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editUserPhone"
+                      name="telepon"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="editUserPassword" class="form-label"
-                  >Password Baru (kosongkan jika tidak ingin mengubah)</label
-                >
-                <input
-                  type="password"
-                  class="form-control"
-                  id="editUserPassword"
-                  name="password"
-                  placeholder="Masukkan password baru"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="editUserStatus" class="form-label">Status</label>
-                <select class="form-select" id="editUserStatus" name="status">
-                  <option value="active">Aktif</option>
-                  <option value="inactive">Tidak Aktif</option>
-                </select>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserPassword" class="form-label"
+                      >Password Baru (kosongkan jika tidak ingin mengubah)</label
+                    >
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="editUserPassword"
+                      name="password"
+                      placeholder="Masukkan password baru"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editUserStatus" class="form-label">Status</label>
+                    <select class="form-select" id="editUserStatus" name="status">
+                      <option value="active">Aktif</option>
+                      <option value="inactive">Tidak Aktif</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -1746,6 +1845,17 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             loadDashboardData();
             break;
           case "books":
+            // Reset category filter and activate "Semua" button
+            currentBookCategory = 'all';
+            setTimeout(() => {
+              const semuaBtn = document.querySelector('#books-section .btn-group button');
+              if (semuaBtn) {
+                document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
+                  btn.classList.remove('active');
+                });
+                semuaBtn.classList.add('active');
+              }
+            }, 100);
             loadAllBooks();
             break;
           case "profile":
@@ -2423,12 +2533,14 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         if (!user) return;
 
         document.getElementById("editUserId").value = user.id;
-        document.getElementById("editUserName").value =
-          user.username || user.nama;
-        document.getElementById("editUserEmail").value = user.email;
-        document.getElementById("editUserPhone").value = user.telepon;
-        document.getElementById("editUserStatus").value =
-          user.status || "active";
+        document.getElementById("editUserFullName").value = user.fullName || user.nama || "";
+        document.getElementById("editUserNIS").value = user.nis || "";
+        document.getElementById("editUserName").value = user.username || "";
+        document.getElementById("editUserEmail").value = user.email || "";
+        document.getElementById("editUserGender").value = user.gender || "";
+        document.getElementById("editUserPhone").value = user.telepon || user.phone || "";
+        document.getElementById("editUserStatus").value = user.status || "active";
+        document.getElementById("editUserPassword").value = ""; // Reset password field
 
         const modal = new bootstrap.Modal(
           document.getElementById("editUserModal")
@@ -2654,40 +2766,53 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         let booksHTML = "";
         books.forEach((book) => {
           booksHTML += `
-          <div class="col-md-3 mb-3">
-            <div class="card book-card">
+          <div class="col-md-2 mb-3">
+            <div class="card h-100 book-card">
               <img 
-                   class="card-img-top book-img" 
+                   class="card-img-top" 
                    alt="${book.namaBuku}"
                    data-title="${book.namaBuku}"
                    data-idx="0"
                    onerror="window._tryBookImage(this)"
-                   src="/images/${sanitizeForFilename(book.namaBuku)}.jpg">
-              <div class="card-body">
-                <h6 class="card-title">${book.namaBuku}</h6>
+                   src="/images/${sanitizeForFilename(book.namaBuku)}.jpg"
+                   style="height:180px;object-fit:cover">
+              <div class="card-body p-3">
+                <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
                 <p class="card-text">
-                  <small class="text-muted">${book.penulis}</small><br>
-                  <small class="text-info">${book.penerbit} (${
-            book.tahunTerbit
-          })</small><br>
+                  <small class="text-muted d-block mb-1">
+                    <i class="fas fa-user me-1"></i>${book.penulis}
+                  </small>
+                  <small class="text-info d-block mb-1">
+                    <i class="fas fa-building me-1"></i>${book.penerbit}
+                  </small>
+                  <small class="text-secondary d-block mb-2">
+                    <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
+                  </small>
+                  ${book.kategori ? `<span class="badge bg-primary d-block mb-2">${book.kategori}</span>` : ''}
+                  ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
                   <span class="badge ${
                     book.stok > 0 ? "bg-success" : "bg-danger"
                   }">
-                    Stok: ${book.stok}
+                    <i class="fas fa-box me-1"></i>Stok: ${book.stok}
                   </span>
                 </p>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 mt-2">
                   <button class="btn btn-sm btn-outline-primary" onclick="editBook('${
                     book.idBuku
-                  }')">
+                  }')" title="Edit Buku">
                     <i class="fas fa-edit"></i>
                   </button>
                   <button class="btn btn-sm btn-outline-danger" onclick="deleteBook('${
                     book.idBuku
-                  }')">
+                  }')" title="Hapus Buku">
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
+              </div>
+              <div class="card-footer bg-transparent border-0 p-2">
+                <small class="text-muted">
+                  <i class="fas fa-barcode me-1"></i>ID: ${book.idBuku}
+                </small>
               </div>
             </div>
           </div>
@@ -2697,12 +2822,31 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         booksGrid.innerHTML = booksHTML;
       }
 
-      // Search books
+      // Current category filter for books
+      let currentBookCategory = 'all';
+
+      // Filter books by category
+      function filterBooksByCategory(category) {
+        currentBookCategory = category;
+        // Update button states
+        document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
+          btn.classList.remove('active');
+          if ((category === 'all' && btn.textContent.trim() === 'Semua') ||
+              (category === 'Fiksi' && btn.textContent.trim() === 'Fiksi') ||
+              (category === 'Fantasi' && btn.textContent.trim() === 'Fantasi') ||
+              (category === 'Pengetahuan' && btn.textContent.trim() === 'Pengetahuan')) {
+            btn.classList.add('active');
+          }
+        });
+        searchBooks();
+      }
+
+      // Search books with sorting and category filter
       function searchBooks() {
         const searchTerm = document
           .getElementById("bookSearch")
           .value.toLowerCase();
-        const filter = document.getElementById("bookFilter").value;
+        const sortValue = document.getElementById("bookSort")?.value || "title-asc";
 
         let filteredBooks = allBooks.filter(
           (book) =>
@@ -2712,10 +2856,46 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             book.idBuku.toLowerCase().includes(searchTerm)
         );
 
-        if (filter === "available") {
-          filteredBooks = filteredBooks.filter((book) => book.stok > 0);
-        } else if (filter === "unavailable") {
-          filteredBooks = filteredBooks.filter((book) => book.stok === 0);
+        // Filter by category
+        if (currentBookCategory && currentBookCategory !== 'all') {
+          filteredBooks = filteredBooks.filter(
+            (book) => (book.kategori || '').toLowerCase() === currentBookCategory.toLowerCase()
+          );
+        }
+
+        // Apply sorting
+        if (sortValue === "title-asc") {
+          filteredBooks.sort((a, b) =>
+            (a.namaBuku || "")
+              .toString()
+              .localeCompare((b.namaBuku || "").toString(), "id", {
+                sensitivity: "base",
+              })
+          );
+        } else if (sortValue === "year-desc") {
+          filteredBooks.sort(
+            (a, b) =>
+              (parseInt(b.tahunTerbit, 10) || 0) -
+              (parseInt(a.tahunTerbit, 10) || 0)
+          );
+        } else if (sortValue === "year-asc") {
+          filteredBooks.sort(
+            (a, b) =>
+              (parseInt(a.tahunTerbit, 10) || 0) -
+              (parseInt(b.tahunTerbit, 10) || 0)
+          );
+        }
+
+        // Update section title
+        const sectionTitle = document.getElementById("booksSectionTitle");
+        if (sectionTitle) {
+          if (searchTerm) {
+            sectionTitle.textContent = `Hasil Pencarian "${searchTerm}" (${filteredBooks.length} buku)`;
+          } else if (currentBookCategory && currentBookCategory !== 'all') {
+            sectionTitle.textContent = `Kategori ${currentBookCategory} (${filteredBooks.length} buku)`;
+          } else {
+            sectionTitle.textContent = `Semua Buku (${filteredBooks.length} buku)`;
+          }
         }
 
         displayBooks(filteredBooks);
@@ -2832,6 +3012,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         document.getElementById("editBookTitle").value = book.namaBuku;
         document.getElementById("editBookAuthor").value = book.penulis;
         document.getElementById("editBookCategory").value = book.kategori || "";
+        document.getElementById("editBookRak").value = book.rak || "";
         document.getElementById("editBookPublisher").value = book.penerbit;
         document.getElementById("editBookYear").value = book.tahunTerbit;
         document.getElementById("editBookStock").value = book.stok;

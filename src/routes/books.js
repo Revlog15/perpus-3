@@ -80,7 +80,7 @@ router.get('/popular', (req, res) => {
 // Create book (supports multipart with optional photo upload)
 router.post('/', upload.single('photo'), (req, res) => {
   try {
-    const { idBuku, namaBuku, penulis, penerbit } = req.body || {};
+    const { idBuku, namaBuku, penulis, penerbit, kategori, rak } = req.body || {};
     const tahunTerbit = req.body?.tahunTerbit;
     const stok = req.body?.stok;
 
@@ -100,6 +100,16 @@ router.post('/', upload.single('photo'), (req, res) => {
       tahunTerbit: parseInt(tahunTerbit),
       stok: parseInt(stok),
     };
+    
+    // Add kategori if provided
+    if (kategori !== undefined && kategori !== '') {
+      newBook.kategori = kategori;
+    }
+    
+    // Add rak if provided
+    if (rak !== undefined && rak !== '') {
+      newBook.rak = rak;
+    }
 
     // If photo uploaded, ensure file name matches sanitized title and keep extension
     if (req.file) {
@@ -138,7 +148,7 @@ router.post('/', upload.single('photo'), (req, res) => {
 
 router.put('/:id', upload.single('photo'), (req, res) => {
   const { id } = req.params;
-  const { namaBuku, penulis, penerbit, tahunTerbit, stok } = req.body;
+  const { namaBuku, penulis, penerbit, tahunTerbit, stok, kategori, rak } = req.body;
   const idx = store.books.findIndex(b => b.idBuku === id);
   if (idx === -1) return res.status(404).json({ message: 'Buku tidak ditemukan' });
   const current = store.books[idx];
@@ -148,6 +158,22 @@ router.put('/:id', upload.single('photo'), (req, res) => {
   if (penerbit !== undefined) updated.penerbit = penerbit;
   if (tahunTerbit !== undefined) updated.tahunTerbit = parseInt(tahunTerbit);
   if (stok !== undefined) updated.stok = parseInt(stok);
+  if (kategori !== undefined) {
+    if (kategori === '' || kategori === null) {
+      // Remove kategori if empty
+      delete updated.kategori;
+    } else {
+      updated.kategori = kategori;
+    }
+  }
+  if (rak !== undefined) {
+    if (rak === '' || rak === null) {
+      // Remove rak if empty
+      delete updated.rak;
+    } else {
+      updated.rak = rak;
+    }
+  }
 
   // If new photo is uploaded, rename and store filename
   if (req.file) {

@@ -64,7 +64,7 @@ router.post("/", (req, res) => {
 
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { username, email, telepon, password, status } = req.body;
+  const { username, email, telepon, password, status, fullName, nis, gender } = req.body;
   const idx = store.users.findIndex((u) => u.id === id);
   if (idx === -1)
     return res.status(404).json({ message: "User tidak ditemukan" });
@@ -77,6 +77,9 @@ router.put("/:id", (req, res) => {
   if (exists) return res.status(400).json({ message: "Email sudah digunakan" });
   const updateData = { username, email, telepon, status: status || "active" };
   if (password) updateData.password = password;
+  if (fullName !== undefined) updateData.fullName = fullName;
+  if (nis !== undefined) updateData.nis = nis;
+  if (gender !== undefined) updateData.gender = gender;
   store.users[idx] = { ...store.users[idx], ...updateData };
   try {
     store.saveUsers();
