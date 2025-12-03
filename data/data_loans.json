@@ -16,7 +16,7 @@
     "nama": "KIKI",
     "tanggalPinjam": "2025-10-12",
     "tanggalKembali": "2025-10-19",
-    "status": "aktif",
+    "status": "dikembalikan",
     "terlambat": false,
     "finePaid": true,
     "paymentId": "P007"
@@ -178,7 +178,7 @@
     "nama": "KIKI",
     "tanggalPinjam": "2025-10-17",
     "tanggalKembali": "2025-10-24",
-    "status": "aktif",
+    "status": "dikembalikan",
     "terlambat": false
   },
   {
@@ -211,6 +211,26 @@
     "tanggalPinjam": "2025-10-18",
     "tanggalKembali": "2025-10-25",
     "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L022",
+    "idBuku": "B001",
+    "idUser": "U006",
+    "nama": "nessa",
+    "tanggalPinjam": "2025-11-28",
+    "tanggalKembali": "2025-12-05",
+    "status": "dikembalikan",
+    "terlambat": false
+  },
+  {
+    "id": "L023",
+    "idBuku": "B001",
+    "idUser": "U006",
+    "nama": "nessa",
+    "tanggalPinjam": "2025-11-28",
+    "tanggalKembali": "2025-12-05",
+    "status": "aktif",
     "terlambat": false
   }
 ]

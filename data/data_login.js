@@ -18,7 +18,7 @@
     "email": "dika@gmail.com",
     "password": "dika123",
     "role": "user",
-    "status": "active",
+    "status": "inactive",
     "createdAt": "2025-10-13"
   },
   {
@@ -37,7 +37,9 @@
     "password": "123",
     "role": "user",
     "status": "active",
-    "createdAt": "2025-10-17"
+    "createdAt": "2025-10-17",
+    "email": "undefined",
+    "telepon": ""
   },
   {
     "id": "U005",
@@ -49,5 +51,16 @@
     "role": "user",
     "status": "active",
     "createdAt": "2025-10-18"
+  },
+  {
+    "id": "U006",
+    "username": "nessa",
+    "gender": "Wanita",
+    "phone": "0812345678",
+    "email": "valendhitavanessa@gmail.com",
+    "password": "12345",
+    "role": "user",
+    "status": "active",
+    "createdAt": "2025-11-28"
   }
 ]

@@ -5,7 +5,7 @@
     "penerbit": "Bentang Pustaka",
     "tahunTerbit": 2005,
     "penulis": "Andrea Hirata",
-    "stok": 59
+    "stok": 58
   },
   {
     "idBuku": "B002",
@@ -13,7 +13,7 @@
     "penerbit": "Hasta Mitra",
     "tahunTerbit": 1980,
     "penulis": "Pramoedya Ananta Toer",
-    "stok": 8
+    "stok": 9
   },
   {
     "idBuku": "B003",
@@ -160,14 +160,6 @@
     "stok": 11
   },
   {
-    "idBuku": "B021",
-    "namaBuku": "House of Flame and Shadow",
-    "penerbit": "Bloomsbury",
-    "tahunTerbit": 2024,
-    "penulis": "Sarah J. Maas",
-    "stok": 8
-  },
-  {
     "idBuku": "B022",
     "namaBuku": "The Familiar",
     "penerbit": "Flatiron Books",
@@ -181,6 +173,6 @@
     "penerbit": "Random House",
     "tahunTerbit": 2024,
     "penulis": "Ashley Elston",
-    "stok": 10
+    "stok": 11
   }
 ]

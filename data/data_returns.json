@@ -242,5 +242,42 @@
     "status": "selesai",
     "finePaid": true,
     "paymentId": "P009"
+  },
+  {
+    "id": "R021",
+    "idBuku": "B002",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-12",
+    "tanggalKembali": "2025-10-19",
+    "tanggalPengembalian": "2025-11-24",
+    "denda": 37000,
+    "status": "selesai",
+    "kondisiBuku": "hilang",
+    "catatan": ""
+  },
+  {
+    "id": "R022",
+    "idBuku": "B001",
+    "idUser": "U006",
+    "nama": "nessa",
+    "tanggalPinjam": "2025-11-28",
+    "tanggalKembali": "2025-12-05",
+    "tanggalPengembalian": "2025-11-28",
+    "denda": 0,
+    "status": "selesai"
+  },
+  {
+    "id": "R023",
+    "idBuku": "B023",
+    "idUser": "U002",
+    "nama": "KIKI",
+    "tanggalPinjam": "2025-10-17",
+    "tanggalKembali": "2025-10-24",
+    "tanggalPengembalian": "2025-11-28",
+    "denda": 36000,
+    "status": "selesai",
+    "kondisiBuku": "baik",
+    "catatan": ""
   }
 ]
