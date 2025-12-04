@@ -11,8 +11,22 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { idBuku, idUser } = req.body;
+  const { idBuku, idUser, adminUserId } = req.body;
   if (!idBuku || !idUser) return res.status(400).json({ message: 'ID Buku dan ID User harus diisi' });
+  
+  // Check if request is from admin (adminUserId should be provided and user should be admin)
+  // In production, this should use proper authentication middleware
+  if (adminUserId) {
+    const adminUser = store.users.find(u => u.id === adminUserId);
+    if (!adminUser || (adminUser.role || '').toLowerCase() !== 'admin') {
+      return res.status(403).json({ message: 'Hanya admin yang dapat melakukan pengembalian' });
+    }
+  } else {
+    // If no adminUserId provided, reject the request
+    // This ensures only admin can process returns
+    return res.status(403).json({ message: 'Hanya admin yang dapat melakukan pengembalian. Silakan hubungi perpustakawan.' });
+  }
+  
   const user = store.users.find(u => u.id === idUser);
   if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
   const activeLoan = store.loans.find(l => l.idBuku === idBuku && l.idUser === idUser && l.status === 'aktif');

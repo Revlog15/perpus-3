@@ -248,5 +248,15 @@
     "tanggalKembali": "2025-12-10",
     "status": "aktif",
     "terlambat": false
+  },
+  {
+    "id": "L026",
+    "idBuku": "B019",
+    "idUser": "U008",
+    "nama": "nessie",
+    "tanggalPinjam": "2025-12-04",
+    "tanggalKembali": "2025-12-11",
+    "status": "aktif",
+    "terlambat": false
   }
 ]
