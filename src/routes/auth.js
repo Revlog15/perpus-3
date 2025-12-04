@@ -21,7 +21,14 @@ router.post('/login', (req, res) => {
       return res.status(403).json({ message: 'Akun dinonaktifkan' });
     }
     const username = found.username || found.nama || found.email || 'User';
-    return res.json({ message: 'Login berhasil', role: found.role || 'user', username, id: found.id, email: found.email });
+    return res.json({ 
+      message: 'Login berhasil', 
+      role: found.role || 'user', 
+      username, 
+      id: found.id, 
+      email: found.email,
+      profilePicture: found.profilePicture || null
+    });
   }
   return res.status(401).json({ message: 'Gagal login' });
 });

@@ -63,6 +63,15 @@ function handleLogin() {
         try { localStorage.removeItem('userid'); } catch (e) {}
         if (data.username) localStorage.setItem('username', data.username);
         if (data.id) localStorage.setItem('userid', data.id);
+        
+        // Save profile picture to localStorage if available from server
+        if (data.profilePicture && data.id) {
+          try {
+            localStorage.setItem(`profile_pic_${data.id}`, data.profilePicture);
+          } catch (e) {
+            console.warn("Could not save profile picture to localStorage:", e);
+          }
+        }
         showMessage("Login berhasil! Redirecting...");
         setTimeout(() => {
           if (data.role === 'admin') window.location.href = '/admin';

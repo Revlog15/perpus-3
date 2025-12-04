@@ -316,7 +316,11 @@
             <a
               href="/"
               class="btn btn-danger"
-              onclick="try{localStorage.clear()}catch(e){}"
+              onclick="try{
+                // Clear only session data (username and userid), keep profile picture
+                localStorage.removeItem('username');
+                localStorage.removeItem('userid');
+              }catch(e){}"
               >Ya, Logout</a
             >
           </div>
@@ -879,7 +883,17 @@
               const localPic = localPicKey
                 ? localStorage.getItem(localPicKey) || null
                 : null;
-              const picToUse = localPic || user.profilePicture || null;
+              // Prioritize server picture, then local storage
+              const picToUse = user.profilePicture || localPic || null;
+
+              // Save server picture to localStorage if available
+              if (user.profilePicture && userId) {
+                try {
+                  localStorage.setItem(`profile_pic_${userId}`, user.profilePicture);
+                } catch (e) {
+                  console.warn("Could not save profile picture to localStorage:", e);
+                }
+              }
 
               if (picToUse) {
                 // If we have a picture (local or from server), display it as image
