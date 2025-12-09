@@ -46,7 +46,7 @@ router.put("/settings", (req, res) => {
 
   const current = store.settings || {};
   const next = {
-    libraryName: libraryName ?? current.libraryName ?? "E-Library",
+    libraryName: libraryName ?? current.libraryName ?? "NesPus",
     maxLoanDays: Number.isFinite(Number(maxLoanDays))
       ? Number(maxLoanDays)
       : current.maxLoanDays ?? 7,

@@ -1,5 +1,5 @@
 {
-  "libraryName": "E-Library",
+  "libraryName": "NesPus",
   "maxLoanDays": 7,
   "finePerDay": 1000,
   "maxBooksPerUser": 3,

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>E-Perpus - Admin Dashboard</title>
+    <title>NesPus - Admin Dashboard</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -110,12 +110,20 @@
         max-height: 320px;
         overflow-y: auto;
       }
+      .site-logo { height: 80px; display:block; }
+      .site-brand { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+      .site-name { margin-top:6px; font-size:1.4rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; text-align:center; line-height:1; }
     </style>
   </head>
   <body>
     <!-- Sidebar -->
     <div class="sidebar">
-      <h4 class="text-center mb-4">📚 E-Library</h4>
+      <h4 class="text-center mb-4">
+        <div class="site-brand">
+          <img src="/images/school_logo.png" alt="logo" class="site-logo">
+          <div class="site-name">NesPus</div>
+        </div>
+      </h4>
       <h6 class="text-center mb-3 text-warning">Admin Panel</h6>
 
       <a
@@ -218,7 +226,7 @@
       <div id="home-section" class="admin-section active">
         <div class="hero mb-4">
           <div>
-            <h4>Dashboard Admin E-Library</h4>
+            <h4>Dashboard Admin NesPus</h4>
             <p>Kelola perpustakaan dengan mudah dan efisien.</p>
           </div>
         </div>
@@ -974,7 +982,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                           type="text"
                           class="form-control"
                           id="libraryName"
-                          value="E-Library"
+                          value="NesPus"
                         />
                       </div>
                       <div class="mb-3">
@@ -3744,7 +3752,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         );
 
         document.getElementById("libraryName").value =
-          settings.libraryName ?? "E-Library";
+          settings.libraryName ?? "NesPus";
         document.getElementById("maxLoanDays").value =
           settings.maxLoanDays ?? 7;
         document.getElementById("maxBooksPerUser").value =
@@ -3757,7 +3765,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         // Reflect library name in sidebar on load
         const sidebarTitle = document.querySelector(".sidebar h4");
         if (sidebarTitle && (settings.libraryName ?? "").trim()) {
-          sidebarTitle.textContent = `📚 ${settings.libraryName}`;
+          sidebarTitle.innerHTML = `<div class="site-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo"><div class="site-name">${settings.libraryName}</div></div>`;
         }
       }
 
@@ -3780,7 +3788,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         // Update library name in sidebar
         const sidebarTitle = document.querySelector(".sidebar h4");
         if (sidebarTitle) {
-          sidebarTitle.textContent = `📚 ${settings.libraryName}`;
+          sidebarTitle.innerHTML = `<div class="site-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo"><div class="site-name">${settings.libraryName}</div></div>`;
         }
 
         return settings;
@@ -4133,7 +4141,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             } catch (_) {}
             const sidebarTitle = document.querySelector(".sidebar h4");
             if (sidebarTitle && settings && settings.libraryName) {
-              sidebarTitle.textContent = `📚 ${settings.libraryName}`;
+              sidebarTitle.innerHTML = `<div class="site-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo"><div class="site-name">${settings.libraryName}</div></div>`;
             }
           }
         } catch (_) {}

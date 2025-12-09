@@ -42,8 +42,8 @@ app.use("/", authRouter); // /login, /register
 // API health/info
 app.get("/api", (req, res) => {
   res.json({
-    ok: true,
-    message: "E-Library API",
+  ok: true,
+  message: "NesPus API",
     endpoints: [
       "/api/books",
       "/api/loans",

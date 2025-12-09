@@ -17,7 +17,7 @@ const store = {
   returns: readJsonSafeSync(returnsJsonPath, []),
   payments: readJsonSafeSync(paymentsJsonPath, []),
   settings: readJsonSafeSync(settingsJsonPath, {
-    libraryName: "E-Library",
+  libraryName: "NesPus",
     maxLoanDays: 7,
     finePerDay: 1000,
     maxBooksPerUser: 5,

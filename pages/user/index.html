@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>E-Perpus - Main Menu User</title>
+    <title>NesPus - Main Menu User</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -74,44 +74,94 @@
         margin: 0;
         opacity: 0.95;
       }
+      .popular-books {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .popular-books > div {
+        flex: 0 1 calc(20% - 12px);
+        min-width: 120px;
+      }
       .popular-books .card {
-        height: 100%;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid #ccc;
+        background: #fff;
         cursor: pointer;
       }
       .popular-books .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       }
       .popular-books .card-img-top {
-        height: 180px;
+        width: 100%;
+        height: 160px;
         object-fit: cover;
-        transition: transform 0.3s ease;
+        display: block;
       }
-      .popular-books .card:hover .card-img-top {
-        transform: scale(1.03);
+      .popular-books .card-body {
+        padding: 8px;
       }
-      .popular-books .card-title {
-        font-size: 0.9rem;
-        line-height: 1.3;
-        margin-bottom: 0.5rem;
+      .popular-books .card-body small {
+        font-size: 0.75rem;
+        display: block;
+        text-align: center;
       }
-      .popular-books .card-text {
-        font-size: 0.8rem;
-        line-height: 1.4;
+      @media (max-width: 1200px) {
+        .popular-books > div {
+          flex: 0 1 calc(25% - 12px);
+        }
       }
-      .popular-books .badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+      @media (max-width: 768px) {
+        .popular-books > div {
+          flex: 0 1 calc(33.333% - 12px);
+        }
+      }
+      @media (max-width: 576px) {
+        .popular-books > div {
+          flex: 0 1 calc(50% - 12px);
+        }
+      }
+      .site-logo { height: 120px; display:block; }
+      .site-brand { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+      .site-name { margin-top:8px; font-size:1.6rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; text-align:center; line-height:1; }
+
+      /* Mobile topbar and sidebar overlay */
+      .mobile-topbar { display:none; position:fixed; top:0; left:0; right:0; height:56px; background:#1e3d59; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 12px; z-index:2000; }
+      .mobile-topbar .menu-btn { background:transparent; border:none; color:#fff; font-size:22px; }
+      .mobile-topbar .mobile-brand { display:flex; align-items:center; gap:8px; color:#fff; }
+      .site-logo-mobile { height:36px; display:block; }
+      .site-name-mobile { font-weight:700; letter-spacing:0.6px; text-transform:uppercase; }
+
+      .sidebar-backdrop { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); z-index:1999; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar { transition: transform 0.25s ease; }
+      .no-scroll { overflow: hidden; }
+
+      @media (max-width: 767.98px) {
+        .mobile-topbar { display:flex; }
+        .sidebar { transform: translateX(-100%); position:fixed; z-index:2001; width:220px; height:100vh; top:0; left:0; }
+        .content { margin-left: 0; padding-top: 76px; }
+        .sidebar h4 { padding-top: 10px; }
       }
     </style>
   </head>
   <body>
+    <!-- Mobile topbar (visible on small screens) -->
+    <div class="mobile-topbar d-md-none">
+      <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle menu" onclick="toggleMobileMenu()">☰</button>
+      <div class="mobile-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo-mobile"><span class="site-name-mobile">NesPus</span></div>
+      <div style="width:32px"></div>
+    </div>
     <!-- Sidebar -->
     <div class="sidebar">
-      <h4 class="text-center mb-4">📚 E-Library</h4>
+      <h4 class="text-center mb-4">
+        <div class="site-brand">
+          <img src="/images/school_logo.png" alt="logo" class="site-logo">
+          <div class="site-name">NesPus</div>
+        </div>
+      </h4>
       <h6 class="text-center mb-3 text-warning">User Panel</h6>
 
       <a href="#" id="homeLink"> <i class="fas fa-home me-2"></i>Home </a>
@@ -134,6 +184,8 @@
         <i class="fas fa-sign-out-alt me-2"></i>Logout
       </a>
     </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="toggleMobileMenu()"></div>
 
     <!-- Content -->
     <div class="content">
@@ -171,7 +223,7 @@
 
       <div class="hero mb-4">
         <div>
-          <h4>Selamat datang di E-Library</h4>
+          <h4>Selamat datang di NesPus</h4>
           <p>Temukan inspirasi dari ribuan koleksi buku digital kami.</p>
         </div>
       </div>
@@ -179,9 +231,9 @@
       <!-- Tentang Perpustakaan -->
       <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title mb-2">Tentang E-Library</h5>
+          <h5 class="card-title mb-2">Tentang NesPus</h5>
           <p class="card-text mb-2">
-            Selamat datang di E-Library, perpustakaan digital yang membantu Anda
+            Selamat datang di NesPus, perpustakaan digital yang membantu Anda
             menemukan, meminjam, dan mengembalikan buku dengan mudah. Nikmati
             kemudahan akses koleksi kami kapan saja dan di mana saja.
           </p>
@@ -210,8 +262,8 @@
       </div>
 
       <!-- Buku Section -->
-      <div class="row popular-books">
-        <div class="col-md-2">
+      <div class="popular-books">
+        <div>
           <div class="card">
             <img
               src="https://covers.openlibrary.org/b/id/8231856-L.jpg"
@@ -223,7 +275,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2">
+        <div>
           <div class="card">
             <img
               src="https://covers.openlibrary.org/b/id/9259251-L.jpg"
@@ -235,7 +287,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2">
+        <div>
           <div class="card">
             <img
               src="https://covers.openlibrary.org/b/id/11153284-L.jpg"
@@ -247,7 +299,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2">
+        <div>
           <div class="card">
             <img
               src="https://covers.openlibrary.org/b/id/10909258-L.jpg"
@@ -259,7 +311,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2">
+        <div>
           <div class="card">
             <img
               src="https://covers.openlibrary.org/b/id/12880737-L.jpg"
@@ -271,7 +323,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2">
+        <div>
           <div class="card">
             <img
               src="https://covers.openlibrary.org/b/id/12604065-L.jpg"
@@ -340,26 +392,27 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="row">
-              <div class="col-md-4">
-                <div
-                  class="bg-light rounded d-flex align-items-center justify-content-center"
-                  style="height: 180px"
-                >
-                  <i class="fas fa-book fa-3x text-muted"></i>
-                </div>
+            <div class="row g-3">
+              <div class="col-md-5">
+                <img
+                  id="bookCoverImg"
+                  src=""
+                  alt="Book Cover"
+                  class="img-fluid rounded"
+                  style="width: 100%; max-width: 200px; max-height: 300px; object-fit: contain; display: block; margin: 0 auto;"
+                />
               </div>
-              <div class="col-md-8">
-                <h5 id="bookTitle" class="mb-1"></h5>
+              <div class="col-md-7">
+                <h5 id="bookTitle" class="mb-2"></h5>
                 <p class="mb-2">
                   <small class="text-muted" id="bookAuthor"></small>
                 </p>
-                <p id="bookSynopsis" class="mb-2"></p>
-                <div class="small text-secondary">
-                  <span id="bookPublisher" class="me-3"></span>
-                  <span id="bookYear" class="me-3"></span>
-                  <span id="bookId" class="me-3"></span>
-                  <span id="bookStock"></span>
+                <p id="bookSynopsis" class="mb-3 text-justify" style="font-size: 0.95rem; line-height: 1.5;"></p>
+                <div class="small text-secondary" style="line-height: 1.8;">
+                  <div><strong>Penerbit:</strong> <span id="bookPublisher"></span></div>
+                  <div><strong>Tahun:</strong> <span id="bookYear"></span></div>
+                  <div><strong>ID Buku:</strong> <span id="bookId"></span></div>
+                  <div><strong>Stok:</strong> <span id="bookStock"></span></div>
                 </div>
               </div>
             </div>
@@ -399,6 +452,34 @@
       aria-labelledby="userProfileLabel"
     >
       <div class="offcanvas-header">
+        <script>
+          // Mobile menu toggle
+          function toggleMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (!sidebar || !backdrop) return;
+            const open = sidebar.classList.toggle('open');
+            backdrop.classList.toggle('show', open);
+            document.body.classList.toggle('no-scroll', open);
+          }
+
+          // Close mobile menu when a sidebar link is clicked
+          document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.sidebar a').forEach((a) => {
+              a.addEventListener('click', function () {
+                if (window.innerWidth <= 768) {
+                  const sidebar = document.querySelector('.sidebar');
+                  const backdrop = document.getElementById('sidebarBackdrop');
+                  if (sidebar && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    backdrop.classList.remove('show');
+                    document.body.classList.remove('no-scroll');
+                  }
+                }
+              });
+            });
+          });
+        </script>
         <h5 id="userProfileLabel">Profile User</h5>
         <button
           type="button"
@@ -1281,7 +1362,7 @@
 
       // Global system settings
       let systemSettings = {
-        libraryName: "E-Library",
+        libraryName: "NesPus",
         maxLoanDays: 7,
         finePerDay: 1000,
         maxBooksPerUser: 5,
@@ -1495,6 +1576,7 @@
           "Enam santri yang memegang prinsip man jadda wajada; mimpi, persahabatan, dan daya juang.",
         "Ayat-Ayat Cinta":
           "Romansa religius Fahri di Mesir; ujian cinta dan iman dengan nilai moral-spiritual.",
+          
         "Filosofi Kopi":
           "Kumpulan cerita seputar Ben sang barista; refleksi hidup sederhana namun dalam melalui secangkir kopi.",
         "Perahu Kertas":
@@ -1538,6 +1620,7 @@
         const yearEl = document.getElementById("bookYear");
         const idEl = document.getElementById("bookId");
         const stockEl = document.getElementById("bookStock");
+        const coverImgEl = document.getElementById("bookCoverImg");
 
         const synopsis =
           BOOK_SYNOPSIS[book.namaBuku] ||
@@ -1546,25 +1629,16 @@
 
         titleEl.textContent = "Detail Buku";
         h5Title.textContent = book.namaBuku;
-        authorEl.textContent = `Penulis: ${book.penulis}`;
+        authorEl.textContent = book.penulis;
         synEl.textContent = synopsis;
-        pubEl.textContent = `Penerbit: ${book.penerbit}`;
-        yearEl.textContent = `Tahun: ${book.tahunTerbit}`;
-        idEl.textContent = `ID: ${book.idBuku}`;
-        stockEl.textContent = `Stok: ${book.stok}`;
+        pubEl.textContent = book.penerbit;
+        yearEl.textContent = book.tahunTerbit;
+        idEl.textContent = book.idBuku;
+        stockEl.textContent = book.stok;
 
-        // tampilkan cover di modal
-        const coverCol = document.querySelector("#bookModal .col-md-4 > div");
-        if (coverCol) {
-          // Use the same fallback logic as the grid cards so short filenames (e.g. 'sapiens.jpg') are tried.
-          const imgEl = document.createElement("img");
-          imgEl.alt = book.namaBuku;
-          imgEl.className = "img-fluid rounded";
-          // Clear existing content and append image element
-          coverCol.innerHTML = "";
-          coverCol.appendChild(imgEl);
-          // Use setBookImage which will try multiple candidate filenames and fall back to a placeholder
-          setBookImage(imgEl, book);
+        // Set cover image using the same fallback logic as cards
+        if (coverImgEl) {
+          setBookImage(coverImgEl, book);
         }
 
         const modal = new bootstrap.Modal(document.getElementById("bookModal"));
@@ -1633,7 +1707,7 @@
               ".navbar-brand, .sidebar h4, h1"
             );
             if (libraryTitle && settings.libraryName) {
-              libraryTitle.textContent = `📚 ${settings.libraryName}`;
+              libraryTitle.innerHTML = `<div class="site-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo"><div class="site-name">${settings.libraryName}</div></div>`;
             }
           }
         } catch (error) {
