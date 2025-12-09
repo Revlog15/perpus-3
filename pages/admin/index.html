@@ -110,6 +110,34 @@
         max-height: 320px;
         overflow-y: auto;
       }
+      /* Password visibility toggle styles */
+      .input-group .btn-outline-secondary {
+        border-color: #dee2e6;
+        color: #6c757d;
+      }
+      .input-group .btn-outline-secondary:hover,
+      .input-group .btn-outline-secondary:focus {
+        color: #007bff;
+        border-color: #007bff;
+        background-color: transparent;
+      }
+      .input-group .btn-outline-secondary i {
+        font-size: 16px;
+      }
+      /* Hide browser's native password reveal button */
+      input[type="password"]::-ms-reveal,
+      input[type="password"]::-webkit-outer-spin-button,
+      input[type="password"]::-webkit-inner-spin-button {
+        display: none;
+      }
+      /* Disabled button styling */
+      button:disabled {
+        cursor: not-allowed !important;
+        opacity: 0.6;
+      }
+      button:disabled:hover {
+        transform: none;
+      }
     </style>
   </head>
   <body>
@@ -633,6 +661,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   <tr>
                     <th>ID User</th>
                     <th>Nama</th>
+                    <th>NIS</th>
                     <th>Email</th>
                     <th>Telepon</th>
                     <th>Status</th>
@@ -1520,44 +1549,131 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           <div class="modal-body">
             <form id="addUserForm">
               <div class="mb-3">
-                <label for="userName" class="form-label">Username</label>
+                <label for="addUserFullName" class="form-label">Nama Lengkap</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="userName"
+                  id="addUserFullName"
+                  name="fullName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="addUserNIS" class="form-label">NIS (10 Digit)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addUserNIS"
+                  name="nis"
+                  maxlength="10"
+                  required
+                />
+                <small id="addUserNISError" class="text-danger" style="display: none;">NIS harus 10 digit angka</small>
+              </div>
+              <div class="mb-3">
+                <label for="addUserUsername" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addUserUsername"
                   name="username"
                   required
                 />
               </div>
               <div class="mb-3">
-                <label for="userEmail" class="form-label">Email</label>
+                <label class="form-label">Gender</label>
+                <div class="d-flex gap-3">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="gender"
+                      id="addUserGenderMale"
+                      value="Pria"
+                      required
+                    />
+                    <label class="form-check-label" for="addUserGenderMale">
+                      Pria
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="gender"
+                      id="addUserGenderFemale"
+                      value="Wanita"
+                      required
+                    />
+                    <label class="form-check-label" for="addUserGenderFemale">
+                      Wanita
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="addUserPhone" class="form-label">Nomor Telepon</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addUserPhone"
+                  name="telepon"
+                  required
+                />
+                <small id="addUserPhoneError" class="text-danger" style="display: none;">Nomor telepon harus angka</small>
+              </div>
+              <div class="mb-3">
+                <label for="addUserEmail" class="form-label">Email</label>
                 <input
                   type="email"
                   class="form-control"
-                  id="userEmail"
+                  id="addUserEmail"
                   name="email"
                   required
                 />
               </div>
               <div class="mb-3">
-                <label for="userPhone" class="form-label">Telepon</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="userPhone"
-                  name="telepon"
-                  required
-                />
+                <label for="addUserPassword" class="form-label">Password</label>
+                <div class="input-group">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="addUserPassword"
+                    name="password"
+                    autocomplete="off"
+                    required
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    id="toggleAddUserPassword"
+                    onclick="togglePasswordVisibility('addUserPassword', 'toggleAddUserPassword')"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
               </div>
               <div class="mb-3">
-                <label for="userPassword" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="userPassword"
-                  name="password"
-                  required
-                />
+                <label for="addUserConfirmPassword" class="form-label">Konfirmasi Password</label>
+                <div class="input-group">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="addUserConfirmPassword"
+                    name="confirmPassword"
+                    autocomplete="off"
+                    required
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    id="toggleAddUserConfirmPassword"
+                    onclick="togglePasswordVisibility('addUserConfirmPassword', 'toggleAddUserConfirmPassword')"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                <small id="addUserPasswordMatchMsg" class="text-danger" style="display: none;">Password tidak sama!</small>
               </div>
             </form>
           </div>
@@ -1762,6 +1878,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   class="form-check-input"
                   type="checkbox"
                   id="confirmDelete"
+                  onchange="document.getElementById('confirmDeleteBtn').disabled = !this.checked"
                 />
                 <label class="form-check-label" for="confirmDelete">
                   Saya mengerti bahwa user akan dihapus secara permanen
@@ -1783,6 +1900,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               id="confirmDeleteBtn"
               onclick="confirmDeleteUser()"
               disabled
+              style="cursor: not-allowed;"
             >
               <i class="fas fa-trash me-2"></i>Hapus User
             </button>
@@ -2382,7 +2500,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
 
         if (users.length === 0) {
           usersTableBody.innerHTML =
-            '<tr><td colspan="8" class="text-center text-muted">Tidak ada user ditemukan</td></tr>';
+            '<tr><td colspan="9" class="text-center text-muted">Tidak ada user ditemukan</td></tr>';
           return;
         }
 
@@ -2408,6 +2526,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                 ? '<i class="fas fa-user-slash text-muted ms-1" title="User Tidak Aktif"></i>'
                 : ""
             }</td>
+            <td>${user.nis || "-"}</td>
             <td>${user.email}</td>
             <td>${user.telepon}</td>
             <td><span class="badge bg-${statusClass}">${statusText}</span></td>
@@ -2490,6 +2609,14 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
 
       // Show add user modal
       function showAddUserModal() {
+        // Reset form before showing modal
+        const form = document.getElementById("addUserForm");
+        form.reset();
+        // Uncheck all radio buttons
+        document.querySelectorAll("input[name='gender']").forEach(radio => {
+          radio.checked = false;
+        });
+        
         const modal = new bootstrap.Modal(
           document.getElementById("addUserModal")
         );
@@ -2499,8 +2626,52 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       // Add new user
       async function addUser() {
         const form = document.getElementById("addUserForm");
-        const formData = new FormData(form);
-        const userData = Object.fromEntries(formData.entries());
+        const fullName = document.getElementById("addUserFullName").value.trim();
+        const nis = document.getElementById("addUserNIS").value.trim();
+        const username = document.getElementById("addUserUsername").value.trim();
+        const gender = document.querySelector("input[name='gender']:checked");
+        const phone = document.getElementById("addUserPhone").value.trim();
+        const email = document.getElementById("addUserEmail").value.trim();
+        const password = document.getElementById("addUserPassword").value;
+        const confirmPassword = document.getElementById("addUserConfirmPassword").value;
+
+        // Debug log to check values
+        console.log("NIS value:", nis);
+        console.log("Full Name:", fullName);
+
+        // Validation
+        if (!fullName || !nis || !username || !gender || !phone || !email || !password || !confirmPassword) {
+          alert("Isi semua field!");
+          return;
+        }
+
+        if (!/^\d{10}$/.test(nis)) {
+          alert("NIS harus 10 digit angka!");
+          return;
+        }
+
+        if (!/^[0-9]+$/.test(phone)) {
+          alert("Nomor telepon harus angka!");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Password tidak sama!");
+          return;
+        }
+
+        const userData = {
+          fullName: fullName,
+          nis: nis,
+          username: username,
+          gender: gender.value,
+          telepon: phone,
+          email: email,
+          password: password,
+          confirmPassword: confirmPassword
+        };
+
+        console.log("Sending userData:", userData);
 
         try {
           const response = await fetch(`${API_BASE}/users`, {
@@ -2524,6 +2695,23 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           }
         } catch (error) {
           alert("Terjadi kesalahan: " + error.message);
+        }
+      }
+
+      // Toggle password visibility
+      function togglePasswordVisibility(inputId, buttonId) {
+        const input = document.getElementById(inputId);
+        const button = document.getElementById(buttonId);
+        const icon = button.querySelector("i");
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
         }
       }
 
@@ -2656,9 +2844,15 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         }
 
         // Show confirmation modal
-        document.getElementById("deleteUserName").textContent = user.nama;
-        document.getElementById("confirmDelete").checked = false;
-        document.getElementById("confirmDeleteBtn").disabled = true;
+        document.getElementById("deleteUserName").textContent = user.nama || user.username || userId;
+        const confirmCheckbox = document.getElementById("confirmDelete");
+        if (confirmCheckbox) {
+          confirmCheckbox.checked = false;
+        }
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+        }
 
         // Store userId for deletion
         window.userToDelete = userId;
@@ -3857,12 +4051,18 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       document
         .getElementById("bookFilter")
         .addEventListener("change", searchBooks);
-      document
-        .getElementById("userSearch")
-        .addEventListener("input", searchUsers);
-      document
-        .getElementById("userFilter")
-        .addEventListener("change", searchUsers);
+      
+      // Add null checks for user search/filter elements
+      if (document.getElementById("userSearch")) {
+        document
+          .getElementById("userSearch")
+          .addEventListener("input", searchUsers);
+      }
+      if (document.getElementById("userFilter")) {
+        document
+          .getElementById("userFilter")
+          .addEventListener("change", searchUsers);
+      }
 
       // Profile form real-time updates
       document
@@ -3875,23 +4075,28 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       }
 
       // Delete confirmation checkbox
-      document
-        .getElementById("confirmDelete")
-        .addEventListener("change", function () {
-          document.getElementById("confirmDeleteBtn").disabled = !this.checked;
+      if (document.getElementById("confirmDelete")) {
+        const confirmCheckbox = document.getElementById("confirmDelete");
+        confirmCheckbox.addEventListener("change", function () {
+          const btn = document.getElementById("confirmDeleteBtn");
+          if (btn) {
+            btn.disabled = !this.checked;
+          }
         });
+      }
 
       // Return confirmation form
-      document
-        .getElementById("returnConfirmForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
+      if (document.getElementById("returnConfirmForm")) {
+        document
+          .getElementById("returnConfirmForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-          const formData = new FormData(this);
-          const returnData = Object.fromEntries(formData.entries());
+            const formData = new FormData(this);
+            const returnData = Object.fromEntries(formData.entries());
 
-          try {
-            const response = await fetch(`${API_BASE}/admin/confirm-return`, {
+            try {
+              const response = await fetch(`${API_BASE}/admin/confirm-return`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -3945,6 +4150,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         `;
           }
         });
+      }
 
       // Initialize page
       document.addEventListener("DOMContentLoaded", async function () {
