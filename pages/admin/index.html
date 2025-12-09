@@ -3223,23 +3223,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       function filterBooksByCategory(category) {
         currentBookCategory = category;
         // Update button states
-<<<<<<< Updated upstream
-        document
-          .querySelectorAll("#books-section .btn-group button")
-          .forEach((btn) => {
-            btn.classList.remove("active");
-            if (
-              (category === "all" && btn.textContent.trim() === "Semua") ||
-              (category === "Fiksi" && btn.textContent.trim() === "Fiksi") ||
-              (category === "Fantasi" &&
-                btn.textContent.trim() === "Fantasi") ||
-              (category === "Pengetahuan" &&
-                btn.textContent.trim() === "Pengetahuan")
-            ) {
-              btn.classList.add("active");
-            }
-          });
-=======
         document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
           btn.classList.remove('active');
           if ((category === 'all' && btn.textContent.trim() === 'Semua') ||
@@ -3249,7 +3232,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             btn.classList.add('active');
           }
         });
->>>>>>> Stashed changes
         searchBooks();
       }
 
