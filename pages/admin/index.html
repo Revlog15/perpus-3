@@ -627,42 +627,11 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               <div class="col-12">
                 <label class="form-label d-block mb-2">Kategori Buku:</label>
                 <div class="btn-group flex-wrap" role="group">
-<<<<<<< Updated upstream
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary"
-                    onclick="filterBooksByCategory('all')"
-                  >
-                    Semua
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-info"
-                    onclick="filterBooksByCategory('Fiksi')"
-                  >
-                    Fiksi
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-success"
-                    onclick="filterBooksByCategory('Fantasi')"
-                  >
-                    Fantasi
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-warning"
-                    onclick="filterBooksByCategory('Pengetahuan')"
-                  >
-                    Pengetahuan
-                  </button>
-=======
                   <button type="button" class="btn btn-outline-primary" onclick="filterBooksByCategory('all')">Semua</button>
                   <button type="button" class="btn btn-outline-info" onclick="filterBooksByCategory('Fiksi')">Fiksi</button>
                   <button type="button" class="btn btn-outline-warning" onclick="filterBooksByCategory('Pengetahuan')">Pengetahuan</button>
                   <button type="button" class="btn btn-outline-danger" onclick="filterBooksByCategory('Pelajaran')">Pelajaran</button>
 
->>>>>>> Stashed changes
                 </div>
               </div>
             </div>
@@ -3143,23 +3112,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       function filterBooksByCategory(category) {
         currentBookCategory = category;
         // Update button states
-<<<<<<< Updated upstream
-        document
-          .querySelectorAll("#books-section .btn-group button")
-          .forEach((btn) => {
-            btn.classList.remove("active");
-            if (
-              (category === "all" && btn.textContent.trim() === "Semua") ||
-              (category === "Fiksi" && btn.textContent.trim() === "Fiksi") ||
-              (category === "Fantasi" &&
-                btn.textContent.trim() === "Fantasi") ||
-              (category === "Pengetahuan" &&
-                btn.textContent.trim() === "Pengetahuan")
-            ) {
-              btn.classList.add("active");
-            }
-          });
-=======
         document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
           btn.classList.remove('active');
           if ((category === 'all' && btn.textContent.trim() === 'Semua') ||
@@ -3169,7 +3121,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             btn.classList.add('active');
           }
         });
->>>>>>> Stashed changes
         searchBooks();
       }
 
