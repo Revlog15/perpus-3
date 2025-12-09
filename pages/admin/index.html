@@ -627,6 +627,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               <div class="col-12">
                 <label class="form-label d-block mb-2">Kategori Buku:</label>
                 <div class="btn-group flex-wrap" role="group">
+<<<<<<< Updated upstream
                   <button
                     type="button"
                     class="btn btn-outline-primary"
@@ -655,6 +656,13 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   >
                     Pengetahuan
                   </button>
+=======
+                  <button type="button" class="btn btn-outline-primary" onclick="filterBooksByCategory('all')">Semua</button>
+                  <button type="button" class="btn btn-outline-info" onclick="filterBooksByCategory('Fiksi')">Fiksi</button>
+                  <button type="button" class="btn btn-outline-warning" onclick="filterBooksByCategory('Pengetahuan')">Pengetahuan</button>
+                  <button type="button" class="btn btn-outline-danger" onclick="filterBooksByCategory('Pelajaran')">Pelajaran</button>
+
+>>>>>>> Stashed changes
                 </div>
               </div>
             </div>
@@ -1397,10 +1405,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                       <option value="">Pilih Kategori</option>
                       <option value="Fiksi">Fiksi</option>
                       <option value="Pengetahuan">Pengetahuan</option>
-                      <option value="Fantasi">Fantasi</option>
-                      <option value="Sejarah">Sejarah</option>
-                      <option value="Biografi">Biografi</option>
-                      <option value="Sains">Sains</option>
+                      <option value="Pelajaran">Pelajaran</option>
                     </select>
                   </div>
                   <div class="mb-3">
@@ -1559,10 +1564,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                       <option value="">Pilih Kategori</option>
                       <option value="Fiksi">Fiksi</option>
                       <option value="Pengetahuan">Pengetahuan</option>
-                      <option value="Fantasi">Fantasi</option>
-                      <option value="Sejarah">Sejarah</option>
-                      <option value="Biografi">Biografi</option>
-                      <option value="Sains">Sains</option>
+                      <option value="Pelajaran">Pelajaran</option>
                     </select>
                   </div>
                   <div class="mb-3">
@@ -3035,14 +3037,22 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         window._tryBookImage = function (imgEl) {
           const title = imgEl.getAttribute("data-title") || "";
           const sanitized = sanitizeForFilename(title);
+          // also try the first word (short filenames like "sapiens.jpg")
+          const firstWord = (title || "").split(" ")[0] || "";
+          const firstSan = sanitizeForFilename(firstWord);
           const candidates = [
             `/images/${sanitized}.jpg`,
             `/images/${sanitized}.jpeg`,
             `/images/${sanitized}.png`,
+          ];
+          if (firstSan && firstSan !== sanitized) {
+            candidates.push(`/images/${firstSan}.jpg`, `/images/${firstSan}.jpeg`, `/images/${firstSan}.png`);
+          }
+          candidates.push(
             `/images/${title}.jpg`,
             `/images/${title}.jpeg`,
-            `/images/${title}.png`,
-          ];
+            `/images/${title}.png`
+          );
           let idx = parseInt(imgEl.getAttribute("data-idx") || "0", 10);
           if (idx >= candidates.length) {
             imgEl.onerror = null;
@@ -3133,6 +3143,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       function filterBooksByCategory(category) {
         currentBookCategory = category;
         // Update button states
+<<<<<<< Updated upstream
         document
           .querySelectorAll("#books-section .btn-group button")
           .forEach((btn) => {
@@ -3148,6 +3159,17 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               btn.classList.add("active");
             }
           });
+=======
+        document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
+          btn.classList.remove('active');
+          if ((category === 'all' && btn.textContent.trim() === 'Semua') ||
+              (category === 'Fiksi' && btn.textContent.trim() === 'Fiksi') ||
+              (category === 'Pengetahuan' && btn.textContent.trim() === 'Pengetahuan') ||
+              (category === 'Pelajaran' && btn.textContent.trim() === 'Pelajaran')) {
+            btn.classList.add('active');
+          }
+        });
+>>>>>>> Stashed changes
         searchBooks();
       }
 

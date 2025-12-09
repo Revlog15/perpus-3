@@ -206,7 +206,7 @@
     "tahunTerbit": 2024,
     "penulis": "Sarah J. Maas",
     "stok": 8,
-    "kategori": "Fantasi",
+    "kategori": "Fiksi",
     "rak": "C-01"
   },
   {
@@ -216,7 +216,7 @@
     "tahunTerbit": 2024,
     "penulis": "Leigh Bardugo",
     "stok": 13,
-    "kategori": "Fantasi",
+    "kategori": "Fiksi",
     "rak": "C-02"
   },
   {
@@ -228,5 +228,85 @@
     "stok": 11,
     "kategori": "Fiksi",
     "rak": "A-13"
+  },
+  {
+    "idBuku": "B024",
+    "namaBuku": "Bahasa Indonesia Kelas X",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 12,
+    "kategori": "Pelajaran",
+    "rak": "D-01"
+  },
+  {
+    "idBuku": "B025",
+    "namaBuku": "Bahasa Indonesia Kelas XI",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 12,
+    "kategori": "Pelajaran",
+    "rak": "D-02"
+  },
+  {
+    "idBuku": "B026",
+    "namaBuku": "Bahasa Korea A1",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 8,
+    "kategori": "Pelajaran",
+    "rak": "D-03"
+  },
+  {
+    "idBuku": "B027",
+    "namaBuku": "Bahasa Korea Pre-A1",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 8,
+    "kategori": "Pelajaran",
+    "rak": "D-04"
+  },
+  {
+    "idBuku": "B028",
+    "namaBuku": "Koding dan Kecerdasan Artifisial Kelas X Semester 1",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 15,
+    "kategori": "Pelajaran",
+    "rak": "D-05"
+  },
+  {
+    "idBuku": "B029",
+    "namaBuku": "Koding dan Kecerdasan Artifisial Kelas X Semester 2",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 15,
+    "kategori": "Pelajaran",
+    "rak": "D-06"
+  },
+  {
+    "idBuku": "B030",
+    "namaBuku": "Matematika Kelas XI Rumpun Bisnis & Manajemen",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 10,
+    "kategori": "Pelajaran",
+    "rak": "D-07"
+  },
+  {
+    "idBuku": "B031",
+    "namaBuku": "Matematika Kelas XI Rumpun Teknologi",
+    "penerbit": "Pusat Edukasi",
+    "tahunTerbit": 2024,
+    "penulis": "Tim Kurikulum",
+    "stok": 10,
+    "kategori": "Pelajaran",
+    "rak": "D-08"
   }
 ]
