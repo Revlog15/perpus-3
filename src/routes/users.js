@@ -32,18 +32,39 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { username, email, telepon, password } = req.body;
-  if (!username || !email || !telepon || !password)
+  const { username, email, telepon, password, fullName, nis, gender, confirmPassword } = req.body;
+
+  // Basic required fields
+  if (!username || !email || !telepon || !password || !fullName || !nis || !gender) {
     return res.status(400).json({ message: "Semua field harus diisi" });
+  }
+
+  // NIS validation (10 digits)
+  if (!/^\d{10}$/.test(String(nis))) {
+    return res.status(400).json({ message: "NIS harus 10 digit angka" });
+  }
+
+  // Phone numeric
+  if (!/^[0-9]+$/.test(String(telepon))) {
+    return res.status(400).json({ message: "Nomor telepon harus angka" });
+  }
+
+  // Password match
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Password tidak sama" });
+  }
+
   const existingUser = store.users.find(
     (u) =>
       (u.email || "").toLowerCase() === String(email).toLowerCase() ||
-      (u.username || "").toLowerCase() === String(username).toLowerCase()
+      (u.username || "").toLowerCase() === String(username).toLowerCase() ||
+      (u.nis || "") === String(nis)
   );
   if (existingUser)
     return res
       .status(400)
-      .json({ message: "Email atau Username sudah digunakan" });
+      .json({ message: "Email, Username, atau NIS sudah digunakan" });
+
   const newUserId = `U${String(store.users.length + 1).padStart(3, "0")}`;
   const newUser = {
     id: newUserId,
@@ -51,6 +72,9 @@ router.post("/", (req, res) => {
     email,
     telepon,
     password,
+    fullName,
+    nis,
+    gender,
     role: "user",
     status: "active",
     createdAt: new Date().toISOString().split("T")[0],
