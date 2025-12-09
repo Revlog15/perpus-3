@@ -146,6 +146,17 @@
         .content { margin-left: 0; padding-top: 76px; }
         .sidebar h4 { padding-top: 10px; }
       }
+      /* Hide browser native password reveal / decorations so only our eye button shows */
+      input[type="password"]::-ms-reveal,
+      input[type="password"]::-ms-clear {
+        display: none !important;
+      }
+      /* WebKit/Chromium decoration container (Edge/Chrome) */
+      input[type="password"]::-webkit-textfield-decoration-container {
+        display: none !important;
+      }
+      /* Fallback to remove default appearance where supported */
+      input[type="password"] { -webkit-appearance: none; appearance: none; }
     </style>
   </head>
   <body>
@@ -722,6 +733,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   <tr>
                     <th>ID User</th>
                     <th>Nama</th>
+                    <th>NIS</th>
                     <th>Email</th>
                     <th>Telepon</th>
                     <th>Status</th>
@@ -1694,44 +1706,54 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           <div class="modal-body">
             <form id="addUserForm">
               <div class="mb-3">
-                <label for="userName" class="form-label">Username</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="userName"
-                  name="username"
-                  required
-                />
+                <label for="addUserFullName" class="form-label">Nama Lengkap</label>
+                <input type="text" class="form-control" id="addUserFullName" name="fullName" required />
               </div>
               <div class="mb-3">
-                <label for="userEmail" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="userEmail"
-                  name="email"
-                  required
-                />
+                <label for="addUserNIS" class="form-label">NIS (10 Digit)</label>
+                <input type="text" class="form-control" id="addUserNIS" name="nis" maxlength="10" required />
+                <small id="addUserNISError" class="text-danger" style="display:none;">NIS harus 10 digit angka</small>
               </div>
               <div class="mb-3">
-                <label for="userPhone" class="form-label">Telepon</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="userPhone"
-                  name="telepon"
-                  required
-                />
+                <label for="addUserUsername" class="form-label">Username</label>
+                <input type="text" class="form-control" id="addUserUsername" name="username" required />
               </div>
               <div class="mb-3">
-                <label for="userPassword" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="userPassword"
-                  name="password"
-                  required
-                />
+                <label class="form-label">Gender</label>
+                <div class="d-flex gap-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="addUserGenderMale" value="Pria" required />
+                    <label class="form-check-label" for="addUserGenderMale">Pria</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="addUserGenderFemale" value="Wanita" required />
+                    <label class="form-check-label" for="addUserGenderFemale">Wanita</label>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="addUserPhone" class="form-label">Nomor Telepon</label>
+                <input type="text" class="form-control" id="addUserPhone" name="telepon" required />
+                <small id="addUserPhoneError" class="text-danger" style="display:none;">Nomor telepon harus angka</small>
+              </div>
+              <div class="mb-3">
+                <label for="addUserEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="addUserEmail" name="email" required />
+              </div>
+              <div class="mb-3">
+                <label for="addUserPassword" class="form-label">Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="addUserPassword" name="password" autocomplete="off" required />
+                  <button class="btn btn-outline-secondary" type="button" id="toggleAddUserPassword" onclick="togglePasswordVisibility('addUserPassword','toggleAddUserPassword')"><i class="fas fa-eye"></i></button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="addUserConfirmPassword" class="form-label">Konfirmasi Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="addUserConfirmPassword" name="confirmPassword" autocomplete="off" required />
+                  <button class="btn btn-outline-secondary" type="button" id="toggleAddUserConfirmPassword" onclick="togglePasswordVisibility('addUserConfirmPassword','toggleAddUserConfirmPassword')"><i class="fas fa-eye"></i></button>
+                </div>
+                <small id="addUserPasswordMatchMsg" class="text-danger" style="display:none;">Password tidak sama!</small>
               </div>
             </form>
           </div>
@@ -1875,13 +1897,18 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                       >Password Baru (kosongkan jika tidak ingin
                       mengubah)</label
                     >
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="editUserPassword"
-                      name="password"
-                      placeholder="Masukkan password baru"
-                    />
+                    <div class="input-group">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="editUserPassword"
+                        name="password"
+                        placeholder="Masukkan password baru"
+                      />
+                      <button class="btn btn-outline-secondary" type="button" id="toggleEditUserPassword" onclick="togglePasswordVisibility('editUserPassword','toggleEditUserPassword')">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -1958,6 +1985,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   class="form-check-input"
                   type="checkbox"
                   id="confirmDelete"
+                  onchange="document.getElementById('confirmDeleteBtn').disabled = !this.checked"
                 />
                 <label class="form-check-label" for="confirmDelete">
                   Saya mengerti bahwa user akan dihapus secara permanen
@@ -2665,7 +2693,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         } catch (error) {
           console.error("Error loading users:", error);
           document.getElementById("usersTableBody").innerHTML =
-            '<tr><td colspan="8" class="text-center text-danger">Gagal memuat data user</td></tr>';
+            '<tr><td colspan="9" class="text-center text-danger">Gagal memuat data user</td></tr>';
         }
       }
 
@@ -2675,7 +2703,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
 
         if (users.length === 0) {
           usersTableBody.innerHTML =
-            '<tr><td colspan="8" class="text-center text-muted">Tidak ada user ditemukan</td></tr>';
+            '<tr><td colspan="9" class="text-center text-muted">Tidak ada user ditemukan</td></tr>';
           return;
         }
 
@@ -2701,6 +2729,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                 ? '<i class="fas fa-user-slash text-muted ms-1" title="User Tidak Aktif"></i>'
                 : ""
             }</td>
+            <td>${user.nis || "-"}</td>
             <td>${user.email}</td>
             <td>${user.telepon}</td>
             <td><span class="badge bg-${statusClass}">${statusText}</span></td>
@@ -2792,8 +2821,46 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       // Add new user
       async function addUser() {
         const form = document.getElementById("addUserForm");
-        const formData = new FormData(form);
-        const userData = Object.fromEntries(formData.entries());
+        const fullName = document.getElementById("addUserFullName").value.trim();
+        const nis = document.getElementById("addUserNIS").value.trim();
+        const username = document.getElementById("addUserUsername").value.trim();
+        const gender = document.querySelector("input[name='gender']:checked");
+        const phone = document.getElementById("addUserPhone").value.trim();
+        const email = document.getElementById("addUserEmail").value.trim();
+        const password = document.getElementById("addUserPassword").value;
+        const confirmPassword = document.getElementById("addUserConfirmPassword").value;
+
+        // Basic validation
+        if (!fullName || !nis || !username || !gender || !phone || !email || !password || !confirmPassword) {
+          alert("Isi semua field!");
+          return;
+        }
+
+        if (!/^\d{10}$/.test(nis)) {
+          alert("NIS harus 10 digit angka!");
+          return;
+        }
+
+        if (!/^[0-9]+$/.test(phone)) {
+          alert("Nomor telepon harus angka!");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Password tidak sama!");
+          return;
+        }
+
+        const userData = {
+          fullName: fullName,
+          nis: nis,
+          username: username,
+          gender: gender.value,
+          telepon: phone,
+          email: email,
+          password: password,
+          confirmPassword: confirmPassword,
+        };
 
         try {
           const response = await fetch(`${API_BASE}/users`, {
@@ -2806,17 +2873,30 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
 
           if (response.ok) {
             alert("User berhasil ditambahkan");
-            bootstrap.Modal.getInstance(
-              document.getElementById("addUserModal")
-            ).hide();
+            bootstrap.Modal.getInstance(document.getElementById("addUserModal")).hide();
             form.reset();
             loadAllUsers();
           } else {
-            const error = await response.json();
-            alert("Error: " + error.message);
+            const error = await response.json().catch(() => null);
+            alert("Error: " + (error?.message || "Gagal menambahkan user"));
           }
         } catch (error) {
           alert("Terjadi kesalahan: " + error.message);
+        }
+      }
+
+      // Toggle password visibility helper
+      function togglePasswordVisibility(inputId, buttonId) {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(buttonId);
+        if (!input || !btn) return;
+        const icon = btn.querySelector("i");
+        if (input.type === "password") {
+          input.type = "text";
+          if (icon) { icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); }
+        } else {
+          input.type = "password";
+          if (icon) { icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); }
         }
       }
 
@@ -4186,36 +4266,34 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           }, 3000);
         });
 
-      // Event listeners
-      document
-        .getElementById("bookSearch")
-        .addEventListener("input", searchBooks);
-      document
-        .getElementById("bookFilter")
-        .addEventListener("change", searchBooks);
-      document
-        .getElementById("userSearch")
-        .addEventListener("input", searchUsers);
-      document
-        .getElementById("userFilter")
-        .addEventListener("change", searchUsers);
+      // Event listeners (guard element existence to avoid uncaught errors)
+      const bookSearchEl = document.getElementById("bookSearch");
+      if (bookSearchEl) bookSearchEl.addEventListener("input", searchBooks);
+
+      const bookFilterEl = document.getElementById("bookFilter");
+      if (bookFilterEl) bookFilterEl.addEventListener("change", searchBooks);
+
+      const userSearchEl = document.getElementById("userSearch");
+      if (userSearchEl) userSearchEl.addEventListener("input", searchUsers);
+
+      const userFilterEl = document.getElementById("userFilter");
+      if (userFilterEl) userFilterEl.addEventListener("change", searchUsers);
 
       // Profile form real-time updates
-      document
-        .getElementById("editName")
-        .addEventListener("input", () => updateAdminDropdown());
-      if (document.getElementById("editUsername")) {
-        document
-          .getElementById("editUsername")
-          .addEventListener("input", () => updateAdminDropdown());
-      }
+      const editNameEl = document.getElementById("editName");
+      if (editNameEl) editNameEl.addEventListener("input", () => updateAdminDropdown());
 
-      // Delete confirmation checkbox
-      document
-        .getElementById("confirmDelete")
-        .addEventListener("change", function () {
-          document.getElementById("confirmDeleteBtn").disabled = !this.checked;
+      const editUsernameEl = document.getElementById("editUsername");
+      if (editUsernameEl) editUsernameEl.addEventListener("input", () => updateAdminDropdown());
+
+      // Delete confirmation checkbox (guarded)
+      const confirmDeleteEl = document.getElementById("confirmDelete");
+      if (confirmDeleteEl) {
+        confirmDeleteEl.addEventListener("change", function () {
+          const btn = document.getElementById("confirmDeleteBtn");
+          if (btn) btn.disabled = !this.checked;
         });
+      }
 
       // Return confirmation form
       document
