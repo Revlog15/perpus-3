@@ -1,4 +1,4 @@
-<!DOCTYPE html>a
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -110,9 +110,25 @@
         max-height: 320px;
         overflow-y: auto;
       }
-      .site-logo { height: 80px; display:block; }
-      .site-brand { display:flex; flex-direction:column; align-items:center; justify-content:center; }
-      .site-name { margin-top:6px; font-size:1.4rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; text-align:center; line-height:1; }
+      .site-logo {
+        height: 80px;
+        display: block;
+      }
+      .site-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .site-name {
+        margin-top: 6px;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1;
+      }
     </style>
   </head>
   <body>
@@ -120,7 +136,7 @@
     <div class="sidebar">
       <h4 class="text-center mb-4">
         <div class="site-brand">
-          <img src="/images/school_logo.png" alt="logo" class="site-logo">
+          <img src="/images/school_logo.png" alt="logo" class="site-logo" />
           <div class="site-name">NesPus</div>
         </div>
       </h4>
@@ -560,14 +576,22 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                     placeholder="Cari buku (judul, penulis, ISBN)..."
                     onkeypress="if(event.key==='Enter'){searchBooks();}"
                   />
-                  <button class="btn btn-primary" type="button" onclick="searchBooks()">
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    onclick="searchBooks()"
+                  >
                     Cari
                   </button>
                 </div>
               </div>
               <div class="col-md-4">
                 <label for="bookSort" class="form-label">Urutkan</label>
-                <select class="form-select" id="bookSort" onchange="searchBooks()">
+                <select
+                  class="form-select"
+                  id="bookSort"
+                  onchange="searchBooks()"
+                >
                   <option value="title-asc">Judul (A-Z)</option>
                   <option value="year-desc">Tahun Terbaru</option>
                   <option value="year-asc">Tahun Terlama</option>
@@ -578,10 +602,34 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               <div class="col-12">
                 <label class="form-label d-block mb-2">Kategori Buku:</label>
                 <div class="btn-group flex-wrap" role="group">
-                  <button type="button" class="btn btn-outline-primary" onclick="filterBooksByCategory('all')">Semua</button>
-                  <button type="button" class="btn btn-outline-info" onclick="filterBooksByCategory('Fiksi')">Fiksi</button>
-                  <button type="button" class="btn btn-outline-success" onclick="filterBooksByCategory('Fantasi')">Fantasi</button>
-                  <button type="button" class="btn btn-outline-warning" onclick="filterBooksByCategory('Pengetahuan')">Pengetahuan</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    onclick="filterBooksByCategory('all')"
+                  >
+                    Semua
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-info"
+                    onclick="filterBooksByCategory('Fiksi')"
+                  >
+                    Fiksi
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-success"
+                    onclick="filterBooksByCategory('Fantasi')"
+                  >
+                    Fantasi
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-warning"
+                    onclick="filterBooksByCategory('Pengetahuan')"
+                  >
+                    Pengetahuan
+                  </button>
                 </div>
               </div>
             </div>
@@ -726,11 +774,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         <!-- Tab Content -->
         <div class="tab-content" id="loanTabsContent">
           <!-- New Loan Tab -->
-          <div
-            class="tab-pane fade"
-            id="new-loan"
-            role="tabpanel"
-          >
+          <div class="tab-pane fade" id="new-loan" role="tabpanel">
             <div class="card">
               <div class="card-header">
                 <h6 class="mb-0">Tambah Peminjaman Baru</h6>
@@ -759,7 +803,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="newLoanUserId" class="form-label"
-                          >ID User / NIS <span class="text-danger">*</span></label
+                          >ID User / NIS
+                          <span class="text-danger">*</span></label
                         >
                         <input
                           type="text"
@@ -1179,7 +1224,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           <!-- Report data will be loaded here -->
         </div>
       </div>
-
     </div>
 
     <!-- Modals -->
@@ -1234,8 +1278,12 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         <div class="modal-content">
           <div class="modal-header border-0 pb-0">
             <div>
-              <p class="text-uppercase text-muted small mb-1">Detail Peminjaman</p>
-              <h5 class="modal-title" id="loanDetailsModalLabel">Informasi Lengkap</h5>
+              <p class="text-uppercase text-muted small mb-1">
+                Detail Peminjaman
+              </p>
+              <h5 class="modal-title" id="loanDetailsModalLabel">
+                Informasi Lengkap
+              </h5>
             </div>
             <button
               type="button"
@@ -1250,11 +1298,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             </div>
           </div>
           <div class="modal-footer border-0 pt-0">
-            <button
-              type="button"
-              class="btn btn-light"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
               Tutup
             </button>
           </div>
@@ -1316,7 +1360,9 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="bookCategory" class="form-label">Kategori</label>
+                    <label for="bookCategory" class="form-label"
+                      >Kategori</label
+                    >
                     <select
                       class="form-select"
                       id="bookCategory"
@@ -1476,7 +1522,9 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="editBookCategory" class="form-label">Kategori</label>
+                    <label for="editBookCategory" class="form-label"
+                      >Kategori</label
+                    >
                     <select
                       class="form-select"
                       id="editBookCategory"
@@ -1701,7 +1749,9 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="editUserFullName" class="form-label">Nama Lengkap</label>
+                    <label for="editUserFullName" class="form-label"
+                      >Nama Lengkap</label
+                    >
                     <input
                       type="text"
                       class="form-control"
@@ -1724,14 +1774,18 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                       pattern="[0-9]{10}"
                       required
                     />
-                    <small class="form-text text-muted">NIS harus 10 digit angka</small>
+                    <small class="form-text text-muted"
+                      >NIS harus 10 digit angka</small
+                    >
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="editUserName" class="form-label">Username</label>
+                    <label for="editUserName" class="form-label"
+                      >Username</label
+                    >
                     <input
                       type="text"
                       class="form-control"
@@ -1757,8 +1811,15 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="editUserGender" class="form-label">Gender</label>
-                    <select class="form-select" id="editUserGender" name="gender" required>
+                    <label for="editUserGender" class="form-label"
+                      >Gender</label
+                    >
+                    <select
+                      class="form-select"
+                      id="editUserGender"
+                      name="gender"
+                      required
+                    >
                       <option value="">Pilih Gender</option>
                       <option value="Pria">Pria</option>
                       <option value="Wanita">Wanita</option>
@@ -1767,7 +1828,9 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="editUserPhone" class="form-label">Telepon</label>
+                    <label for="editUserPhone" class="form-label"
+                      >Telepon</label
+                    >
                     <input
                       type="text"
                       class="form-control"
@@ -1782,7 +1845,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="editUserPassword" class="form-label"
-                      >Password Baru (kosongkan jika tidak ingin mengubah)</label
+                      >Password Baru (kosongkan jika tidak ingin
+                      mengubah)</label
                     >
                     <input
                       type="password"
@@ -1795,8 +1859,14 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="editUserStatus" class="form-label">Status</label>
-                    <select class="form-select" id="editUserStatus" name="status">
+                    <label for="editUserStatus" class="form-label"
+                      >Status</label
+                    >
+                    <select
+                      class="form-select"
+                      id="editUserStatus"
+                      name="status"
+                    >
                       <option value="active">Aktif</option>
                       <option value="inactive">Tidak Aktif</option>
                     </select>
@@ -1945,14 +2015,18 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             break;
           case "books":
             // Reset category filter and activate "Semua" button
-            currentBookCategory = 'all';
+            currentBookCategory = "all";
             setTimeout(() => {
-              const semuaBtn = document.querySelector('#books-section .btn-group button');
+              const semuaBtn = document.querySelector(
+                "#books-section .btn-group button"
+              );
               if (semuaBtn) {
-                document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
-                  btn.classList.remove('active');
-                });
-                semuaBtn.classList.add('active');
+                document
+                  .querySelectorAll("#books-section .btn-group button")
+                  .forEach((btn) => {
+                    btn.classList.remove("active");
+                  });
+                semuaBtn.classList.add("active");
               }
             }, 100);
             loadAllBooks();
@@ -2181,7 +2255,9 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   localStorage.setItem("loans:updated", String(Date.now()));
                 } catch (e) {}
               } else {
-                msgEl.innerHTML = `<div class="alert alert-danger">${result.message || "Gagal membuat peminjaman"}</div>`;
+                msgEl.innerHTML = `<div class="alert alert-danger">${
+                  result.message || "Gagal membuat peminjaman"
+                }</div>`;
               }
             } catch (error) {
               console.error("Error creating loan:", error);
@@ -2713,13 +2789,16 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         if (!user) return;
 
         document.getElementById("editUserId").value = user.id;
-        document.getElementById("editUserFullName").value = user.fullName || user.nama || "";
+        document.getElementById("editUserFullName").value =
+          user.fullName || user.nama || "";
         document.getElementById("editUserNIS").value = user.nis || "";
         document.getElementById("editUserName").value = user.username || "";
         document.getElementById("editUserEmail").value = user.email || "";
         document.getElementById("editUserGender").value = user.gender || "";
-        document.getElementById("editUserPhone").value = user.telepon || user.phone || "";
-        document.getElementById("editUserStatus").value = user.status || "active";
+        document.getElementById("editUserPhone").value =
+          user.telepon || user.phone || "";
+        document.getElementById("editUserStatus").value =
+          user.status || "active";
         document.getElementById("editUserPassword").value = ""; // Reset password field
 
         const modal = new bootstrap.Modal(
@@ -2957,7 +3036,9 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                    src="/images/${sanitizeForFilename(book.namaBuku)}.jpg"
                    style="height:180px;object-fit:cover">
               <div class="card-body p-3">
-                <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
+                <h6 class="card-title fw-bold text-truncate" title="${
+                  book.namaBuku
+                }">${book.namaBuku}</h6>
                 <p class="card-text">
                   <small class="text-muted d-block mb-1">
                     <i class="fas fa-user me-1"></i>${book.penulis}
@@ -2968,8 +3049,16 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   <small class="text-secondary d-block mb-2">
                     <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                   </small>
-                  ${book.kategori ? `<span class="badge bg-primary d-block mb-2">${book.kategori}</span>` : ''}
-                  ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
+                  ${
+                    book.kategori
+                      ? `<span class="badge bg-primary d-block mb-2">${book.kategori}</span>`
+                      : ""
+                  }
+                  ${
+                    book.rak
+                      ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>`
+                      : ""
+                  }
                   <span class="badge ${
                     book.stok > 0 ? "bg-success" : "bg-danger"
                   }">
@@ -3003,21 +3092,27 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       }
 
       // Current category filter for books
-      let currentBookCategory = 'all';
+      let currentBookCategory = "all";
 
       // Filter books by category
       function filterBooksByCategory(category) {
         currentBookCategory = category;
         // Update button states
-        document.querySelectorAll('#books-section .btn-group button').forEach(btn => {
-          btn.classList.remove('active');
-          if ((category === 'all' && btn.textContent.trim() === 'Semua') ||
-              (category === 'Fiksi' && btn.textContent.trim() === 'Fiksi') ||
-              (category === 'Fantasi' && btn.textContent.trim() === 'Fantasi') ||
-              (category === 'Pengetahuan' && btn.textContent.trim() === 'Pengetahuan')) {
-            btn.classList.add('active');
-          }
-        });
+        document
+          .querySelectorAll("#books-section .btn-group button")
+          .forEach((btn) => {
+            btn.classList.remove("active");
+            if (
+              (category === "all" && btn.textContent.trim() === "Semua") ||
+              (category === "Fiksi" && btn.textContent.trim() === "Fiksi") ||
+              (category === "Fantasi" &&
+                btn.textContent.trim() === "Fantasi") ||
+              (category === "Pengetahuan" &&
+                btn.textContent.trim() === "Pengetahuan")
+            ) {
+              btn.classList.add("active");
+            }
+          });
         searchBooks();
       }
 
@@ -3026,7 +3121,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         const searchTerm = document
           .getElementById("bookSearch")
           .value.toLowerCase();
-        const sortValue = document.getElementById("bookSort")?.value || "title-asc";
+        const sortValue =
+          document.getElementById("bookSort")?.value || "title-asc";
 
         let filteredBooks = allBooks.filter(
           (book) =>
@@ -3037,9 +3133,11 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         );
 
         // Filter by category
-        if (currentBookCategory && currentBookCategory !== 'all') {
+        if (currentBookCategory && currentBookCategory !== "all") {
           filteredBooks = filteredBooks.filter(
-            (book) => (book.kategori || '').toLowerCase() === currentBookCategory.toLowerCase()
+            (book) =>
+              (book.kategori || "").toLowerCase() ===
+              currentBookCategory.toLowerCase()
           );
         }
 
@@ -3071,7 +3169,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         if (sectionTitle) {
           if (searchTerm) {
             sectionTitle.textContent = `Hasil Pencarian "${searchTerm}" (${filteredBooks.length} buku)`;
-          } else if (currentBookCategory && currentBookCategory !== 'all') {
+          } else if (currentBookCategory && currentBookCategory !== "all") {
             sectionTitle.textContent = `Kategori ${currentBookCategory} (${filteredBooks.length} buku)`;
           } else {
             sectionTitle.textContent = `Semua Buku (${filteredBooks.length} buku)`;
@@ -3333,7 +3431,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           const userSelect = document.getElementById("reportUser");
           if (userSelect) {
             const wanted = prev?.user || "all";
-            userSelect.innerHTML = '<option value="all">Semua Tahun Masuk</option>';
+            userSelect.innerHTML =
+              '<option value="all">Semua Tahun Masuk</option>';
             allUsers
               .filter((u) => String(u.role || "").toLowerCase() !== "admin")
               .forEach((user) => {
@@ -4130,7 +4229,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       document.addEventListener("DOMContentLoaded", async function () {
         // Show home section first to ensure it's visible
         showSection("home");
-        
+
         // Preload saved settings from server and reflect globally (e.g., sidebar title)
         try {
           const res = await fetch(`${API_BASE}/admin/settings`);
@@ -4235,7 +4334,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           }
         }, 1000);
       })();
-
     </script>
   </body>
 </html>

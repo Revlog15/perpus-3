@@ -92,7 +92,7 @@
         cursor: pointer;
       }
       .popular-books .card:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
       .popular-books .card-img-top {
         width: 100%;
@@ -123,42 +123,129 @@
           flex: 0 1 calc(50% - 12px);
         }
       }
-      .site-logo { height: 120px; display:block; }
-      .site-brand { display:flex; flex-direction:column; align-items:center; justify-content:center; }
-      .site-name { margin-top:8px; font-size:1.6rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; text-align:center; line-height:1; }
+      .site-logo {
+        height: 120px;
+        display: block;
+      }
+      .site-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .site-name {
+        margin-top: 8px;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1;
+      }
 
       /* Mobile topbar and sidebar overlay */
-      .mobile-topbar { display:none; position:fixed; top:0; left:0; right:0; height:56px; background:#1e3d59; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 12px; z-index:2000; }
-      .mobile-topbar .menu-btn { background:transparent; border:none; color:#fff; font-size:22px; }
-      .mobile-topbar .mobile-brand { display:flex; align-items:center; gap:8px; color:#fff; }
-      .site-logo-mobile { height:36px; display:block; }
-      .site-name-mobile { font-weight:700; letter-spacing:0.6px; text-transform:uppercase; }
+      .mobile-topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        background: #1e3d59;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        z-index: 2000;
+      }
+      .mobile-topbar .menu-btn {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 22px;
+      }
+      .mobile-topbar .mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+      }
+      .site-logo-mobile {
+        height: 36px;
+        display: block;
+      }
+      .site-name-mobile {
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+      }
 
-      .sidebar-backdrop { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); z-index:1999; }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar { transition: transform 0.25s ease; }
-      .no-scroll { overflow: hidden; }
+      .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1999;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar {
+        transition: transform 0.25s ease;
+      }
+      .no-scroll {
+        overflow: hidden;
+      }
 
       @media (max-width: 767.98px) {
-        .mobile-topbar { display:flex; }
-        .sidebar { transform: translateX(-100%); position:fixed; z-index:2001; width:220px; height:100vh; top:0; left:0; }
-        .content { margin-left: 0; padding-top: 76px; }
-        .sidebar h4 { padding-top: 10px; }
+        .mobile-topbar {
+          display: flex;
+        }
+        .sidebar {
+          transform: translateX(-100%);
+          position: fixed;
+          z-index: 2001;
+          width: 220px;
+          height: 100vh;
+          top: 0;
+          left: 0;
+        }
+        .content {
+          margin-left: 0;
+          padding-top: 76px;
+        }
+        .sidebar h4 {
+          padding-top: 10px;
+        }
       }
     </style>
   </head>
   <body>
     <!-- Mobile topbar (visible on small screens) -->
     <div class="mobile-topbar d-md-none">
-      <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle menu" onclick="toggleMobileMenu()">☰</button>
-      <div class="mobile-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo-mobile"><span class="site-name-mobile">NesPus</span></div>
-      <div style="width:32px"></div>
+      <button
+        class="menu-btn"
+        id="mobileMenuBtn"
+        aria-label="Toggle menu"
+        onclick="toggleMobileMenu()"
+      >
+        ☰
+      </button>
+      <div class="mobile-brand">
+        <img
+          src="/images/school_logo.png"
+          alt="logo"
+          class="site-logo-mobile"
+        /><span class="site-name-mobile">NesPus</span>
+      </div>
+      <div style="width: 32px"></div>
     </div>
     <!-- Sidebar -->
     <div class="sidebar">
       <h4 class="text-center mb-4">
         <div class="site-brand">
-          <img src="/images/school_logo.png" alt="logo" class="site-logo">
+          <img src="/images/school_logo.png" alt="logo" class="site-logo" />
           <div class="site-name">NesPus</div>
         </div>
       </h4>
@@ -185,7 +272,11 @@
       </a>
     </div>
 
-    <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="toggleMobileMenu()"></div>
+    <div
+      id="sidebarBackdrop"
+      class="sidebar-backdrop"
+      onclick="toggleMobileMenu()"
+    ></div>
 
     <!-- Content -->
     <div class="content">
@@ -399,7 +490,14 @@
                   src=""
                   alt="Book Cover"
                   class="img-fluid rounded"
-                  style="width: 100%; max-width: 200px; max-height: 300px; object-fit: contain; display: block; margin: 0 auto;"
+                  style="
+                    width: 100%;
+                    max-width: 200px;
+                    max-height: 300px;
+                    object-fit: contain;
+                    display: block;
+                    margin: 0 auto;
+                  "
                 />
               </div>
               <div class="col-md-7">
@@ -407,9 +505,15 @@
                 <p class="mb-2">
                   <small class="text-muted" id="bookAuthor"></small>
                 </p>
-                <p id="bookSynopsis" class="mb-3 text-justify" style="font-size: 0.95rem; line-height: 1.5;"></p>
-                <div class="small text-secondary" style="line-height: 1.8;">
-                  <div><strong>Penerbit:</strong> <span id="bookPublisher"></span></div>
+                <p
+                  id="bookSynopsis"
+                  class="mb-3 text-justify"
+                  style="font-size: 0.95rem; line-height: 1.5"
+                ></p>
+                <div class="small text-secondary" style="line-height: 1.8">
+                  <div>
+                    <strong>Penerbit:</strong> <span id="bookPublisher"></span>
+                  </div>
                   <div><strong>Tahun:</strong> <span id="bookYear"></span></div>
                   <div><strong>ID Buku:</strong> <span id="bookId"></span></div>
                   <div><strong>Stok:</strong> <span id="bookStock"></span></div>
@@ -430,8 +534,6 @@
       </div>
     </div>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       // Populate greeting from login
@@ -442,7 +544,6 @@
           if (el) el.textContent = name;
         }
       })();
-
     </script>
     <!-- User Profile Offcanvas -->
     <div
@@ -455,25 +556,25 @@
         <script>
           // Mobile menu toggle
           function toggleMobileMenu() {
-            const sidebar = document.querySelector('.sidebar');
-            const backdrop = document.getElementById('sidebarBackdrop');
+            const sidebar = document.querySelector(".sidebar");
+            const backdrop = document.getElementById("sidebarBackdrop");
             if (!sidebar || !backdrop) return;
-            const open = sidebar.classList.toggle('open');
-            backdrop.classList.toggle('show', open);
-            document.body.classList.toggle('no-scroll', open);
+            const open = sidebar.classList.toggle("open");
+            backdrop.classList.toggle("show", open);
+            document.body.classList.toggle("no-scroll", open);
           }
 
           // Close mobile menu when a sidebar link is clicked
-          document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.sidebar a').forEach((a) => {
-              a.addEventListener('click', function () {
+          document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".sidebar a").forEach((a) => {
+              a.addEventListener("click", function () {
                 if (window.innerWidth <= 768) {
-                  const sidebar = document.querySelector('.sidebar');
-                  const backdrop = document.getElementById('sidebarBackdrop');
-                  if (sidebar && sidebar.classList.contains('open')) {
-                    sidebar.classList.remove('open');
-                    backdrop.classList.remove('show');
-                    document.body.classList.remove('no-scroll');
+                  const sidebar = document.querySelector(".sidebar");
+                  const backdrop = document.getElementById("sidebarBackdrop");
+                  if (sidebar && sidebar.classList.contains("open")) {
+                    sidebar.classList.remove("open");
+                    backdrop.classList.remove("show");
+                    document.body.classList.remove("no-scroll");
                   }
                 }
               });
@@ -970,9 +1071,15 @@
               // Save server picture to localStorage if available
               if (user.profilePicture && userId) {
                 try {
-                  localStorage.setItem(`profile_pic_${userId}`, user.profilePicture);
+                  localStorage.setItem(
+                    `profile_pic_${userId}`,
+                    user.profilePicture
+                  );
                 } catch (e) {
-                  console.warn("Could not save profile picture to localStorage:", e);
+                  console.warn(
+                    "Could not save profile picture to localStorage:",
+                    e
+                  );
                 }
               }
 
@@ -1490,7 +1597,11 @@
                 <span class="badge bg-primary d-block mb-2">${
                   book.kategori || "Umum"
                 }</span>
-                ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
+                ${
+                  book.rak
+                    ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>`
+                    : ""
+                }
                 <span class="badge ${
                   book.stok > 0 ? "bg-success" : "bg-danger"
                 }">
@@ -1576,7 +1687,7 @@
           "Enam santri yang memegang prinsip man jadda wajada; mimpi, persahabatan, dan daya juang.",
         "Ayat-Ayat Cinta":
           "Romansa religius Fahri di Mesir; ujian cinta dan iman dengan nilai moral-spiritual.",
-          
+
         "Filosofi Kopi":
           "Kumpulan cerita seputar Ben sang barista; refleksi hidup sederhana namun dalam melalui secangkir kopi.",
         "Perahu Kertas":
@@ -1998,7 +2109,11 @@
                 <small class="text-secondary d-block mb-2">
                   <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                 </small>
-                ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
+                ${
+                  book.rak
+                    ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>`
+                    : ""
+                }
                 <span class="badge ${
                   book.stok > 0 ? "bg-success" : "bg-danger"
                 }">
@@ -2248,7 +2363,9 @@
           <div class="card h-100">
             <img class="card-img-top" alt="${book.namaBuku}">
             <div class="card-body p-3">
-              <h6 class="card-title fw-bold text-truncate" title="${book.namaBuku}">${book.namaBuku}</h6>
+              <h6 class="card-title fw-bold text-truncate" title="${
+                book.namaBuku
+              }">${book.namaBuku}</h6>
               <p class="card-text">
                 <small class="text-muted d-block mb-1">
                   <i class="fas fa-user me-1"></i>${book.penulis}
@@ -2259,7 +2376,11 @@
                 <small class="text-secondary d-block mb-2">
                   <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                 </small>
-                ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
+                ${
+                  book.rak
+                    ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>`
+                    : ""
+                }
                 <span class="badge bg-success">
                   <i class="fas fa-box me-1"></i>Stok: ${book.stok}
                 </span>
@@ -2321,7 +2442,11 @@
                   <small class="text-secondary d-block mb-2">
                     <i class="fas fa-calendar me-1"></i>${book.tahunTerbit}
                   </small>
-                  ${book.rak ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>` : ''}
+                  ${
+                    book.rak
+                      ? `<small class="text-secondary d-block mb-2"><i class="fas fa-map-marker-alt me-1"></i>Rak: ${book.rak}</small>`
+                      : ""
+                  }
                   <span class="badge ${
                     book.stok > 0 ? "bg-success" : "bg-danger"
                   }">
