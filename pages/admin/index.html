@@ -129,9 +129,32 @@
         text-align: center;
         line-height: 1;
       }
+      /* Mobile topbar and sidebar overlay */
+      .mobile-topbar { display:none; position:fixed; top:0; left:0; right:0; height:56px; background:#1e3d59; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 12px; z-index:2000; }
+      .mobile-topbar .menu-btn { background:transparent; border:none; color:#fff; font-size:22px; }
+      .mobile-topbar .mobile-brand { display:flex; align-items:center; gap:8px; color:#fff; }
+      .site-logo-mobile { height:36px; display:block; }
+
+      .sidebar-backdrop { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); z-index:1999; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar { transition: transform 0.25s ease; }
+      .no-scroll { overflow: hidden; }
+
+      @media (max-width: 767.98px) {
+        .mobile-topbar { display:flex; }
+        .sidebar { transform: translateX(-100%); position:fixed; z-index:2001; width:220px; height:100vh; top:0; left:0; }
+        .content { margin-left: 0; padding-top: 76px; }
+        .sidebar h4 { padding-top: 10px; }
+      }
     </style>
   </head>
   <body>
+    <!-- Mobile topbar (visible on small screens) -->
+    <div class="mobile-topbar d-md-none">
+      <button class="menu-btn" id="adminMobileMenuBtn" aria-label="Toggle menu" onclick="toggleAdminMobileMenu()">☰</button>
+      <div class="mobile-brand"><img src="/images/school_logo.png" alt="logo" class="site-logo-mobile"><span class="site-name-mobile">NesPus</span></div>
+      <div style="width:32px"></div>
+    </div>
     <!-- Sidebar -->
     <div class="sidebar">
       <h4 class="text-center mb-4">
@@ -192,6 +215,8 @@
         <i class="fas fa-sign-out-alt me-2"></i>Logout
       </a>
     </div>
+
+    <div id="adminSidebarBackdrop" class="sidebar-backdrop" onclick="toggleAdminMobileMenu()"></div>
 
     <!-- Content -->
     <div class="content">
@@ -1974,6 +1999,16 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         } catch (_) {}
         return "http://localhost:3001/api";
       })();
+
+      // Mobile admin menu toggle
+      function toggleAdminMobileMenu() {
+        const sidebar = document.querySelector('.sidebar');
+        const backdrop = document.getElementById('adminSidebarBackdrop');
+        if (!sidebar || !backdrop) return;
+        const open = sidebar.classList.toggle('open');
+        backdrop.style.display = open ? 'block' : 'none';
+        document.body.classList.toggle('no-scroll', open);
+      }
 
       // Global variables
       let allBooks = [];
