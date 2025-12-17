@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const store = require('../store');
+const booksRepo = require('../db/books');
 
 const router = express.Router();
 
@@ -38,47 +38,41 @@ const upload = multer({
   }
 });
 
-router.get('/', (req, res) => {
-  res.json(store.books);
+router.get('/', async (_req, res) => {
+  const books = await booksRepo.getAll();
+  res.json(books);
 });
 
-router.get('/available', (req, res) => {
-  const available = store.books.filter(b => b.stok > 0);
-  res.json(available);
+router.get('/available', async (_req, res) => {
+  const books = await booksRepo.getAvailable();
+  res.json(books);
 });
 
-router.get('/latest', (req, res) => {
+router.get('/latest', async (_req, res) => {
   const currentYear = new Date().getFullYear();
   const cutoff = currentYear - 1;
-  const latest = store.books.filter(b => Number(b.tahunTerbit) >= cutoff);
-  res.json(latest);
+  const books = await booksRepo.getLatest(cutoff);
+  res.json(books);
 });
 
-router.get('/search', (req, res) => {
+router.get('/search', async (req, res) => {
   const { q } = req.query;
-  if (!q) return res.json(store.books);
-  const lower = String(q).toLowerCase();
-  const results = store.books.filter(b =>
-    (b.namaBuku || '').toLowerCase().includes(lower) ||
-    (b.penulis || '').toLowerCase().includes(lower) ||
-    (b.penerbit || '').toLowerCase().includes(lower) ||
-    (b.idBuku || '').toLowerCase().includes(lower)
-  );
+  if (!q) {
+    const books = await booksRepo.getAll();
+    return res.json(books);
+  }
+  const results = await booksRepo.search(String(q));
   res.json(results);
 });
 
-router.get('/popular', (req, res) => {
-  const popular = store.books
-    .filter(b => b.stok > 0)
-    .slice()
-    .sort((a, b) => a.stok - b.stok)
-    .slice(0, 6);
+router.get('/popular', async (_req, res) => {
+  const popular = await booksRepo.getPopular(6);
   res.json(popular);
 });
 
 // Admin book management
 // Create book (supports multipart with optional photo upload)
-router.post('/', upload.single('photo'), (req, res) => {
+router.post('/', upload.single('photo'), async (req, res) => {
   try {
     const { idBuku, namaBuku, penulis, penerbit, kategori, rak } = req.body || {};
     const tahunTerbit = req.body?.tahunTerbit;
@@ -88,30 +82,21 @@ router.post('/', upload.single('photo'), (req, res) => {
       return res.status(400).json({ message: 'Semua field harus diisi' });
     }
 
-    const exists = store.books.find(b => b.idBuku === idBuku);
+    const exists = await booksRepo.getById(idBuku);
     if (exists) return res.status(400).json({ message: 'ID buku sudah ada' });
 
-    // Prepare new book object
     const newBook = {
       idBuku,
       namaBuku,
       penulis,
       penerbit,
-      tahunTerbit: parseInt(tahunTerbit),
-      stok: parseInt(stok),
+      tahunTerbit: parseInt(tahunTerbit, 10),
+      stok: parseInt(stok, 10),
+      kategori: kategori || null,
+      rak: rak || null,
+      photo: null,
     };
-    
-    // Add kategori if provided
-    if (kategori !== undefined && kategori !== '') {
-      newBook.kategori = kategori;
-    }
-    
-    // Add rak if provided
-    if (rak !== undefined && rak !== '') {
-      newBook.rak = rak;
-    }
 
-    // If photo uploaded, ensure file name matches sanitized title and keep extension
     if (req.file) {
       const sanitize = (str) => String(str || '')
         .normalize('NFKD')
@@ -128,17 +113,15 @@ router.post('/', upload.single('photo'), (req, res) => {
 
       try {
         if (path.basename(currentPath) !== desiredName) {
-          // Rename/move to desired file name
           fs.renameSync(currentPath, desiredPath);
         }
-        newBook.photo = desiredName; // store filename for admin view if needed
+        newBook.photo = desiredName;
       } catch (err) {
         console.error('Failed to finalize uploaded photo name:', err.message);
       }
     }
 
-    store.books.push(newBook);
-    try { store.saveBooks(); } catch (_) {}
+    await booksRepo.create(newBook);
     return res.status(201).json({ message: 'Buku berhasil ditambahkan', book: newBook });
   } catch (err) {
     console.error('Failed to add book:', err);
@@ -146,36 +129,21 @@ router.post('/', upload.single('photo'), (req, res) => {
   }
 });
 
-router.put('/:id', upload.single('photo'), (req, res) => {
+router.put('/:id', upload.single('photo'), async (req, res) => {
   const { id } = req.params;
-  const { namaBuku, penulis, penerbit, tahunTerbit, stok, kategori, rak } = req.body;
-  const idx = store.books.findIndex(b => b.idBuku === id);
-  if (idx === -1) return res.status(404).json({ message: 'Buku tidak ditemukan' });
-  const current = store.books[idx];
-  const updated = { ...current };
-  if (namaBuku !== undefined) updated.namaBuku = namaBuku;
-  if (penulis !== undefined) updated.penulis = penulis;
-  if (penerbit !== undefined) updated.penerbit = penerbit;
-  if (tahunTerbit !== undefined) updated.tahunTerbit = parseInt(tahunTerbit);
-  if (stok !== undefined) updated.stok = parseInt(stok);
-  if (kategori !== undefined) {
-    if (kategori === '' || kategori === null) {
-      // Remove kategori if empty
-      delete updated.kategori;
-    } else {
-      updated.kategori = kategori;
-    }
-  }
-  if (rak !== undefined) {
-    if (rak === '' || rak === null) {
-      // Remove rak if empty
-      delete updated.rak;
-    } else {
-      updated.rak = rak;
-    }
-  }
+  const { namaBuku, penulis, penerbit, tahunTerbit, stok, kategori, rak } = req.body || {};
+  const existing = await booksRepo.getById(id);
+  if (!existing) return res.status(404).json({ message: 'Buku tidak ditemukan' });
 
-  // If new photo is uploaded, rename and store filename
+  const fields = {};
+  if (namaBuku !== undefined) fields.namaBuku = namaBuku;
+  if (penulis !== undefined) fields.penulis = penulis;
+  if (penerbit !== undefined) fields.penerbit = penerbit;
+  if (tahunTerbit !== undefined) fields.tahunTerbit = parseInt(tahunTerbit, 10);
+  if (stok !== undefined) fields.stok = parseInt(stok, 10);
+  if (kategori !== undefined) fields.kategori = kategori === '' || kategori === null ? null : kategori;
+  if (rak !== undefined) fields.rak = rak === '' || rak === null ? null : rak;
+
   if (req.file) {
     const sanitize = (str) => String(str || '')
       .normalize('NFKD')
@@ -185,32 +153,30 @@ router.put('/:id', upload.single('photo'), (req, res) => {
       .toLowerCase();
     const imagesDir = path.join(__dirname, '../../images');
     const ext = path.extname(req.file.originalname) || '.jpg';
-    const desiredName = sanitize(namaBuku || updated.namaBuku) + ext;
+    const desiredName = sanitize(namaBuku || existing.namaBuku) + ext;
     const currentPath = req.file.path;
     const desiredPath = path.join(imagesDir, desiredName);
     try {
       if (path.basename(currentPath) !== desiredName) {
         fs.renameSync(currentPath, desiredPath);
       }
-      updated.photo = desiredName;
+      fields.photo = desiredName;
     } catch (err) {
       console.error('Failed to finalize uploaded photo name (update):', err.message);
     }
   }
 
-  store.books[idx] = updated;
-  try { store.saveBooks(); } catch (_) {}
-  res.json({ message: 'Buku berhasil diupdate', book: store.books[idx] });
+  const updated = await booksRepo.update(id, fields);
+  res.json({ message: 'Buku berhasil diupdate', book: updated });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const idx = store.books.findIndex(b => b.idBuku === id);
-  if (idx === -1) return res.status(404).json({ message: 'Buku tidak ditemukan' });
-  const activeLoan = store.loans.find(l => l.idBuku === id && l.status === 'aktif');
+  const existing = await booksRepo.getById(id);
+  if (!existing) return res.status(404).json({ message: 'Buku tidak ditemukan' });
+  const activeLoan = await booksRepo.hasActiveLoan(id);
   if (activeLoan) return res.status(400).json({ message: 'Buku sedang dipinjam, tidak dapat dihapus' });
-  store.books.splice(idx, 1);
-  try { store.saveBooks(); } catch (_) {}
+  await booksRepo.remove(id);
   res.json({ message: 'Buku berhasil dihapus' });
 });
 

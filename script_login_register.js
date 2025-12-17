@@ -95,6 +95,7 @@ function handleLogin() {
 function handleRegister() {
   const fullName = document.getElementById("regFullName").value;
   const nis = document.getElementById("regNIS").value;
+  const entryYear = document.getElementById("regEntryYear").value;
   const username = document.getElementById("regUsername").value;
   const gender = document.querySelector("input[name='gender']:checked");
   const phone = document.getElementById("regPhone").value;
@@ -103,13 +104,18 @@ function handleRegister() {
   const confirmPassword = document.getElementById("regConfirmPassword").value;
 
   // validasi dasar
-  if (!fullName || !nis || !username || !gender || !phone || !email || !password || !confirmPassword) {
+  if (!fullName || !nis || !entryYear || !username || !gender || !phone || !email || !password || !confirmPassword) {
     showMessage("Isi semua field!", true);
     return;
   }
 
   if (!/^\d{10}$/.test(nis)) {
     showMessage("NIS harus 10 digit angka!", true);
+    return;
+  }
+
+  if (!/^\d{4}$/.test(entryYear)) {
+    showMessage("Tahun masuk harus 4 digit angka!", true);
     return;
   }
 
@@ -127,7 +133,7 @@ function handleRegister() {
   fetch("/register", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `fullName=${encodeURIComponent(fullName)}&nis=${encodeURIComponent(nis)}&username=${encodeURIComponent(username)}&gender=${encodeURIComponent(gender.value)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&confirmPassword=${encodeURIComponent(confirmPassword)}`
+    body: `fullName=${encodeURIComponent(fullName)}&nis=${encodeURIComponent(nis)}&tahunMasuk=${encodeURIComponent(entryYear)}&username=${encodeURIComponent(username)}&gender=${encodeURIComponent(gender.value)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&confirmPassword=${encodeURIComponent(confirmPassword)}`
   })
     .then(res => res.text())
     .then(data => {
@@ -190,10 +196,25 @@ function checkNISInput() {
   checkFormValidity();
 }
 
+// cek input Tahun Masuk (4 digit)
+function checkEntryYearInput() {
+  const entryYear = document.getElementById("regEntryYear").value;
+  const error = document.getElementById("entryYearError");
+
+  if (entryYear !== "" && !/^\d{4}$/.test(entryYear)) {
+    error.style.display = "block";
+  } else {
+    error.style.display = "none";
+  }
+
+  checkFormValidity();
+}
+
 // cek semua field agar tombol aktif hanya jika lengkap & valid
 function checkFormValidity() {
   const fullName = document.getElementById("regFullName").value.trim();
   const nis = document.getElementById("regNIS").value.trim();
+  const entryYear = document.getElementById("regEntryYear").value.trim();
   const name = document.getElementById("regUsername").value.trim();
   const gender = document.querySelector("input[name='gender']:checked");
   const phone = document.getElementById("regPhone").value.trim();
@@ -202,12 +223,13 @@ function checkFormValidity() {
   const confirmPassword = document.getElementById("regConfirmPassword").value.trim();
 
   const nisValid = /^\d{10}$/.test(nis);
+  const entryYearValid = /^\d{4}$/.test(entryYear);
   const phoneValid = /^[0-9]+$/.test(phone);
   const passwordsMatch = password !== "" && password === confirmPassword;
-  const allFilled = fullName && nis && name && gender && phone && email && password && confirmPassword;
+  const allFilled = fullName && nis && entryYear && name && gender && phone && email && password && confirmPassword;
 
   const registerBtn = document.getElementById("registerBtn");
-  const valid = allFilled && nisValid && phoneValid && passwordsMatch;
+  const valid = allFilled && nisValid && entryYearValid && phoneValid && passwordsMatch;
 
   registerBtn.disabled = !valid;
 
@@ -242,6 +264,7 @@ window.onload = () => {
   ["regFullName", "regNIS", "regUsername", "regPhone", "regEmail", "regPassword", "regConfirmPassword"].forEach(id => {
     document.getElementById(id).addEventListener("input", checkFormValidity);
   });
+  document.getElementById("regEntryYear").addEventListener("input", checkEntryYearInput);
 
   document.querySelectorAll("input[name='gender']").forEach(radio => {
     radio.addEventListener("change", checkFormValidity);

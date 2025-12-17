@@ -1,29 +1,37 @@
 const express = require("express");
-const store = require("../store");
+const usersRepo = require("../db/users");
+const loansRepo = require("../db/loans");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const normalized = (store.users || []).map((u) => ({
-    ...u,
-    nama: u.nama || u.username || "",
-    telepon: u.telepon || u.phone || "",
-    role: u.role || "user",
-    status: u.status || "active",
-    createdAt: u.createdAt || "",
-  }));
-  res.json(normalized);
+  // keep handler sync wrapper; delegate to async inside
+  (async () => {
+    const users = await usersRepo.getAll();
+    const normalized = (users || []).map((u) => ({
+      ...u,
+      nama: u.fullName || u.username || "",
+      telepon: u.telepon || "",
+      role: u.role || "user",
+      status: u.status || "active",
+      createdAt: u.createdAt || "",
+    }));
+    res.json(normalized);
+  })().catch((err) => {
+    console.error(err);
+    res.status(500).json({ message: "Gagal mengambil data users" });
+  });
 });
 
 // Get single user by id
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const u = (store.users || []).find((user) => user.id === id);
+  const u = await usersRepo.getById(id);
   if (!u) return res.status(404).json({ message: "User tidak ditemukan" });
   const normalized = {
     ...u,
-    nama: u.nama || u.username || "",
-    telepon: u.telepon || u.phone || "",
+    nama: u.fullName || u.username || "",
+    telepon: u.telepon || "",
     role: u.role || "user",
     status: u.status || "active",
     createdAt: u.createdAt || "",
@@ -32,140 +40,125 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { username, email, telepon, password, fullName, nis, gender, confirmPassword } = req.body;
+  (async () => {
+    const { username, email, telepon, password, fullName, nis, gender, confirmPassword } = req.body;
 
-  // Basic required fields
-  if (!username || !email || !telepon || !password || !fullName || !nis || !gender) {
-    return res.status(400).json({ message: "Semua field harus diisi" });
-  }
+    if (!username || !email || !telepon || !password || !fullName || !nis || !gender) {
+      return res.status(400).json({ message: "Semua field harus diisi" });
+    }
+    if (!/^\d{10}$/.test(String(nis))) {
+      return res.status(400).json({ message: "NIS harus 10 digit angka" });
+    }
+    if (!/^[0-9]+$/.test(String(telepon))) {
+      return res.status(400).json({ message: "Nomor telepon harus angka" });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Password tidak sama" });
+    }
 
-  // NIS validation (10 digits)
-  if (!/^\d{10}$/.test(String(nis))) {
-    return res.status(400).json({ message: "NIS harus 10 digit angka" });
-  }
+    const exists = await usersRepo.existsWithEmailUsernameNis({ email, username, nis });
+    if (exists) {
+      return res.status(400).json({ message: "Email, Username, atau NIS sudah digunakan" });
+    }
 
-  // Phone numeric
-  if (!/^[0-9]+$/.test(String(telepon))) {
-    return res.status(400).json({ message: "Nomor telepon harus angka" });
-  }
-
-  // Password match
-  if (password !== confirmPassword) {
-    return res.status(400).json({ message: "Password tidak sama" });
-  }
-
-  const existingUser = store.users.find(
-    (u) =>
-      (u.email || "").toLowerCase() === String(email).toLowerCase() ||
-      (u.username || "").toLowerCase() === String(username).toLowerCase() ||
-      (u.nis || "") === String(nis)
-  );
-  if (existingUser)
-    return res
-      .status(400)
-      .json({ message: "Email, Username, atau NIS sudah digunakan" });
-
-  const newUserId = `U${String(store.users.length + 1).padStart(3, "0")}`;
-  const newUser = {
-    id: newUserId,
-    username,
-    email,
-    telepon,
-    password,
-    fullName,
-    nis,
-    gender,
-    role: "user",
-    status: "active",
-    createdAt: new Date().toISOString().split("T")[0],
-  };
-  store.users.push(newUser);
-  try {
-    store.saveUsers();
-  } catch (_) {}
-  res.status(201).json({ message: "User berhasil ditambahkan", user: newUser });
+    const newUserId = await usersRepo.getNextId();
+    const newUser = {
+      id: newUserId,
+      username,
+      email,
+      telepon,
+      password,
+      fullName,
+      nis,
+      gender,
+      role: "user",
+      status: "active",
+      createdAt: new Date().toISOString().split("T")[0],
+    };
+    await usersRepo.create(newUser);
+    res.status(201).json({ message: "User berhasil ditambahkan", user: newUser });
+  })().catch((err) => {
+    console.error(err);
+    res.status(500).json({ message: "Gagal menambahkan user" });
+  });
 });
 
 router.put("/:id", (req, res) => {
-  const { id } = req.params;
-  const { username, email, telepon, password, status, fullName, nis, gender } = req.body;
-  const idx = store.users.findIndex((u) => u.id === id);
-  if (idx === -1)
-    return res.status(404).json({ message: "User tidak ditemukan" });
-  const exists = store.users.find(
-    (u) =>
-      ((u.email || "").toLowerCase() === String(email).toLowerCase() ||
-        (u.username || "").toLowerCase() === String(username).toLowerCase()) &&
-      u.id !== id
-  );
-  if (exists) return res.status(400).json({ message: "Email sudah digunakan" });
-  const updateData = { username, email, telepon, status: status || "active" };
-  if (password) updateData.password = password;
-  if (fullName !== undefined) updateData.fullName = fullName;
-  if (nis !== undefined) updateData.nis = nis;
-  if (gender !== undefined) updateData.gender = gender;
-  store.users[idx] = { ...store.users[idx], ...updateData };
-  try {
-    store.saveUsers();
-  } catch (_) {}
-  res.json({ message: "User berhasil diupdate", user: store.users[idx] });
+  (async () => {
+    const { id } = req.params;
+    const { username, email, telepon, password, status, fullName, nis, gender } = req.body;
+    const existing = await usersRepo.getById(id);
+    if (!existing) return res.status(404).json({ message: "User tidak ditemukan" });
+
+    const conflict = await usersRepo.existsWithEmailUsernameNis({ email, username, nis }, id);
+    if (conflict) return res.status(400).json({ message: "Email/Username/NIS sudah digunakan" });
+
+    const updateData = { username, email, telepon, status: status || "active" };
+    if (password) updateData.password = password;
+    if (fullName !== undefined) updateData.fullName = fullName;
+    if (nis !== undefined) updateData.nis = nis;
+    if (gender !== undefined) updateData.gender = gender;
+
+    const updated = await usersRepo.update(id, updateData);
+    res.json({ message: "User berhasil diupdate", user: updated });
+  })().catch((err) => {
+    console.error(err);
+    res.status(500).json({ message: "Gagal mengupdate user" });
+  });
 });
 
 router.post("/:id/reset-password", (req, res) => {
-  const { id } = req.params;
-  const { password } = req.body;
-  const idx = store.users.findIndex((u) => u.id === id);
-  if (idx === -1)
-    return res.status(404).json({ message: "User tidak ditemukan" });
-  if (!password)
-    return res.status(400).json({ message: "Password harus diisi" });
-  store.users[idx].password = password;
-  try {
-    store.saveUsers();
-  } catch (_) {}
-  res.json({ message: "Password berhasil direset" });
+  (async () => {
+    const { id } = req.params;
+    const { password } = req.body;
+    const existing = await usersRepo.getById(id);
+    if (!existing) return res.status(404).json({ message: "User tidak ditemukan" });
+    if (!password) return res.status(400).json({ message: "Password harus diisi" });
+    const updated = await usersRepo.update(id, { password });
+    res.json({ message: "Password berhasil direset", user: updated });
+  })().catch((err) => {
+    console.error(err);
+    res.status(500).json({ message: "Gagal reset password" });
+  });
 });
 
 router.put("/:id/status", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  const idx = store.users.findIndex((u) => u.id === id);
-  if (idx === -1)
-    return res.status(404).json({ message: "User tidak ditemukan" });
-  if (!["active", "inactive"].includes(status))
-    return res.status(400).json({ message: "Status tidak valid" });
-  store.users[idx].status = status;
-  try {
-    store.saveUsers();
-  } catch (_) {}
-  res.json({
-    message: `User berhasil ${
-      status === "active" ? "diaktifkan" : "dinonaktifkan"
-    }`,
-    user: store.users[idx],
+  (async () => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const existing = await usersRepo.getById(id);
+    if (!existing) return res.status(404).json({ message: "User tidak ditemukan" });
+    if (!["active", "inactive"].includes(status))
+      return res.status(400).json({ message: "Status tidak valid" });
+    const updated = await usersRepo.update(id, { status });
+    res.json({
+      message: `User berhasil ${status === "active" ? "diaktifkan" : "dinonaktifkan"}`,
+      user: updated,
+    });
+  })().catch((err) => {
+    console.error(err);
+    res.status(500).json({ message: "Gagal mengubah status user" });
   });
 });
 
 router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  const idx = store.users.findIndex((u) => u.id === id);
-  if (idx === -1)
-    return res.status(404).json({ message: "User tidak ditemukan" });
-  const activeLoans = store.loans.filter(
-    (loan) => loan.idUser === id && loan.status === "aktif"
-  );
-  if (activeLoans.length > 0) {
-    return res
-      .status(400)
-      .json({
-        message: `Tidak dapat menghapus user karena masih memiliki ${activeLoans.length} peminjaman aktif`,
+  (async () => {
+    const { id } = req.params;
+    const existing = await usersRepo.getById(id);
+    if (!existing)
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    const activeCount = await loansRepo.countActiveByUser(id);
+    if (activeCount > 0) {
+      return res.status(400).json({
+        message: `Tidak dapat menghapus user karena masih memiliki ${activeCount} peminjaman aktif`,
       });
-  }
-  const deletedUser = store.users.splice(idx, 1)[0];
-  try {
-    store.saveUsers();
-  } catch (_) {}
-  res.json({ message: "User berhasil dihapus", user: deletedUser });
+    }
+    await usersRepo.remove(id);
+    res.json({ message: "User berhasil dihapus", user: existing });
+  })().catch((err) => {
+    console.error(err);
+    res.status(500).json({ message: "Gagal menghapus user" });
+  });
 });
 
 module.exports = router;

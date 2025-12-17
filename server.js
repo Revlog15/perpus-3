@@ -3,7 +3,7 @@ const cors = require("cors");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
 
 // Middleware
 app.use(cors());
@@ -26,7 +26,6 @@ app.get("/user", (req, res) => {
 const booksRouter = require("./src/routes/books");
 const loansRouter = require("./src/routes/loans");
 const returnsRouter = require("./src/routes/returns");
-const paymentsRouter = require("./src/routes/payments");
 const usersRouter = require("./src/routes/users");
 const adminRouter = require("./src/routes/admin");
 const authRouter = require("./src/routes/auth");
@@ -34,7 +33,6 @@ const authRouter = require("./src/routes/auth");
 app.use("/api/books", booksRouter);
 app.use("/api/loans", loansRouter);
 app.use("/api/returns", returnsRouter);
-app.use("/api/payments", paymentsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/admin", adminRouter);
 app.use("/", authRouter); // /login, /register

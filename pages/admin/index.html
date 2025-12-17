@@ -2016,6 +2016,23 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       let allReturns = [];
       let reportsInitialized = false; // prevent filters from resetting after user interaction
 
+      // Format date helper function - converts ISO/YYYY-MM-DD to dd/mm/yyyy
+      function formatDate(dateString) {
+        if (!dateString) return '-';
+        try {
+          // Handle ISO format with timezone (2025-12-16T17:00:00.000Z) or plain date (2025-12-16)
+          const date = new Date(dateString);
+          if (isNaN(date.getTime())) return dateString; // If invalid date, return original
+          
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          return `${day}/${month}/${year}`;
+        } catch (e) {
+          return dateString; // Return original if error
+        }
+      }
+
       // Show specific section
       function showSection(sectionName) {
         // Hide all sections
@@ -2413,8 +2430,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             <td>${loan.id}</td>
             <td>${book ? book.namaBuku : "Buku tidak ditemukan"}</td>
             <td>${user ? user.nama : loan.nama}</td>
-            <td>${loan.tanggalPinjam}</td>
-            <td>${loan.tanggalKembali}${
+            <td>${formatDate(loan.tanggalPinjam)}</td>
+            <td>${formatDate(loan.tanggalKembali)}${
             isOverdue
               ? ` <small class="text-danger">(${daysOverdue} hari terlambat)</small>`
               : ""
@@ -2475,8 +2492,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             <td>${loan.id}</td>
             <td>${book ? book.namaBuku : "Buku tidak ditemukan"}</td>
             <td>${user ? user.nama : loan.nama}</td>
-            <td>${loan.tanggalPinjam}</td>
-            <td>${loan.tanggalKembali}</td>
+            <td>${formatDate(loan.tanggalPinjam)}</td>
+            <td>${formatDate(loan.tanggalKembali)}</td>
             <td><span class="badge bg-danger">${daysOverdue} hari</span></td>
             <td>
               <button class="btn btn-sm btn-success" onclick="confirmReturn('${
@@ -2589,13 +2606,13 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             <div class="col-md-4">
               <div class="bg-light border rounded p-3 h-100">
                 <p class="text-muted mb-1">Tanggal Pinjam</p>
-                <h5 class="mb-0">${loan.tanggalPinjam}</h5>
+                <h5 class="mb-0">${formatDate(loan.tanggalPinjam)}</h5>
               </div>
             </div>
             <div class="col-md-4">
               <div class="bg-light border rounded p-3 h-100">
                 <p class="text-muted mb-1">Jatuh Tempo</p>
-                <h5 class="mb-1">${loan.tanggalKembali}</h5>
+                <h5 class="mb-1">${formatDate(loan.tanggalKembali)}</h5>
                 <span class="badge bg-${statusClass}">${statusText}</span>
               </div>
             </div>
@@ -3791,8 +3808,8 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
             <td>${item.idBuku}</td>
             <td>${book ? book.namaBuku : "Tidak ditemukan"}</td>
             <td>${item.nama}</td>
-            <td>${item.tanggalPinjam}</td>
-            <td>${item.tanggalKembali || item.tanggalPengembalian || "-"}</td>
+            <td>${formatDate(item.tanggalPinjam)}</td>
+            <td>${formatDate(item.tanggalKembali || item.tanggalPengembalian)}</td>
             <td><span class="${statusClass}">${statusText}</span></td>
           </tr>
         `;
