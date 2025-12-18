@@ -41,7 +41,7 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", (req, res) => {
   (async () => {
-    const { username, email, telepon, password, fullName, nis, gender, confirmPassword } = req.body;
+    const { username, email, telepon, password, fullName, nis, gender, confirmPassword, tahunMasuk } = req.body;
 
     if (!username || !email || !telepon || !password || !fullName || !nis || !gender) {
       return res.status(400).json({ message: "Semua field harus diisi" });
@@ -54,6 +54,10 @@ router.post("/", (req, res) => {
     }
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Password tidak sama" });
+    }
+
+    if (tahunMasuk && !/^\d{4}$/.test(String(tahunMasuk))) {
+      return res.status(400).json({ message: "Tahun masuk harus 4 digit angka" });
     }
 
     const exists = await usersRepo.existsWithEmailUsernameNis({ email, username, nis });
@@ -71,6 +75,7 @@ router.post("/", (req, res) => {
       fullName,
       nis,
       gender,
+      tahunMasuk,
       role: "user",
       status: "active",
       createdAt: new Date().toISOString().split("T")[0],
@@ -86,7 +91,7 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   (async () => {
     const { id } = req.params;
-    const { username, email, telepon, password, status, fullName, nis, gender } = req.body;
+    const { username, email, telepon, password, status, fullName, nis, gender, tahunMasuk } = req.body;
     const existing = await usersRepo.getById(id);
     if (!existing) return res.status(404).json({ message: "User tidak ditemukan" });
 
@@ -98,6 +103,12 @@ router.put("/:id", (req, res) => {
     if (fullName !== undefined) updateData.fullName = fullName;
     if (nis !== undefined) updateData.nis = nis;
     if (gender !== undefined) updateData.gender = gender;
+    if (tahunMasuk !== undefined) {
+      if (tahunMasuk && !/^\d{4}$/.test(String(tahunMasuk))) {
+        return res.status(400).json({ message: "Tahun masuk harus 4 digit angka" });
+      }
+      updateData.tahunMasuk = tahunMasuk;
+    }
 
     const updated = await usersRepo.update(id, updateData);
     res.json({ message: "User berhasil diupdate", user: updated });

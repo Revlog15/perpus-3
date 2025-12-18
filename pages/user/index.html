@@ -810,6 +810,10 @@
                 <code id="viewNIS">-</code>
               </div>
               <div class="profile-info">
+                <small style="font-size: 12px">Tahun Masuk:</small>
+                <small style="font-size: 15px" id="viewEntryYear">-</small>
+              </div>
+              <div class="profile-info">
                 <small style="font-size: 12px">Username:</small>
                 <small
                   style="font-size: 15px; font-weight: 600"
@@ -870,6 +874,15 @@
                 <div class="form-group-custom">
                   <label for="viewNISEdit">NIS (Tidak dapat diubah)</label>
                   <input type="text" id="viewNISEdit" readonly disabled />
+                </div>
+
+                <div class="form-group-custom">
+                  <label for="editEntryYear">Tahun Masuk</label>
+                  <input
+                    type="text"
+                    id="editEntryYear"
+                    placeholder="Tahun masuk (4 digit)"
+                  />
                 </div>
 
                 <div class="form-group-custom">
@@ -991,6 +1004,8 @@
         document.getElementById("viewEmail").textContent = "-";
         document.getElementById("viewGender").textContent = "-";
         document.getElementById("viewPhone").textContent = "-";
+        if (document.getElementById("viewEntryYear"))
+          document.getElementById("viewEntryYear").textContent = "-";
         document.getElementById("viewLoanCount").textContent = "0";
 
         if (document.getElementById("editFullName"))
@@ -999,6 +1014,8 @@
           document.getElementById("editUsername").value = "";
         if (document.getElementById("viewNISEdit"))
           document.getElementById("viewNISEdit").value = "";
+        if (document.getElementById("editEntryYear"))
+          document.getElementById("editEntryYear").value = "";
         if (document.getElementById("editEmail"))
           document.getElementById("editEmail").value = "";
         if (document.getElementById("editPhone"))
@@ -1042,6 +1059,9 @@
               user.gender || "-";
             document.getElementById("viewPhone").textContent =
               user.phone || "-";
+            if (document.getElementById("viewEntryYear"))
+              document.getElementById("viewEntryYear").textContent =
+                user.tahunMasuk || "-";
             if (document.getElementById("editFullName"))
               document.getElementById("editFullName").value =
                 user.fullName || "";
@@ -1050,6 +1070,9 @@
                 user.username || user.nama || "";
             if (document.getElementById("viewNISEdit"))
               document.getElementById("viewNISEdit").value = user.nis || "-";
+            if (document.getElementById("editEntryYear"))
+              document.getElementById("editEntryYear").value =
+                user.tahunMasuk || "";
             if (document.getElementById("editEmail"))
               document.getElementById("editEmail").value = user.email || "";
             if (document.getElementById("editPhone"))
@@ -1171,6 +1194,9 @@
           const email = document.getElementById("editEmail")?.value?.trim();
           const phone = document.getElementById("editPhone")?.value?.trim();
           const gender = document.getElementById("editGender")?.value?.trim();
+          const entryYear = document
+            .getElementById("editEntryYear")
+            ?.value?.trim();
           const pwd = document.getElementById("editPassword")?.value || "";
           const pwd2 =
             document.getElementById("editPasswordConfirm")?.value || "";
@@ -1198,6 +1224,7 @@
               if (email) body.email = email;
               if (phone) body.phone = phone;
               if (gender) body.gender = gender;
+              if (entryYear) body.tahunMasuk = entryYear;
               if (pwd) body.password = pwd;
               const r = await fetch(`/profile/${userId}`, {
                 method: "PUT",
