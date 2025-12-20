@@ -95,23 +95,18 @@ router.post("/confirm-return", (req, res) => {
     const {
       returnLoanId,
       returnBookId,
-      returnBorrowerName,
       returnCondition,
       returnNotes,
     } = req.body;
-    if (!returnLoanId || !returnBookId || !returnBorrowerName) {
-      return res
-        .status(400)
-        .json({
-          message: "ID Peminjaman, ID Buku, dan Nama Peminjam harus diisi",
-        });
+    // Hanya wajib ID peminjaman dan ID buku; nama peminjam tidak lagi diinput manual
+    if (!returnLoanId || !returnBookId) {
+      return res.status(400).json({
+        message: "ID Peminjaman dan ID Buku harus diisi",
+      });
     }
     const loans = await loansRepo.list({ status: "aktif" });
     const activeLoan = loans.find(
-      (l) =>
-        l.id === returnLoanId &&
-        l.idBuku === returnBookId &&
-        l.nama === returnBorrowerName
+      (l) => l.id === returnLoanId && l.idBuku === returnBookId
     );
     if (!activeLoan)
       return res
@@ -130,7 +125,8 @@ router.post("/confirm-return", (req, res) => {
       id: `R${String(Date.now()).slice(-6)}`,
       idBuku: returnBookId,
       idUser: activeLoan.idUser,
-      nama: returnBorrowerName,
+      // Gunakan nama dari data peminjaman aktif
+      nama: activeLoan.nama,
       tanggalPinjam: activeLoan.tanggalPinjam,
       tanggalKembali: activeLoan.tanggalKembali,
       tanggalPengembalian: today.toISOString().split("T")[0],

@@ -45,8 +45,12 @@ router.post('/', async (req, res) => {
   const returnDate = new Date();
   const loanDays = maxLoanDays || settings.maxLoanDays || 7;
   returnDate.setDate(returnDate.getDate() + loanDays);
+
+  // Generate ID baru berdasarkan ID terakhir di tabel loans (menghindari duplikasi seperti 'L001')
+  const newId = await loansRepo.getNextId();
+
   const newLoan = {
-    id: `L${String(existingLoan.length + 1).padStart(3, '0')}`,
+    id: newId,
     idBuku,
     idUser,
     nama: user.username || user.fullName || '',

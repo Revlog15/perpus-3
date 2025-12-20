@@ -175,7 +175,11 @@ router.delete('/:id', async (req, res) => {
   const existing = await booksRepo.getById(id);
   if (!existing) return res.status(404).json({ message: 'Buku tidak ditemukan' });
   const activeLoan = await booksRepo.hasActiveLoan(id);
-  if (activeLoan) return res.status(400).json({ message: 'Buku sedang dipinjam, tidak dapat dihapus' });
+  if (activeLoan) {
+    return res
+      .status(400)
+      .json({ message: 'Buku sudah pernah dipinjam, tidak dapat dihapus karena masih terhubung dengan data peminjaman.' });
+  }
   await booksRepo.remove(id);
   res.json({ message: 'Buku berhasil dihapus' });
 });

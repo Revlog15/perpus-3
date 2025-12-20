@@ -90,8 +90,10 @@ async function getById(idBuku) {
   return rows[0] || null;
 }
 
+// Cek apakah buku pernah dipakai di tabel loans (apapun statusnya).
+// Ini untuk mencegah error foreign key saat menghapus buku yang sudah ada riwayat peminjaman.
 async function hasActiveLoan(idBuku) {
-  const rows = await query('SELECT 1 FROM loans WHERE id_buku = ? AND status = "aktif" LIMIT 1', [idBuku]);
+  const rows = await query('SELECT 1 FROM loans WHERE id_buku = ? LIMIT 1', [idBuku]);
   return rows.length > 0;
 }
 

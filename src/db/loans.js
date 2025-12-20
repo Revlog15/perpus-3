@@ -20,9 +20,22 @@ async function list({ userId, status } = {}) {
   return query(sql, params);
 }
 
+// Generate ID baru berdasarkan ID terbesar yang sudah ada di tabel loans
+async function getNextId() {
+  const rows = await query('SELECT id FROM loans ORDER BY id DESC LIMIT 1');
+  if (!rows.length) {
+    return 'L001';
+  }
+
+  const lastId = rows[0].id || 'L000';
+  const numericPart = parseInt(String(lastId).replace(/^L/i, ''), 10) || 0;
+  const nextNumber = numericPart + 1;
+  return `L${String(nextNumber).padStart(3, '0')}`;
+}
+
 async function create(loan) {
   const {
-    id,
+    id, // optional sekarang, akan diisi otomatis jika tidak ada
     idBuku,
     idUser,
     nama,
@@ -31,12 +44,16 @@ async function create(loan) {
     status = 'aktif',
     terlambat = false,
   } = loan;
+
+  const finalId = id || (await getNextId());
+
   await query(
     `INSERT INTO loans (id, id_buku, id_user, nama, tanggal_pinjam, tanggal_kembali, status, terlambat)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [id, idBuku, idUser, nama, tanggalPinjam, tanggalKembali, status, terlambat ? 1 : 0]
+    [finalId, idBuku, idUser, nama, tanggalPinjam, tanggalKembali, status, terlambat ? 1 : 0]
   );
-  return { ...loan };
+
+  return { ...loan, id: finalId };
 }
 
 async function getById(id) {
@@ -70,6 +87,7 @@ module.exports = {
   setStatus,
   markFinePaid,
   countActiveByUser,
+  getNextId,
 };
 
 

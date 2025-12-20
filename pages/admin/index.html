@@ -966,20 +966,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                   <div class="row">
                     <div class="col-md-6">
                       <div class="mb-3">
-                        <label for="returnBorrowerName" class="form-label"
-                          >Nama Peminjam</label
-                        >
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="returnBorrowerName"
-                          name="returnBorrowerName"
-                          placeholder="Masukkan nama peminjam"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="mb-3">
                         <label for="returnCondition" class="form-label"
                           >Kondisi Buku</label
                         >
@@ -1795,24 +1781,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
                     <small class="form-text text-muted"
                       >NIS harus 10 digit angka</small
                     >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="editUserEntryYear" class="form-label"
-                      >Tahun Masuk</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="editUserEntryYear"
-                      name="tahunMasuk"
-                      placeholder="4 digit tahun"
-                      maxlength="4"
-                      pattern="[0-9]{4}"
-                    />
                   </div>
                 </div>
               </div>
@@ -2909,8 +2877,6 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         document.getElementById("editUserFullName").value =
           user.fullName || user.nama || "";
         document.getElementById("editUserNIS").value = user.nis || "";
-        document.getElementById("editUserEntryYear").value =
-          user.tahunMasuk || "";
         document.getElementById("editUserName").value = user.username || "";
         document.getElementById("editUserEmail").value = user.email || "";
         document.getElementById("editUserGender").value = user.gender || "";
@@ -3548,29 +3514,28 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           allBooks = await booksRes.json();
           allUsers = await usersRes.json();
 
-          // Populate "Angkatan Tahun Masuk" filter (rebuild options but keep current selection if any)
+          // Populate user filter (rebuild options but keep current selection if any)
           const userSelect = document.getElementById("reportUser");
           if (userSelect) {
             const wanted = prev?.user || "all";
             userSelect.innerHTML =
               '<option value="all">Semua Tahun Masuk</option>';
 
-            // Ambil semua tahunMasuk unik dari user (kecuali admin), urutkan
-            const entryYears = Array.from(
+            // Ambil daftar unik tahunMasuk dari user non-admin
+            const tahunMasukList = Array.from(
               new Set(
                 allUsers
                   .filter(
                     (u) => String(u.role || "").toLowerCase() !== "admin"
                   )
                   .map((u) => u.tahunMasuk)
-                  .filter((y) => y && String(y).trim() !== "")
+                  .filter(Boolean)
               )
             ).sort();
 
-            entryYears.forEach((year) => {
-              userSelect.innerHTML += `<option value="${year}">${year}</option>`;
+            tahunMasukList.forEach((thn) => {
+              userSelect.innerHTML += `<option value="${thn}">${thn}</option>`;
             });
-
             userSelect.value = wanted;
           }
 
@@ -3604,7 +3569,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
       function generateReport() {
         const period = document.getElementById("reportPeriod").value;
         const status = document.getElementById("reportStatus").value;
-        const userId = document.getElementById("reportUser").value;
+        const tahunMasukFilter = document.getElementById("reportUser").value;
         const fromVal = document.getElementById("reportFrom").value;
         const toVal = document.getElementById("reportTo").value;
         const keyword = (document.getElementById("reportKeyword").value || "")
@@ -3661,9 +3626,12 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
           }
         }
 
-        // Filter by user
-        if (userId !== "all") {
-          reportData = reportData.filter((item) => item.idUser === userId);
+        // Filter by angkatan (tahunMasuk)
+        if (tahunMasukFilter !== "all") {
+          reportData = reportData.filter((item) => {
+            const user = allUsers.find((u) => u.id === item.idUser);
+            return (user?.tahunMasuk || "") === tahunMasukFilter;
+          });
         }
 
         // Filter by date range (overrides/combines with period)
@@ -3708,12 +3676,13 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         const container = document.getElementById("reportResults");
         const period = document.getElementById("reportPeriod").value;
         const status = document.getElementById("reportStatus").value;
-        const userId = document.getElementById("reportUser").value;
+        const tahunMasukFilter = document.getElementById("reportUser").value;
         const fromVal = document.getElementById("reportFrom").value;
         const toVal = document.getElementById("reportTo").value;
         const keyword = document.getElementById("reportKeyword").value;
 
-        const userName = userId !== "all" ? userId : "Semua Tahun Masuk";
+        const angkatanLabel =
+          tahunMasukFilter !== "all" ? tahunMasukFilter : "all";
 
         const w = window.open("", "_blank");
         if (!w) return;
@@ -3729,7 +3698,7 @@ Administrator perpustakaan yang bertanggung jawab mengelola sistem perpustakaan 
         <div class="meta mb-3">
           <small><strong>Periode:</strong> ${period}</small>
           <small><strong>Status:</strong> ${status}</small>
-          <small><strong>Angkatan Tahun Masuk:</strong> ${userName}</small>
+          <small><strong>Angkatan Tahun Masuk:</strong> ${angkatanLabel}</small>
           <small><strong>Dari:</strong> ${
             fromVal || "-"
           } &nbsp; <strong>Sampai:</strong> ${toVal || "-"}</small>

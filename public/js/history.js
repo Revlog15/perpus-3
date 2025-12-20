@@ -50,6 +50,13 @@ export async function renderHistory(target) {
     const tbody = table.querySelector("tbody");
     const today = new Date();
 
+    const formatDate = (value) => {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return value;
+      return d.toLocaleDateString("id-ID");
+    };
+
     // Sort by loan date (newest first)
     userLoans.sort(
       (a, b) => new Date(b.tanggalPinjam) - new Date(a.tanggalPinjam)
@@ -73,11 +80,11 @@ export async function renderHistory(target) {
       tr.innerHTML = `
         <td>${loan.id}</td>
         <td>${book ? book.namaBuku : loan.idBuku}</td>
-        <td>${loan.tanggalPinjam}</td>
+        <td>${formatDate(loan.tanggalPinjam)}</td>
         <td><span class="badge bg-${statusClass}">${status}</span></td>
         <td>${
           loan.status === "aktif"
-            ? `Jatuh tempo: ${loan.tanggalKembali}`
+            ? `Jatuh tempo: ${formatDate(loan.tanggalKembali)}`
             : loan.finePaid
             ? "Denda telah dibayar"
             : "Tepat waktu"

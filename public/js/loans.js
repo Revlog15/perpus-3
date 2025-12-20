@@ -140,6 +140,13 @@ export async function renderLoanStatus(target) {
     const tbody = table.querySelector("tbody");
     const today = new Date();
 
+    const formatDate = (value) => {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return value; // fallback kalau bukan format tanggal valid
+      return d.toLocaleDateString("id-ID");
+    };
+
     activeLoans.forEach((loan) => {
       const book = books.find((b) => b.idBuku === loan.idBuku);
       const returnDate = new Date(loan.tanggalKembali);
@@ -149,8 +156,8 @@ export async function renderLoanStatus(target) {
       tr.innerHTML = `
         <td>${loan.id}</td>
         <td>${book ? book.namaBuku : loan.idBuku}</td>
-        <td>${loan.tanggalPinjam}</td>
-        <td>${loan.tanggalKembali}</td>
+        <td>${formatDate(loan.tanggalPinjam)}</td>
+        <td>${formatDate(loan.tanggalKembali)}</td>
         <td><span class="badge bg-${isOverdue ? "danger" : "success"}">${
         isOverdue ? "Terlambat" : "Aktif"
       }</span></td>
