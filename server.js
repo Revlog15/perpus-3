@@ -50,9 +50,13 @@ function sendHtml(filePath, res) {
       </script>
       <script src="${BASE_PATH}/js/back-to-portfolio.js"></script>
     </body>`;
-    const finalHtml = html.includes("</body>")
-      ? html.replace("</body>", scriptInjection)
-      : html + scriptInjection;
+    const bodyCloseIdx = html.lastIndexOf("</body>");
+    const finalHtml =
+      bodyCloseIdx !== -1
+        ? html.slice(0, bodyCloseIdx) +
+          scriptInjection +
+          html.slice(bodyCloseIdx + "</body>".length)
+        : html + scriptInjection;
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.send(finalHtml);
   });

@@ -15,8 +15,8 @@
 
   Object.assign(btn.style, {
     position: "fixed",
-    top: "14px",
-    right: "14px",
+    bottom: "16px",
+    right: "16px",
     zIndex: "99999",
     display: "inline-flex",
     alignItems: "center",
