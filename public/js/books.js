@@ -11,7 +11,7 @@ function sanitizeForFilename(str) {
 }
 
 function getImageCandidates(book) {
-  const baseDir = 'images';
+  const baseDir = '/images';
   const title = book?.namaBuku || '';
   const rawJpg = `${baseDir}/${title}.jpg`;
   const rawJpeg = `${baseDir}/${title}.jpeg`;

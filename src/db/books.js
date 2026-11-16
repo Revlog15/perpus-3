@@ -98,9 +98,10 @@ async function hasActiveLoan(idBuku) {
 }
 
 async function getPopular(limit = 6) {
+  const safeLimit = Math.max(1, Math.min(100, parseInt(limit, 10) || 6));
   return query(
-    'SELECT id_buku AS idBuku, nama_buku AS namaBuku, penulis, penerbit, tahun_terbit AS tahunTerbit, stok, kategori, rak FROM books WHERE stok > 0 ORDER BY stok ASC LIMIT ?',
-    [limit]
+    `SELECT id_buku AS idBuku, nama_buku AS namaBuku, penulis, penerbit, tahun_terbit AS tahunTerbit, stok, kategori, rak FROM books WHERE stok > 0 ORDER BY stok ASC LIMIT ${safeLimit}`,
+    []
   );
 }
 

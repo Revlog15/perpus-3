@@ -12,8 +12,9 @@ async function get() {
 async function upsert(settings) {
   const current = await get();
   const next = { ...(current || {}), ...settings };
+  await query('DELETE FROM system_settings', []);
   await query(
-    `REPLACE INTO system_settings (library_name, max_loan_days, max_books_per_user, auto_renewal, notification_days)
+    `INSERT INTO system_settings (library_name, max_loan_days, max_books_per_user, auto_renewal, notification_days)
      VALUES (?, ?, ?, ?, ?)`,
     [
       next.libraryName || 'NesPus',

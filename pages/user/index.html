@@ -2759,9 +2759,9 @@
       import {
         renderLoanForm,
         renderLoanStatus,
-      } from "../../public/js/loans.js";
-      import { renderReturnForm } from "../../public/js/returns.js";
-      import { renderHistory } from "../../public/js/history.js";
+      } from "/js/loans.js";
+      import { renderReturnForm } from "/js/returns.js";
+      import { renderHistory } from "/js/history.js";
 
       // Bridge existing buttons to module functions used in UI text/links
       window.loadLoanStatus = () => {
@@ -2826,7 +2826,7 @@
       };
     </script>
     <script type="module">
-      import { renderAllBooks } from "../../public/js/books.js";
+      import { renderAllBooks } from "/js/books.js";
 
       // Initialize allBooksCache if not already defined
       if (typeof allBooksCache === "undefined") {

@@ -5,7 +5,8 @@ export const API_BASE = (function () {
       window.location &&
       /^https?:/.test(window.location.origin)
     ) {
-      return window.location.origin.replace(/\/$/, "") + "/api";
+      const prefix = window.__BASE_PATH__ || "";
+      return window.location.origin.replace(/\/$/, "") + prefix + "/api";
     }
   } catch (_) {}
   return "http://localhost:3001/api";

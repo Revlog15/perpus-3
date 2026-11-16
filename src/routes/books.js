@@ -1,23 +1,28 @@
 const express = require('express');
 const multer = require('multer');
+const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const booksRepo = require('../db/books');
 
 const router = express.Router();
 
-// Configure multer for file uploads
+const IS_SERVERLESS = Boolean(
+  process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
+);
+const UPLOAD_DIR = IS_SERVERLESS
+  ? path.join(os.tmpdir(), 'nespus-uploads')
+  : path.join(__dirname, '../../public/images');
+
+// Configure multer for file uploads (falls back to /tmp in serverless read-only environments)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../../images');
-    // Create images directory if it doesn't exist
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+    if (!fs.existsSync(UPLOAD_DIR)) {
+      fs.mkdirSync(UPLOAD_DIR, { recursive: true });
     }
-    cb(null, uploadPath);
+    cb(null, UPLOAD_DIR);
   },
   filename: function (req, file, cb) {
-    // Use the filename from the request body
     const filename = req.body.filename || file.originalname;
     cb(null, filename);
   }
@@ -105,11 +110,10 @@ router.post('/', upload.single('photo'), async (req, res) => {
         .replace(/[\s_]+/g, '-')
         .toLowerCase();
 
-      const imagesDir = path.join(__dirname, '../../images');
       const ext = path.extname(req.file.originalname) || '.jpg';
       const desiredName = sanitize(namaBuku) + ext;
       const currentPath = req.file.path;
-      const desiredPath = path.join(imagesDir, desiredName);
+      const desiredPath = path.join(UPLOAD_DIR, desiredName);
 
       try {
         if (path.basename(currentPath) !== desiredName) {
@@ -151,11 +155,10 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
       .trim()
       .replace(/[\s_]+/g, '-')
       .toLowerCase();
-    const imagesDir = path.join(__dirname, '../../images');
     const ext = path.extname(req.file.originalname) || '.jpg';
     const desiredName = sanitize(namaBuku || existing.namaBuku) + ext;
     const currentPath = req.file.path;
-    const desiredPath = path.join(imagesDir, desiredName);
+    const desiredPath = path.join(UPLOAD_DIR, desiredName);
     try {
       if (path.basename(currentPath) !== desiredName) {
         fs.renameSync(currentPath, desiredPath);
